@@ -1,0 +1,243 @@
+:root {
+	/* ===== Light theme (default) ===== */
+	/* Colors */
+	--background-light: #f9fafb;
+	--brand-light: #3b82f6;
+	--text-light: #1f2937;
+	--alert-light: #f59e0b;
+	--error-light: #ef4444;
+	--success-light: #10b981;
+	--surface-light: #ffffff;
+	--surface-hover-light: #f3f4f6;
+	--border-light: #e5e7eb;
+	--muted-light: #6b7280;
+
+	/* Typography */
+	--font-weight-light: 400;
+	--font-weight-heading-light: 600;
+	--line-height-light: 1.5;
+	--letter-spacing-light: 0;
+
+	/* Spacing */
+	--spacing-unit-light: 0.25rem;
+	--content-padding-light: 1.5rem;
+
+	/* Borders */
+	--border-radius-sm-light: 0.25rem;
+	--border-radius-md-light: 0.375rem;
+	--border-radius-lg-light: 0.5rem;
+	--border-radius-xl-light: 0.75rem;
+	--border-width-light: 1px;
+
+	/* Shadows */
+	--shadow-sm-light: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+	--shadow-md-light: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px
+		rgba(0, 0, 0, 0.06);
+	--shadow-lg-light: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px
+		rgba(0, 0, 0, 0.05);
+
+	/* Animations */
+	--transition-duration-light: 200ms;
+	--transition-duration-fast-light: 100ms;
+	--transition-duration-slow-light: 400ms;
+	--transition-timing-light: cubic-bezier(0.4, 0, 0.2, 1);
+	--transition-timing-ease-light: ease;
+	--transition-timing-linear-light: linear;
+
+	/* Focus */
+	--focus-ring-light: 0 0 0 2px rgba(59, 130, 246, 0.5);
+
+	/* ===== Dark theme ===== */
+	/* Colors */
+	--background-dark: #111827;
+	--brand-dark: #60a5fa;
+	--text-dark: #f3f4f6;
+	--alert-dark: #fbbf24;
+	--error-dark: #f87171;
+	--success-dark: #34d399;
+	--surface-dark: #1f2937;
+	--surface-hover-dark: #374151;
+	--border-dark: #374151;
+	--muted-dark: #9ca3af;
+
+	/* Typography */
+	--font-weight-dark: 300;
+	--font-weight-heading-dark: 500;
+	--line-height-dark: 1.6;
+	--letter-spacing-dark: 0.01em;
+
+	/* Spacing */
+	--spacing-unit-dark: 0.25rem;
+	--content-padding-dark: 1.5rem;
+
+	/* Borders */
+	--border-radius-sm-dark: 0.25rem;
+	--border-radius-md-dark: 0.375rem;
+	--border-radius-lg-dark: 0.5rem;
+	--border-radius-xl-dark: 0.75rem;
+	--border-width-dark: 1px;
+
+	/* Shadows */
+	--shadow-sm-dark: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+	--shadow-md-dark: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px
+		rgba(0, 0, 0, 0.2);
+	--shadow-lg-dark: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px
+		rgba(0, 0, 0, 0.2);
+
+	/* Animations */
+	--transition-duration-dark: 250ms;
+	--transition-duration-fast-dark: 150ms;
+	--transition-duration-slow-dark: 500ms;
+	--transition-timing-dark: cubic-bezier(0.4, 0, 0.2, 1);
+	--transition-timing-ease-dark: ease;
+	--transition-timing-linear-dark: linear;
+
+	/* Focus */
+	--focus-ring-dark: 0 0 0 2px rgba(96, 165, 250, 0.7);
+}
+
+/* Theme variables application */
+:root {
+	/* Default theme (light) */
+	/* Colors */
+	--background: var(--background-light);
+	--brand: var(--brand-light);
+	--text: var(--text-light);
+	--alert: var(--alert-light);
+	--error: var(--error-light);
+	--success: var(--success-light);
+	--surface: var(--surface-light);
+	--surface-hover: var(--surface-hover-light);
+	--border: var(--border-light);
+	--muted: var(--muted-light);
+
+	/* Typography */
+	--font-weight: var(--font-weight-light);
+	--font-weight-heading: var(--font-weight-heading-light);
+	--line-height: var(--line-height-light);
+	--letter-spacing: var(--letter-spacing-light);
+
+	/* Spacing */
+	--spacing-unit: var(--spacing-unit-light);
+	--content-padding: var(--content-padding-light);
+
+	/* Borders */
+	--border-radius-sm: var(--border-radius-sm-light);
+	--border-radius-md: var(--border-radius-md-light);
+	--border-radius-lg: var(--border-radius-lg-light);
+	--border-radius-xl: var(--border-radius-xl-light);
+	--border-width: var(--border-width-light);
+
+	/* Shadows */
+	--shadow-sm: var(--shadow-sm-light);
+	--shadow-md: var(--shadow-md-light);
+	--shadow-lg: var(--shadow-lg-light);
+
+	/* Animations */
+	--transition-duration: var(--transition-duration-light);
+	--transition-duration-fast: var(--transition-duration-fast-light);
+	--transition-duration-slow: var(--transition-duration-slow-light);
+	--transition-timing: var(--transition-timing-light);
+	--transition-timing-ease: var(--transition-timing-ease-light);
+	--transition-timing-linear: var(--transition-timing-linear-light);
+
+	/* Focus */
+	--focus-ring: var(--focus-ring-light);
+}
+
+.dark {
+	/* Colors */
+	--background: var(--background-dark);
+	--brand: var(--brand-dark);
+	--text: var(--text-dark);
+	--alert: var(--alert-dark);
+	--error: var(--error-dark);
+	--success: var(--success-dark);
+	--surface: var(--surface-dark);
+	--surface-hover: var(--surface-hover-dark);
+	--border: var(--border-dark);
+	--muted: var(--muted-dark);
+
+	/* Typography */
+	--font-weight: var(--font-weight-dark);
+	--font-weight-heading: var(--font-weight-heading-dark);
+	--line-height: var(--line-height-dark);
+	--letter-spacing: var(--letter-spacing-dark);
+
+	/* Spacing */
+	--spacing-unit: var(--spacing-unit-dark);
+	--content-padding: var(--content-padding-dark);
+
+	/* Borders */
+	--border-radius-sm: var(--border-radius-sm-dark);
+	--border-radius-md: var(--border-radius-md-dark);
+	--border-radius-lg: var(--border-radius-lg-dark);
+	--border-radius-xl: var(--border-radius-xl-dark);
+	--border-width: var(--border-width-dark);
+
+	/* Shadows */
+	--shadow-sm: var(--shadow-sm-dark);
+	--shadow-md: var(--shadow-md-dark);
+	--shadow-lg: var(--shadow-lg-dark);
+
+	/* Animations */
+	--transition-duration: var(--transition-duration-dark);
+	--transition-duration-fast: var(--transition-duration-fast-dark);
+	--transition-duration-slow: var(--transition-duration-slow-dark);
+	--transition-timing: var(--transition-timing-dark);
+	--transition-timing-ease: var(--transition-timing-ease-dark);
+	--transition-timing-linear: var(--transition-timing-linear-dark);
+
+	/* Focus */
+	--focus-ring: var(--focus-ring-dark);
+}
+
+@media (prefers-color-scheme: dark) {
+	:root:not(.light) {
+		/* Colors */
+		--background: var(--background-dark);
+		--brand: var(--brand-dark);
+		--text: var(--text-dark);
+		--alert: var(--alert-dark);
+		--error: var(--error-dark);
+		--success: var(--success-dark);
+		--surface: var(--surface-dark);
+		--surface-hover: var(--surface-hover-dark);
+		--border: var(--border-dark);
+		--muted: var(--muted-dark);
+
+		/* Typography */
+		--font-weight: var(--font-weight-dark);
+		--font-weight-heading: var(--font-weight-heading-dark);
+		--line-height: var(--line-height-dark);
+		--letter-spacing: var(--letter-spacing-dark);
+
+		/* Spacing */
+		--spacing-unit: var(--spacing-unit-dark);
+		--content-padding: var(--content-padding-dark);
+
+		/* Borders */
+		--border-radius-sm: var(--border-radius-sm-dark);
+		--border-radius-md: var(--border-radius-md-dark);
+		--border-radius-lg: var(--border-radius-lg-dark);
+		--border-radius-xl: var(--border-radius-xl-dark);
+		--border-width: var(--border-width-dark);
+
+		/* Shadows */
+		--shadow-sm: var(--shadow-sm-dark);
+		--shadow-md: var(--shadow-md-dark);
+		--shadow-lg: var(--shadow-lg-dark);
+
+		/* Animations */
+		--transition-duration: var(--transition-duration-dark);
+		--transition-duration-fast: var(--transition-duration-fast-dark);
+		--transition-duration-slow: var(--transition-duration-slow-dark);
+		--transition-timing: var(--transition-timing-dark);
+		--transition-timing-ease: var(--transition-timing-ease-dark);
+		--transition-timing-linear: var(--transition-timing-linear-dark);
+
+		/* Focus */
+		--focus-ring: var(--focus-ring-dark);
+	}
+}
+
