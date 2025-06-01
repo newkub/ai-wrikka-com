@@ -98,7 +98,7 @@ type Status = 'todo' | 'inProgress' | 'review' | 'done';
 type Priority = 'low' | 'medium' | 'high';
 
 const props = defineProps<{
-  task: Task | null;
+  task: Partial<Task> | null;
   status: Status;
 }>();
 

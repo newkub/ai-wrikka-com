@@ -19,7 +19,9 @@
         class="border rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer h-48 overflow-hidden"
       >
         <h3 class="font-semibold text-lg mb-2 truncate">{{ note.title || 'Untitled Note' }}</h3>
-        <div class="text-gray-600 text-sm line-clamp-5" v-html="renderMarkdown(note.content)"></div>
+        <div class="text-gray-600 text-sm line-clamp-5">
+          <MDC :value="note.content" />
+        </div>
       </div>
     </div>
 
@@ -55,7 +57,9 @@
             ></textarea>
           </div>
           <div class="w-1/2 p-4 overflow-auto">
-            <div class="prose max-w-none" v-html="renderMarkdown(currentNote.content)"></div>
+            <div class="prose max-w-none">
+              <MDC :value="currentNote.content" />
+            </div>
           </div>
         </div>
         <div class="p-4 border-t flex justify-end space-x-2">
@@ -90,7 +94,6 @@ const notes = ref<Note[]>([])
 const currentNote = ref<Note>({ title: '', content: '' })
 
 // Composable
-const { renderMarkdown } = useMarkdown()
 const { isOpen, open, close } = useModal()
 
 // Methods

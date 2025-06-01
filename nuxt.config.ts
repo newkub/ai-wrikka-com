@@ -20,8 +20,27 @@ export default defineNuxtConfig({
     "@unocss/nuxt",
     "@vueuse/nuxt",
     "@pinia/nuxt",
-
+    "@nuxtjs/mdc",
   ],
+  
+  mdc: {
+    highlight: {
+      theme: 'github-dark',
+      preload: [
+        'ts',
+        'js',
+        'vue',
+        'html',
+        'css',
+        'json',
+        'bash',
+        'markdown'
+      ]
+    },
+    components: {
+      prose: true
+    }
+  },
   typescript: {
     // strict: true,
     // typeCheck: true,

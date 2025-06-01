@@ -1,3 +1,151 @@
+<script setup lang="ts">
+import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue';
+import { useTaskStore } from '~/stores/task';
+import type { Task } from '~/types/task';
+type Status = 'todo' | 'inProgress' | 'review' | 'done';
+
+type ViewMode = 'list' | 'board';
+
+// Components
+const TaskSidebar = defineAsyncComponent(() => import('~/components/tasks/TaskSidebar.vue'));
+const TaskCard = defineAsyncComponent(() => import('~/components/tasks/TaskCard.vue'));
+const TaskModal = defineAsyncComponent(() => import('~/components/tasks/TaskModal.vue'));
+const TaskListView = defineAsyncComponent(() => import('~/components/tasks/TaskListView.vue'));
+
+// Store
+const taskStore = useTaskStore();
+
+// Current task and status for the modal
+const currentTask = ref<Partial<Task>>({
+  title: '',
+  description: '',
+  status: 'todo',
+  priority: 'medium',
+  dueDate: '',
+  assignee: '',
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+  labels: []
+});
+
+const currentStatus = ref<Status>('todo');
+const showModal = ref(false);
+const currentView = ref<'list' | 'board'>('board');
+interface TaskList {
+  id: string;
+  name: string;
+}
+
+const currentList = ref<TaskList | null>(null);
+
+// Computed
+const allTasks = computed((): Task[] => taskStore.tasks);
+
+interface TaskGroup {
+  [key: string]: Task[];
+}
+
+const tasks = computed<TaskGroup>(() => ({
+  todo: allTasks.value.filter((task: Task) => task.status === 'todo'),
+  inProgress: allTasks.value.filter((task: Task) => task.status === 'inProgress'),
+  review: allTasks.value.filter((task: Task) => task.status === 'review'),
+  done: allTasks.value.filter((task: Task) => task.status === 'done')
+}));
+
+// Methods
+const openNewTaskModal = (status: Status): void => {
+  currentTask.value = {
+    title: '',
+    description: '',
+    status,
+    priority: 'medium',
+    dueDate: '',
+    assignee: '',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+  currentStatus.value = status;
+  showModal.value = true;
+}
+
+const openEditModal = (task: Task): void => {
+  currentTask.value = { ...task };
+  currentStatus.value = task.status;
+  showModal.value = true;
+}
+
+const closeModal = (): void => {
+  showModal.value = false;
+  currentTask.value = {
+    title: '',
+    description: '',
+    status: 'todo',
+    priority: 'medium',
+    dueDate: '',
+    assignee: '',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+}
+
+interface TaskData {
+  task: Partial<Task>;
+  status: Status;
+}
+
+const saveTask = async (taskData: TaskData): Promise<void> => {
+  // Ensure all required fields have values to satisfy the Task interface
+  const taskToSave: Task = {
+    id: taskData.task.id ?? Date.now().toString(),
+    title: taskData.task.title ?? '',
+    description: taskData.task.description ?? '',
+    status: taskData.status,
+    priority: taskData.task.priority ?? 'medium',
+    dueDate: taskData.task.dueDate ?? '',
+    assignee: taskData.task.assignee ?? '',
+    labels: taskData.task.labels ?? [],
+    createdAt: taskData.task.createdAt ?? new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  if (taskData.task.id) {
+    const { id, ...updates } = taskToSave;
+    taskStore.updateTask(id, updates);
+  } else {
+    taskStore.addTask(taskToSave);
+  }
+  
+  closeModal();
+}
+
+const deleteTask = async (id: string): Promise<void> => {
+  if (confirm('Are you sure you want to delete this task?')) {
+    taskStore.deleteTask(id);
+  }
+}
+
+const updateTask = (updatedTask: Task): void => {
+  const { id, ...updates } = updatedTask;
+  if (id) {
+    taskStore.updateTask(id, updates);
+  }
+}
+
+// Handle list selection
+const handleListSelect = (list: TaskList): void => {
+  currentList.value = list;
+  // In a real app, you would fetch tasks for the selected list
+  console.log('Selected list:', list);
+  // For now, we'll just fetch all tasks
+  taskStore.fetchTasks();
+}
+
+// Fetch tasks on component mount
+onMounted(() => {
+  taskStore.fetchTasks();
+});
+</script>
+
 <template>
   <div class="min-h-screen bg-gray-50 flex">
     <!-- Sidebar -->
@@ -173,11 +321,10 @@
         </div>
       </div>
     </div>
-
     <!-- Task Modal -->
     <div v-if="showModal">
       <TaskModal 
-        :task="currentTask as Task"
+        :task="currentTask"
         :status="currentStatus"
         @save="saveTask"
         @close="closeModal"
@@ -185,151 +332,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, computed, defineAsyncComponent, onMounted, watch } from 'vue';
-import { useTaskStore } from '~/stores/task';
-import type { Task } from '~/types/task';
-type Status = 'todo' | 'inProgress' | 'review' | 'done';
-
-type ViewMode = 'list' | 'board';
-
-// Components
-const TaskSidebar = defineAsyncComponent(() => import('~/components/tasks/TaskSidebar.vue'));
-
-// Components
-const TaskCard = defineAsyncComponent(() => import('~/components/tasks/TaskCard.vue'));
-const TaskModal = defineAsyncComponent(() => import('~/components/tasks/TaskModal.vue'));
-const TaskListView = defineAsyncComponent(() => import('~/components/tasks/TaskListView.vue'));
-
-// Store
-const taskStore = useTaskStore();
-
-// Current task and status for the modal
-const currentTask = ref<Partial<Task>>({
-  title: '',
-  description: '',
-  status: 'todo',
-  priority: 'medium',
-  dueDate: '',
-  assignee: '',
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
-  labels: []
-});
-
-const currentStatus = ref<Status>('todo');
-const showModal = ref(false);
-const currentView = ref<'list' | 'board'>('board');
-interface TaskList {
-  id: string;
-  name: string;
-}
-
-const currentList = ref<TaskList | null>(null);
-
-// Computed
-const allTasks = computed((): Task[] => taskStore.tasks);
-
-interface TaskGroup {
-  [key: string]: Task[];
-}
-
-const tasks = computed<TaskGroup>(() => ({
-  todo: allTasks.value.filter((task: Task) => task.status === 'todo'),
-  inProgress: allTasks.value.filter((task: Task) => task.status === 'inProgress'),
-  review: allTasks.value.filter((task: Task) => task.status === 'review'),
-  done: allTasks.value.filter((task: Task) => task.status === 'done')
-}));
-
-// Methods
-const openNewTaskModal = (status: Status): void => {
-  currentTask.value = {
-    title: '',
-    description: '',
-    status,
-    priority: 'medium',
-    dueDate: '',
-    assignee: '',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
-  currentStatus.value = status;
-  showModal.value = true;
-}
-
-const openEditModal = (task: Task): void => {
-  currentTask.value = { ...task };
-  currentStatus.value = task.status;
-  showModal.value = true;
-}
-
-const closeModal = (): void => {
-  showModal.value = false;
-  currentTask.value = {
-    title: '',
-    description: '',
-    status: 'todo',
-    priority: 'medium',
-    dueDate: '',
-    assignee: '',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
-}
-
-interface TaskData {
-  task: Partial<Task>;
-  status: Status;
-}
-
-const saveTask = async (taskData: TaskData): Promise<void> => {
-  const taskToSave: Task = {
-    id: taskData.task.id || Date.now().toString(),
-    title: taskData.task.title || '',
-    description: taskData.task.description || '',
-    status: taskData.status,
-    priority: taskData.task.priority || 'medium',
-    dueDate: taskData.task.dueDate || '',
-    assignee: taskData.task.assignee || '',
-    createdAt: taskData.task.createdAt || new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
-
-  if (taskData.task.id) {
-    const { id, ...updates } = taskToSave;
-    taskStore.updateTask(id, updates);
-  } else {
-    taskStore.addTask(taskToSave);
-  }
-  
-  closeModal();
-}
-
-const deleteTask = async (id: string): Promise<void> => {
-  if (confirm('Are you sure you want to delete this task?')) {
-    taskStore.deleteTask(id);
-  }
-}
-
-const updateTask = (updatedTask: Task): void => {
-  const { id, ...updates } = updatedTask;
-  if (id) {
-    taskStore.updateTask(id, updates);
-  }
-}
-
-// Handle list selection
-const handleListSelect = (list: TaskList): void => {
-  currentList.value = list;
-  // In a real app, you would fetch tasks for the selected list
-  console.log('Selected list:', list);
-  // For now, we'll just fetch all tasks
-  taskStore.fetchTasks();
-}
-
-// Fetch tasks on component mount
-onMounted(() => {
-  taskStore.fetchTasks();
-});
-</script>

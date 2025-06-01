@@ -19,7 +19,7 @@
                 : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none shadow-sm'
             ]"
           >
-            <div v-html="renderMarkdown(message.text)"></div>
+            <MDC :value="message.text" />
           </div>
         </div>
       </div>
@@ -48,7 +48,7 @@ definePageMeta({
 });
 
 import { ref, onUnmounted, nextTick, watch, onMounted, computed } from 'vue';
-import { useMarkdown } from '~/composables/useMarkdown';
+
 import { useRoute, useRouter } from 'vue-router';
 import ChatInput from '~/components/chat/ChatInput.vue';
 
@@ -56,7 +56,7 @@ interface FileWithPreview extends File {
   preview: string;
 }
 
-const { renderMarkdown } = useMarkdown();
+
 const route = useRoute();
 const router = useRouter();
 

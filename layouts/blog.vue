@@ -11,9 +11,9 @@
           </NuxtLink>
           <nav class="flex gap-6">
             <NuxtLink to="/" class="text-gray-600 font-medium py-2 relative transition-colors hover:text-blue-500">Home</NuxtLink>
-            <NuxtLink to="/blog" class="text-gray-600 font-medium py-2 relative transition-colors hover:text-blue-500" :class="{ 'text-blue-600 after:content-[\'\'] after:absolute after:bottom-[-1px] after:left-0 after:right-0 after:h-0.5 after:bg-blue-600 after:rounded-sm': $route.path === '/blog' }">All Posts</NuxtLink>
-            <NuxtLink to="/blog/categories" class="text-gray-600 font-medium py-2 relative transition-colors hover:text-blue-500" :class="{ 'text-blue-600 after:content-[\'\'] after:absolute after:bottom-[-1px] after:left-0 after:right-0 after:h-0.5 after:bg-blue-600 after:rounded-sm': $route.path.startsWith('/blog/categories') }">Categories</NuxtLink>
-            <NuxtLink to="/blog/tags" class="text-gray-600 font-medium py-2 relative transition-colors hover:text-blue-500" :class="{ 'text-blue-600 after:content-[\'\'] after:absolute after:bottom-[-1px] after:left-0 after:right-0 after:h-0.5 after:bg-blue-600 after:rounded-sm': $route.path.startsWith('/blog/tags') }">Tags</NuxtLink>
+            <NuxtLink to="/blog" class="text-gray-600 font-medium py-2 relative transition-colors hover:text-blue-500" :class="{ 'text-blue-600 after:content-[\'\'] after:absolute after:bottom-[-1px] after:left-0 after:right-0 after:h-0.5 after:bg-blue-600 after:rounded-sm': route.path === '/blog' }">All Posts</NuxtLink>
+            <NuxtLink to="/blog/categories" class="text-gray-600 font-medium py-2 relative transition-colors hover:text-blue-500" :class="{ 'text-blue-600 after:content-[\'\'] after:absolute after:bottom-[-1px] after:left-0 after:right-0 after:h-0.5 after:bg-blue-600 after:rounded-sm': route.path.startsWith('/blog/categories') }">Categories</NuxtLink>
+            <NuxtLink to="/blog/tags" class="text-gray-600 font-medium py-2 relative transition-colors hover:text-blue-500" :class="{ 'text-blue-600 after:content-[\'\'] after:absolute after:bottom-[-1px] after:left-0 after:right-0 after:h-0.5 after:bg-blue-600 after:rounded-sm': route.path.startsWith('/blog/tags') }">Tags</NuxtLink>
           </nav>
         </div>
       </div>

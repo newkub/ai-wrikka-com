@@ -205,66 +205,90 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick, onUnmounted } from 'vue';
-import { useWriteboard } from '~/composables/useWriteboard';
+import { nextTick, onMounted, onUnmounted, ref } from "vue";
+import { useWhiteboard } from "~/composables/useWhiteboard";
 
-type Tool = 'select' | 'hand' | 'pen' | 'eraser' | 'line' | 'text' | 'rectangle' | 'circle' | 'triangle' | 'image';
+definePageMeta({
+	layout: "default",
+});
+
+type Tool =
+	| "select"
+	| "hand"
+	| "pen"
+	| "eraser"
+	| "line"
+	| "text"
+	| "rectangle"
+	| "circle"
+	| "triangle"
+	| "image";
 
 useHead({
-  title: 'Whiteboard - AI Wrikka',
-  meta: [
-    { name: 'description', content: 'AI-powered collaborative whiteboard' }
-  ]
+	title: "Whiteboard - AI Wrikka",
+	meta: [
+		{ name: "description", content: "AI-powered collaborative whiteboard" },
+	],
 });
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
-const activeTool = ref('pen');
+const activeTool = ref("pen");
 const shapeMenuOpen = ref(false);
 
-const toggleShapeMenu = (event?: Event) => {
-  if (event) {
-    event.stopPropagation();
-  }
-  shapeMenuOpen.value = !shapeMenuOpen.value;
-};
+const {
+	isDrawing,
+	selectedColor,
+	selectedWidth,
+	startDrawing,
+	draw,
+	stopDrawing,
+	clearCanvas,
+	redraw,
+	setActiveTool,
+	handleImageUpload,
+} = useWhiteboard(canvasRef);
 
 // Handle click outside to close shape menu
 const onClickOutside = (event: MouseEvent) => {
-  const target = event.target as HTMLElement;
-  if (!target.closest('.group')) {
-    shapeMenuOpen.value = false;
-  }
+	const target = event.target as HTMLElement;
+	if (!target.closest(".relative.group")) {
+		shapeMenuOpen.value = false;
+	}
 };
 
-const setTool = (tool: Tool) => {
-  activeTool.value = tool;
+// Toggle shape menu
+const toggleShapeMenu = (event?: Event) => {
+	if (event) event.stopPropagation();
+	shapeMenuOpen.value = !shapeMenuOpen.value;
 };
 
-const {
-  isDrawing,
-  selectedColor,
-  selectedWidth,
-  startDrawing,
-  draw,
-  stopDrawing,
-  clearCanvas,
-  redraw
-} = useWriteboard(canvasRef);
+// Set the active tool
+const setTool = (tool: string) => {
+	setActiveTool(tool as Tool); // Cast to Tool type
+	shapeMenuOpen.value = false; // Close shape menu when a tool is selected
+};
 
 // Handle window resize
 const handleResize = () => {
-  nextTick(() => {
-    redraw();
-  });
+	if (canvasRef.value) {
+		redraw();
+	}
 };
 
+// Set up event listeners
 onMounted(() => {
-  window.addEventListener('resize', handleResize);
-  document.addEventListener('click', onClickOutside);
+	window.addEventListener("resize", handleResize);
+	document.addEventListener("click", onClickOutside);
+
+	// Initial redraw after mount
+	nextTick(() => {
+		redraw();
+	});
 });
 
+// Clean up event listeners
 onUnmounted(() => {
-  window.removeEventListener('resize', handleResize);
-  document.removeEventListener('click', onClickOutside);
+	window.removeEventListener("resize", handleResize);
+	document.removeEventListener("click", onClickOutside);
 });
 </script>
