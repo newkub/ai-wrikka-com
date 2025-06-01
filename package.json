@@ -19,7 +19,6 @@
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@nuxt/content": "^3.5.1",
-    "@nuxthub/core": "0.8.27",
     "@nuxtjs/markdownit": "^2.0.0",
     "@shikijs/transformers": "^3.4.2",
     "@unocss/reset": "^66.1.3",

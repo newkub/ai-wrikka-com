@@ -21,9 +21,6 @@ export default defineNuxtConfig({
     },
   },
   
-  hub: {
-    ai: true
-  },
   modules: [
     "@unocss/nuxt",
     "@vueuse/nuxt",
@@ -31,7 +28,6 @@ export default defineNuxtConfig({
     "@nuxtjs/mdc",
     //"@nuxt/content",
     //'nuxt-content-twoslash',
-    "@nuxthub/core",
   ],
 
   
