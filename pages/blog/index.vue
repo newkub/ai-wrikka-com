@@ -1,20 +1,21 @@
 <script lang="ts" setup>
-import type { BlogPost } from '~/types/content'
+import type { BlogPost } from "~/types/content";
 
-const { data: blogPosts } = await useAsyncData<BlogPost[]>('blog-posts', async () => {
-  // @ts-ignore - queryContent will be available at runtime from Nuxt Content
-  return await queryContent<BlogPost>('blog')
-    .sort({ date: -1 })
-    .find()
-})
+const { data: blogPosts } = await useAsyncData<BlogPost[]>(
+	"blog-posts",
+	async () => {
+		// @ts-ignore - queryContent will be available at runtime from Nuxt Content
+		return await queryContent<BlogPost>("blog").sort({ date: -1 }).find();
+	},
+);
 
 const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
-}
+	return new Date(dateString).toLocaleDateString("en-US", {
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+	});
+};
 </script>
 
 <template>

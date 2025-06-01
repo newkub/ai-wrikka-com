@@ -1,194 +1,203 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, computed } from "vue";
+import { useRouter } from "vue-router";
 
-type ResultType = 'answer' | 'source' | 'image' | 'video'
+type ResultType = "answer" | "source" | "image" | "video";
 
 interface SearchResult {
-  id: string
-  title: string
-  url: string
-  displayUrl: string
-  snippet: string
-  type: ResultType
-  thumbnail?: string
-  duration?: string
-  views?: string
-  date?: string
-  dimensions?: string
+	id: string;
+	title: string;
+	url: string;
+	displayUrl: string;
+	snippet: string;
+	type: ResultType;
+	thumbnail?: string;
+	duration?: string;
+	views?: string;
+	date?: string;
+	dimensions?: string;
 }
 
-const router = useRouter()
-const searchQuery = ref('')
-const searchInput = ref<HTMLInputElement | null>(null)
-const loading = ref(false)
-const activeTab = ref<ResultType>('answer')
-const results = ref<SearchResult[]>([])
-const hasSearched = ref(false)
-const showResults = ref(false)
-const currentPage = ref(1)
-const resultsPerPage = 10
+const router = useRouter();
+const searchQuery = ref("");
+const searchInput = ref<HTMLInputElement | null>(null);
+const loading = ref(false);
+const activeTab = ref<ResultType>("answer");
+const results = ref<SearchResult[]>([]);
+const hasSearched = ref(false);
+const showResults = ref(false);
+const currentPage = ref(1);
+const resultsPerPage = 10;
 
 const tabs = [
-  { id: 'answer', label: 'Answer' },
-  { id: 'source', label: 'Sources' },
-  { id: 'image', label: 'Images' },
-  { id: 'video', label: 'Videos' }
-] as const
+	{ id: "answer", label: "Answer" },
+	{ id: "source", label: "Sources" },
+	{ id: "image", label: "Images" },
+	{ id: "video", label: "Videos" },
+] as const;
 
 // Generate mock data for different result types
-const generateMockResults = (query: string, type: ResultType, count: number): SearchResult[] => {
-  return Array.from({ length: count }, (_, i) => {
-    const baseResult = {
-      id: `${type}-${i + 1}`,
-      title: `${type.charAt(0).toUpperCase() + type.slice(1)} Result ${i + 1} for "${query}"`,
-      url: `https://example.com/${type}-result-${i + 1}`,
-      displayUrl: `example.com/${type}-results/result-${i + 1}`,
-      type,
-      snippet: `This is a ${type} result description for "${query}". ${i % 3 === 0 ? 'Additional context about the search result.' : 'More information available.'}`
-    }
+const generateMockResults = (
+	query: string,
+	type: ResultType,
+	count: number,
+): SearchResult[] => {
+	return Array.from({ length: count }, (_, i) => {
+		const baseResult = {
+			id: `${type}-${i + 1}`,
+			title: `${type.charAt(0).toUpperCase() + type.slice(1)} Result ${i + 1} for "${query}"`,
+			url: `https://example.com/${type}-result-${i + 1}`,
+			displayUrl: `example.com/${type}-results/result-${i + 1}`,
+			type,
+			snippet: `This is a ${type} result description for "${query}". ${i % 3 === 0 ? "Additional context about the search result." : "More information available."}`,
+		};
 
-    switch (type) {
-      case 'answer':
-        return {
-          ...baseResult,
-          title: `Answer: ${query} (${i + 1})`
-        }
-      case 'image':
-        return {
-          ...baseResult,
-          title: `Image: ${query} (${i + 1})`,
-          thumbnail: `https://picsum.photos/200/150?random=${i}`,
-          dimensions: '800x600'
-        }
-      case 'video':
-        return {
-          ...baseResult,
-          title: `Video: ${query} (${i + 1})`,
-          thumbnail: `https://picsum.photos/320/180?random=${i + 100}`,
-          duration: `${Math.floor(Math.random() * 10) + 1}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
-          views: `${(Math.random() * 1000).toFixed(0)}K views`,
-          date: `${Math.floor(Math.random() * 12) + 1} ${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][Math.floor(Math.random() * 12)]} ${2020 + Math.floor(Math.random() * 4)}`
-        }
-      default: // source
-        return {
-          ...baseResult,
-          title: `Source: ${query} (${i + 1})`,
-          date: `${Math.floor(Math.random() * 30) + 1} ${['Jan', 'Feb', 'Mar'][Math.floor(Math.random() * 3)]} ${2020 + Math.floor(Math.random() * 4)}`
-        }
-    }
-  })
-}
+		switch (type) {
+			case "answer":
+				return {
+					...baseResult,
+					title: `Answer: ${query} (${i + 1})`,
+				};
+			case "image":
+				return {
+					...baseResult,
+					title: `Image: ${query} (${i + 1})`,
+					thumbnail: `https://picsum.photos/200/150?random=${i}`,
+					dimensions: "800x600",
+				};
+			case "video":
+				return {
+					...baseResult,
+					title: `Video: ${query} (${i + 1})`,
+					thumbnail: `https://picsum.photos/320/180?random=${i + 100}`,
+					duration: `${Math.floor(Math.random() * 10) + 1}:${Math.floor(
+						Math.random() * 60,
+					)
+						.toString()
+						.padStart(2, "0")}`,
+					views: `${(Math.random() * 1000).toFixed(0)}K views`,
+					date: `${Math.floor(Math.random() * 12) + 1} ${["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][Math.floor(Math.random() * 12)]} ${2020 + Math.floor(Math.random() * 4)}`,
+				};
+			default: // source
+				return {
+					...baseResult,
+					title: `Source: ${query} (${i + 1})`,
+					date: `${Math.floor(Math.random() * 30) + 1} ${["Jan", "Feb", "Mar"][Math.floor(Math.random() * 3)]} ${2020 + Math.floor(Math.random() * 4)}`,
+				};
+		}
+	});
+};
 
 // Mock search function
 const mockSearch = async (query: string) => {
-  // Simulate API call delay
-  await new Promise(resolve => setTimeout(resolve, 800))
-  
-  // Return results for all types
-  return [
-    ...generateMockResults(query, 'answer', 2),
-    ...generateMockResults(query, 'source', 10),
-    ...generateMockResults(query, 'image', 12),
-    ...generateMockResults(query, 'video', 8)
-  ]
-}
+	// Simulate API call delay
+	await new Promise((resolve) => setTimeout(resolve, 800));
+
+	// Return results for all types
+	return [
+		...generateMockResults(query, "answer", 2),
+		...generateMockResults(query, "source", 10),
+		...generateMockResults(query, "image", 12),
+		...generateMockResults(query, "video", 8),
+	];
+};
 
 const totalPages = computed(() => {
-  return Math.ceil(results.value.length / resultsPerPage)
-})
+	return Math.ceil(results.value.length / resultsPerPage);
+});
 
 // Filter and paginate results based on active tab
 const filteredResults = computed(() => {
-  // Filter by active tab
-  const filtered = activeTab.value === 'answer' 
-    ? results.value.filter(r => r.type === 'answer')
-    : results.value.filter(r => r.type === activeTab.value)
-  
-  // Paginate
-  const start = (currentPage.value - 1) * resultsPerPage
-  const end = start + resultsPerPage
-  
-  return filtered.slice(start, end)
-})
+	// Filter by active tab
+	const filtered =
+		activeTab.value === "answer"
+			? results.value.filter((r) => r.type === "answer")
+			: results.value.filter((r) => r.type === activeTab.value);
+
+	// Paginate
+	const start = (currentPage.value - 1) * resultsPerPage;
+	const end = start + resultsPerPage;
+
+	return filtered.slice(start, end);
+});
 
 // Get featured answer if available
-const featuredAnswer = computed(() => 
-  results.value.find(r => r.type === 'answer')
-)
+const featuredAnswer = computed(() =>
+	results.value.find((r) => r.type === "answer"),
+);
 
 // Check if current tab has results
-const hasTabResults = computed(() => 
-  results.value.some(r => r.type === activeTab.value)
-)
+const hasTabResults = computed(() =>
+	results.value.some((r) => r.type === activeTab.value),
+);
 
 const paginatedResults = computed(() => {
-  const start = (currentPage.value - 1) * resultsPerPage
-  const end = start + resultsPerPage
-  return results.value.slice(start, end)
-})
+	const start = (currentPage.value - 1) * resultsPerPage;
+	const end = start + resultsPerPage;
+	return results.value.slice(start, end);
+});
 
 const search = async () => {
-  const query = searchQuery.value.trim()
-  if (!query) return
-  
-  loading.value = true
-  showResults.value = true
-  hasSearched.value = true
-  currentPage.value = 1
-  
-  try {
-    // In a real app, this would be an API call to a search engine
-    results.value = await mockSearch(query)
-  } catch (error) {
-    console.error('Search error:', error)
-    results.value = []
-  } finally {
-    loading.value = false
-  }
-}
+	const query = searchQuery.value.trim();
+	if (!query) return;
+
+	loading.value = true;
+	showResults.value = true;
+	hasSearched.value = true;
+	currentPage.value = 1;
+
+	try {
+		// In a real app, this would be an API call to a search engine
+		results.value = await mockSearch(query);
+	} catch (error) {
+		console.error("Search error:", error);
+		results.value = [];
+	} finally {
+		loading.value = false;
+	}
+};
 
 const feelingLucky = async () => {
-  if (!searchQuery.value.trim()) return
-  
-  loading.value = true
-  try {
-    // In a real app, this would redirect to the first result
-    const searchResults = await mockSearch(searchQuery.value)
-    if (searchResults.length > 0) {
-      window.location.href = searchResults[0].url
-    } else {
-      showResults.value = true
-      hasSearched.value = true
-      results.value = []
-      loading.value = false
-    }
-  } catch (error) {
-    console.error('Search error:', error)
-    showResults.value = true
-    hasSearched.value = true
-    results.value = []
-    loading.value = false
-  }
-}
+	if (!searchQuery.value.trim()) return;
+
+	loading.value = true;
+	try {
+		// In a real app, this would redirect to the first result
+		const searchResults = await mockSearch(searchQuery.value);
+		if (searchResults.length > 0) {
+			window.location.href = searchResults[0].url;
+		} else {
+			showResults.value = true;
+			hasSearched.value = true;
+			results.value = [];
+			loading.value = false;
+		}
+	} catch (error) {
+		console.error("Search error:", error);
+		showResults.value = true;
+		hasSearched.value = true;
+		results.value = [];
+		loading.value = false;
+	}
+};
 
 const clearSearch = () => {
-  searchQuery.value = ''
-  if (searchInput.value) {
-    searchInput.value.focus()
-  }
-}
+	searchQuery.value = "";
+	if (searchInput.value) {
+		searchInput.value.focus();
+	}
+};
 
 const goToPage = (page: number) => {
-  currentPage.value = page
-  window.scrollTo({ top: 0, behavior: 'smooth' })
-}
+	currentPage.value = page;
+	window.scrollTo({ top: 0, behavior: "smooth" });
+};
 
 onMounted(() => {
-  if (searchInput.value) {
-    searchInput.value.focus()
-  }
-})
+	if (searchInput.value) {
+		searchInput.value.focus();
+	}
+});
 </script>
 
 <template>

@@ -1,49 +1,49 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from "vue";
 
 interface Dependency {
-  name: string;
-  version: string;
-  type: 'dependencies' | 'devDependencies';
+	name: string;
+	version: string;
+	type: "dependencies" | "devDependencies";
 }
 
 interface InstallationOutput {
-  type: 'success' | 'error' | 'warning' | 'info';
-  text: string;
+	type: "success" | "error" | "warning" | "info";
+	text: string;
 }
 
 const props = defineProps<{
-  dependencies: Dependency[];
-  installationOutput: InstallationOutput[];
+	dependencies: Dependency[];
+	installationOutput: InstallationOutput[];
 }>();
 
-const emit = defineEmits(['install-dependency']);
+const emit = defineEmits(["install-dependency"]);
 
-const searchQuery = ref('');
-const packageName = ref('');
-const packageVersion = ref('latest');
+const searchQuery = ref("");
+const packageName = ref("");
+const packageVersion = ref("latest");
 const isDevDependency = ref(false);
 const addDependencyModal = ref<HTMLDialogElement | null>(null);
 
 const installNewDependency = () => {
-  if (!packageName.value) return;
-  
-  emit('install-dependency', {
-    name: packageName.value,
-    version: packageVersion.value,
-    isDev: isDevDependency.value
-  });
-  
-  // Reset form
-  packageName.value = '';
-  packageVersion.value = 'latest';
+	if (!packageName.value) return;
+
+	emit("install-dependency", {
+		name: packageName.value,
+		version: packageVersion.value,
+		isDev: isDevDependency.value,
+	});
+
+	// Reset form
+	packageName.value = "";
+	packageVersion.value = "latest";
 };
 
 const filteredDependencies = () => {
-  if (!searchQuery.value) return props.dependencies;
-  return props.dependencies.filter(dep => 
-    dep.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-  );
+	if (!searchQuery.value) return props.dependencies;
+	return props.dependencies.filter((dep) =>
+		dep.name.toLowerCase().includes(searchQuery.value.toLowerCase()),
+	);
 };
 </script>
 

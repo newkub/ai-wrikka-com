@@ -1,286 +1,304 @@
 <script setup lang="ts">
-import { useBookmarkStore, type Bookmark } from '~/stores/bookmark';
+import { useBookmarkStore, type Bookmark } from "~/stores/bookmark";
 
 definePageMeta({
-  layout: 'default'
+	layout: "default",
 });
 
 const bookmarkStore = useBookmarkStore();
 
 // State
-const selectedCollection = ref<string>('All');
+const selectedCollection = ref<string>("All");
 const selectedTags = ref<string[]>([]);
-const searchQuery = ref<string>('');
-const viewMode = ref<'grid' | 'list'>('grid');
+const searchQuery = ref<string>("");
+const viewMode = ref<"grid" | "list">("grid");
 const showAddModal = ref<boolean>(false);
 const isEditing = ref<boolean>(false);
 const currentBookmarkId = ref<string | null>(null);
 
 // Grouping and Sorting
-const groupBy = ref<'none' | 'date' | 'collection' | 'tag'>('none');
-const sortBy = ref<'date' | 'title' | 'url' | 'collection'>('date');
-const sortDirection = ref<'asc' | 'desc'>('desc');
+const groupBy = ref<"none" | "date" | "collection" | "tag">("none");
+const sortBy = ref<"date" | "title" | "url" | "collection">("date");
+const sortDirection = ref<"asc" | "desc">("desc");
 
 // Grouping options
 const groupOptions = [
-  { value: 'none', label: 'No Grouping', icon: 'i-ri-apps-line' },
-  { value: 'date', label: 'Group by Date', icon: 'i-ri-calendar-line' },
-  { value: 'collection', label: 'Group by Collection', icon: 'i-ri-folder-line' },
-  { value: 'tag', label: 'Group by Tag', icon: 'i-ri-price-tag-3-line' },
+	{ value: "none", label: "No Grouping", icon: "i-ri-apps-line" },
+	{ value: "date", label: "Group by Date", icon: "i-ri-calendar-line" },
+	{
+		value: "collection",
+		label: "Group by Collection",
+		icon: "i-ri-folder-line",
+	},
+	{ value: "tag", label: "Group by Tag", icon: "i-ri-price-tag-3-line" },
 ];
 
 // Sort options
 const sortOptions = [
-  { value: 'date', label: 'Date', icon: 'i-ri-calendar-line' },
-  { value: 'title', label: 'Title', icon: 'i-ri-text' },
-  { value: 'url', label: 'URL', icon: 'i-ri-link' },
-  { value: 'collection', label: 'Collection', icon: 'i-ri-folder-line' },
+	{ value: "date", label: "Date", icon: "i-ri-calendar-line" },
+	{ value: "title", label: "Title", icon: "i-ri-text" },
+	{ value: "url", label: "URL", icon: "i-ri-link" },
+	{ value: "collection", label: "Collection", icon: "i-ri-folder-line" },
 ];
 
 // New bookmark form
 const newBookmark = ref<Partial<Bookmark>>({
-  title: '',
-  url: '',
-  description: '',
-  tags: [],
-  collection: 'Uncategorized',
-  isRead: false,
-  isFavorite: false
+	title: "",
+	url: "",
+	description: "",
+	tags: [],
+	collection: "Uncategorized",
+	isRead: false,
+	isFavorite: false,
 });
 
 // Temp tag input
-const tagInput = ref<string>('');
+const tagInput = ref<string>("");
 
 // Computed
 const filteredBookmarks = computed(() => {
-  let result = bookmarkStore.bookmarks;
-  
-  // Filter by collection
-  if (selectedCollection.value !== 'All') {
-    result = result.filter(bookmark => bookmark.collection === selectedCollection.value);
-  }
-  
-  // Filter by tags
-  if (selectedTags.value.length > 0) {
-    result = result.filter(bookmark => 
-      selectedTags.value.every(tag => bookmark.tags.includes(tag))
-    );
-  }
-  
-  // Search by title, url or description
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase();
-    result = result.filter(bookmark => 
-      bookmark.title.toLowerCase().includes(query) || 
-      bookmark.url.toLowerCase().includes(query) || 
-      (bookmark.description?.toLowerCase().includes(query))
-    );
-  }
-  
-  return result;
+	let result = bookmarkStore.bookmarks;
+
+	// Filter by collection
+	if (selectedCollection.value !== "All") {
+		result = result.filter(
+			(bookmark) => bookmark.collection === selectedCollection.value,
+		);
+	}
+
+	// Filter by tags
+	if (selectedTags.value.length > 0) {
+		result = result.filter((bookmark) =>
+			selectedTags.value.every((tag) => bookmark.tags.includes(tag)),
+		);
+	}
+
+	// Search by title, url or description
+	if (searchQuery.value) {
+		const query = searchQuery.value.toLowerCase();
+		result = result.filter(
+			(bookmark) =>
+				bookmark.title.toLowerCase().includes(query) ||
+				bookmark.url.toLowerCase().includes(query) ||
+				bookmark.description?.toLowerCase().includes(query),
+		);
+	}
+
+	return result;
 });
 
 // Group bookmarks
 const groupedBookmarks = computed(() => {
-  const bookmarks = [...filteredBookmarks.value];
-  
-  // Sort bookmarks first
-  const sortedBookmarks = bookmarks.sort((a, b) => {
-    let valueA: string | number;
-    let valueB: string | number;
-    
-    if (sortBy.value === 'date') {
-      valueA = new Date(a.updatedAt).getTime();
-      valueB = new Date(b.updatedAt).getTime();
-    } else if (sortBy.value === 'title') {
-      valueA = a.title.toLowerCase();
-      valueB = b.title.toLowerCase();
-    } else if (sortBy.value === 'collection') {
-      valueA = a.collection.toLowerCase();
-      valueB = b.collection.toLowerCase();
-    } else {
-      valueA = a.url.toLowerCase();
-      valueB = b.url.toLowerCase();
-    }
-    
-    return sortDirection.value === 'asc' 
-      ? valueA > valueB ? 1 : -1
-      : valueA < valueB ? 1 : -1;
-  });
+	const bookmarks = [...filteredBookmarks.value];
 
-  // Group if needed
-  if (groupBy.value === 'none') {
-    return { 'All Bookmarks': sortedBookmarks };
-  }
-  
-  const groups: Record<string, typeof sortedBookmarks> = {};
-  
-  for (const bookmark of sortedBookmarks) {
-    let groupKey = 'Uncategorized';
-    
-    if (groupBy.value === 'date') {
-      const date = new Date(bookmark.updatedAt);
-      groupKey = date.toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      });
-    } else if (groupBy.value === 'collection') {
-      groupKey = bookmark.collection || 'Uncategorized';
-    } else if (groupBy.value === 'tag') {
-      if (bookmark.tags.length === 0) {
-        groupKey = 'No Tags';
-      } else {
-        // For tag grouping, we'll create a group for each tag
-        for (const tag of bookmark.tags) {
-          if (!groups[tag]) groups[tag] = [];
-          groups[tag].push(bookmark);
-        }
-        return; // Skip the default push
-      }
-    }
-    
-    if (groupKey) {
-      if (!groups[groupKey]) {
-        groups[groupKey] = [];
-      }
-      groups[groupKey].push(bookmark);
-    }
-  }
-  
-  // Sort groups
-  const sortedGroups: Record<string, typeof sortedBookmarks> = {};
-  for (const key of Object.keys(groups).sort()) {
-    sortedGroups[key] = groups[key];
-  }
-  
-  return sortedGroups;
+	// Sort bookmarks first
+	const sortedBookmarks = bookmarks.sort((a, b) => {
+		let valueA: string | number;
+		let valueB: string | number;
+
+		if (sortBy.value === "date") {
+			valueA = new Date(a.updatedAt).getTime();
+			valueB = new Date(b.updatedAt).getTime();
+		} else if (sortBy.value === "title") {
+			valueA = a.title.toLowerCase();
+			valueB = b.title.toLowerCase();
+		} else if (sortBy.value === "collection") {
+			valueA = a.collection.toLowerCase();
+			valueB = b.collection.toLowerCase();
+		} else {
+			valueA = a.url.toLowerCase();
+			valueB = b.url.toLowerCase();
+		}
+
+		return sortDirection.value === "asc"
+			? valueA > valueB
+				? 1
+				: -1
+			: valueA < valueB
+				? 1
+				: -1;
+	});
+
+	// Group if needed
+	if (groupBy.value === "none") {
+		return { "All Bookmarks": sortedBookmarks };
+	}
+
+	const groups: Record<string, typeof sortedBookmarks> = {};
+
+	for (const bookmark of sortedBookmarks) {
+		let groupKey = "Uncategorized";
+
+		if (groupBy.value === "date") {
+			const date = new Date(bookmark.updatedAt);
+			groupKey = date.toLocaleDateString("en-US", {
+				year: "numeric",
+				month: "long",
+				day: "numeric",
+			});
+		} else if (groupBy.value === "collection") {
+			groupKey = bookmark.collection || "Uncategorized";
+		} else if (groupBy.value === "tag") {
+			if (bookmark.tags.length === 0) {
+				groupKey = "No Tags";
+			} else {
+				// For tag grouping, we'll create a group for each tag
+				for (const tag of bookmark.tags) {
+					if (!groups[tag]) groups[tag] = [];
+					groups[tag].push(bookmark);
+				}
+				return; // Skip the default push
+			}
+		}
+
+		if (groupKey) {
+			if (!groups[groupKey]) {
+				groups[groupKey] = [];
+			}
+			groups[groupKey].push(bookmark);
+		}
+	}
+
+	// Sort groups
+	const sortedGroups: Record<string, typeof sortedBookmarks> = {};
+	for (const key of Object.keys(groups).sort()) {
+		sortedGroups[key] = groups[key];
+	}
+
+	return sortedGroups;
 });
 
 // Methods
 const addTag = () => {
-  if (tagInput.value && !newBookmark.value.tags?.includes(tagInput.value)) {
-    if (!newBookmark.value.tags) {
-      newBookmark.value.tags = [];
-    }
-    newBookmark.value.tags.push(tagInput.value);
-    tagInput.value = '';
-  }
+	if (tagInput.value && !newBookmark.value.tags?.includes(tagInput.value)) {
+		if (!newBookmark.value.tags) {
+			newBookmark.value.tags = [];
+		}
+		newBookmark.value.tags.push(tagInput.value);
+		tagInput.value = "";
+	}
 };
 
 const removeTag = (tag: string) => {
-  if (newBookmark.value.tags) {
-    newBookmark.value.tags = newBookmark.value.tags.filter(t => t !== tag);
-  }
+	if (newBookmark.value.tags) {
+		newBookmark.value.tags = newBookmark.value.tags.filter((t) => t !== tag);
+	}
 };
 
 const toggleTagFilter = (tag: string) => {
-  if (selectedTags.value.includes(tag)) {
-    selectedTags.value = selectedTags.value.filter(t => t !== tag);
-  } else {
-    selectedTags.value.push(tag);
-  }
+	if (selectedTags.value.includes(tag)) {
+		selectedTags.value = selectedTags.value.filter((t) => t !== tag);
+	} else {
+		selectedTags.value.push(tag);
+	}
 };
 
 const openAddModal = () => {
-  isEditing.value = false;
-  currentBookmarkId.value = null;
-  newBookmark.value = {
-    title: '',
-    url: '',
-    description: '',
-    tags: [],
-    collection: 'Uncategorized',
-    isRead: false,
-    isFavorite: false
-  };
-  showAddModal.value = true;
+	isEditing.value = false;
+	currentBookmarkId.value = null;
+	newBookmark.value = {
+		title: "",
+		url: "",
+		description: "",
+		tags: [],
+		collection: "Uncategorized",
+		isRead: false,
+		isFavorite: false,
+	};
+	showAddModal.value = true;
 };
 
 const openEditModal = (bookmark: Bookmark) => {
-  isEditing.value = true;
-  currentBookmarkId.value = bookmark.id;
-  newBookmark.value = {
-    title: bookmark.title,
-    url: bookmark.url,
-    description: bookmark.description || '',
-    tags: [...bookmark.tags],
-    collection: bookmark.collection,
-    isRead: bookmark.isRead,
-    isFavorite: bookmark.isFavorite
-  };
-  showAddModal.value = true;
+	isEditing.value = true;
+	currentBookmarkId.value = bookmark.id;
+	newBookmark.value = {
+		title: bookmark.title,
+		url: bookmark.url,
+		description: bookmark.description || "",
+		tags: [...bookmark.tags],
+		collection: bookmark.collection,
+		isRead: bookmark.isRead,
+		isFavorite: bookmark.isFavorite,
+	};
+	showAddModal.value = true;
 };
 
 const closeAddModal = () => {
-  showAddModal.value = false;
+	showAddModal.value = false;
 };
 
 const saveBookmark = () => {
-  if (newBookmark.value.title && newBookmark.value.url) {
-    if (isEditing.value && currentBookmarkId.value) {
-      bookmarkStore.updateBookmark(currentBookmarkId.value, newBookmark.value as Partial<Omit<Bookmark, 'id' | 'createdAt' | 'updatedAt'>>);
-    } else {
-      bookmarkStore.addBookmark(newBookmark.value as Omit<Bookmark, 'id' | 'createdAt' | 'updatedAt'>);
-    }
-    showAddModal.value = false;
-  }
+	if (newBookmark.value.title && newBookmark.value.url) {
+		if (isEditing.value && currentBookmarkId.value) {
+			bookmarkStore.updateBookmark(
+				currentBookmarkId.value,
+				newBookmark.value as Partial<
+					Omit<Bookmark, "id" | "createdAt" | "updatedAt">
+				>,
+			);
+		} else {
+			bookmarkStore.addBookmark(
+				newBookmark.value as Omit<Bookmark, "id" | "createdAt" | "updatedAt">,
+			);
+		}
+		showAddModal.value = false;
+	}
 };
 
 const toggleFavorite = (id: string) => {
-  bookmarkStore.toggleFavorite(id);
+	bookmarkStore.toggleFavorite(id);
 };
 
 const toggleRead = (id: string) => {
-  bookmarkStore.toggleRead(id);
+	bookmarkStore.toggleRead(id);
 };
 
 const deleteBookmark = (id: string) => {
-  if (confirm('Are you sure you want to delete this bookmark?')) {
-    bookmarkStore.deleteBookmark(id);
-  }
+	if (confirm("Are you sure you want to delete this bookmark?")) {
+		bookmarkStore.deleteBookmark(id);
+	}
 };
 
-const changeSortOrder = (field: 'date' | 'title' | 'url' | 'collection') => {
-  if (sortBy.value === field) {
-    sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
-  } else {
-    sortBy.value = field;
-    sortDirection.value = 'desc';
-  }
+const changeSortOrder = (field: "date" | "title" | "url" | "collection") => {
+	if (sortBy.value === field) {
+		sortDirection.value = sortDirection.value === "asc" ? "desc" : "asc";
+	} else {
+		sortBy.value = field;
+		sortDirection.value = "desc";
+	}
 };
 
 // Helper functions
 const getTimeAgo = (dateString: string) => {
-  const date = new Date(dateString);
-  const now = new Date();
-  const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-  
-  if (seconds < 60) return 'just now';
-  
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-  
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-  
-  const days = Math.floor(hours / 24);
-  if (days < 30) return `${days} day${days > 1 ? 's' : ''} ago`;
-  
-  const months = Math.floor(days / 30);
-  if (months < 12) return `${months} month${months > 1 ? 's' : ''} ago`;
-  
-  const years = Math.floor(months / 12);
-  return `${years} year${years > 1 ? 's' : ''} ago`;
+	const date = new Date(dateString);
+	const now = new Date();
+	const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+	if (seconds < 60) return "just now";
+
+	const minutes = Math.floor(seconds / 60);
+	if (minutes < 60) return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
+
+	const hours = Math.floor(minutes / 60);
+	if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+
+	const days = Math.floor(hours / 24);
+	if (days < 30) return `${days} day${days > 1 ? "s" : ""} ago`;
+
+	const months = Math.floor(days / 30);
+	if (months < 12) return `${months} month${months > 1 ? "s" : ""} ago`;
+
+	const years = Math.floor(months / 12);
+	return `${years} year${years > 1 ? "s" : ""} ago`;
 };
 
 const extractDomain = (url: string) => {
-  try {
-    const domain = new URL(url).hostname;
-    return domain.replace('www.', '');
-  } catch {
-    return url;
-  }
+	try {
+		const domain = new URL(url).hostname;
+		return domain.replace("www.", "");
+	} catch {
+		return url;
+	}
 };
 </script>
 

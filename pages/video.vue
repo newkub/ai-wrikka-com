@@ -184,22 +184,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed } from "vue";
 
 interface Video {
-  id: string;
-  title: string;
-  channel: string;
-  views: string;
-  date: string;
-  duration: string;
-  thumbnail: string;
-  avatar: string;
+	id: string;
+	title: string;
+	channel: string;
+	views: string;
+	date: string;
+	duration: string;
+	thumbnail: string;
+	avatar: string;
 }
 
 // Refs
-const searchQuery = ref('');
-const activeFilter = ref('All');
+const searchQuery = ref("");
+const activeFilter = ref("All");
 const isLoading = ref(false);
 const videos = ref<Video[]>([]);
 const showUploadModal = ref(false);
@@ -208,196 +208,207 @@ const uploadProgress = ref(0);
 const fileInput = ref<HTMLInputElement | null>(null);
 
 // Filters
-const filters = ['All', 'Today', 'This week', 'This month', 'This year'];
+const filters = ["All", "Today", "This week", "This month", "This year"];
 
 // Mock data for demonstration
 const mockVideos: Video[] = [
-  {
-    id: '1',
-    title: 'Amazing Sunset at the Beach - 4K Drone Footage',
-    channel: 'Nature Lovers',
-    views: '1.2M',
-    date: '2 days ago',
-    duration: '4:32',
-    thumbnail: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80',
-    avatar: 'https://randomuser.me/api/portraits/men/1.jpg'
-  },
-  {
-    id: '2',
-    title: 'How to Make Perfect Pasta - Quick & Easy Recipe',
-    channel: 'Cooking Master',
-    views: '856K',
-    date: '1 week ago',
-    duration: '12:45',
-    thumbnail: 'https://images.unsplash.com/photo-1551183053-bf91a1d81111?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80',
-    avatar: 'https://randomuser.me/api/portraits/women/1.jpg'
-  },
-  {
-    id: '3',
-    title: 'Morning Yoga Routine for Beginners - 15 Minutes',
-    channel: 'Yoga with Sarah',
-    views: '2.3M',
-    date: '3 weeks ago',
-    duration: '15:20',
-    thumbnail: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80',
-    avatar: 'https://randomuser.me/api/portraits/women/2.jpg'
-  },
-  {
-    id: '4',
-    title: 'Top 10 Travel Destinations for 2023',
-    channel: 'Wanderlust',
-    views: '3.1M',
-    date: '1 month ago',
-    duration: '8:56',
-    thumbnail: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80',
-    avatar: 'https://randomuser.me/api/portraits/men/2.jpg'
-  },
-  {
-    id: '5',
-    title: 'Learn JavaScript in 1 Hour - Full Beginner\'s Tutorial',
-    channel: 'CodeMaster',
-    views: '1.8M',
-    date: '2 months ago',
-    duration: '1:02:45',
-    thumbnail: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80',
-    avatar: 'https://randomuser.me/api/portraits/men/3.jpg'
-  },
-  {
-    id: '6',
-    title: 'DIY Home Decoration Ideas on a Budget',
-    channel: 'Home & Living',
-    views: '745K',
-    date: '3 months ago',
-    duration: '18:12',
-    thumbnail: 'https://images.unsplash.com/photo-1583847268964-28d60b8f6e5f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80',
-    avatar: 'https://randomuser.me/api/portraits/women/3.jpg'
-  },
-  {
-    id: '7',
-    title: '10-Minute Ab Workout - No Equipment Needed',
-    channel: 'Fitness Pro',
-    views: '1.5M',
-    date: '4 months ago',
-    duration: '10:30',
-    thumbnail: 'https://images.unsplash.com/photo-1571019614242-c6c68685a0e0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80',
-    avatar: 'https://randomuser.me/api/portraits/men/4.jpg'
-  },
-  {
-    id: '8',
-    title: 'Photography Tips for Beginners - Master Your Camera',
-    channel: 'Photo Masters',
-    views: '2.7M',
-    date: '5 months ago',
-    duration: '22:15',
-    thumbnail: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80',
-    avatar: 'https://randomuser.me/api/portraits/women/4.jpg'
-  }
+	{
+		id: "1",
+		title: "Amazing Sunset at the Beach - 4K Drone Footage",
+		channel: "Nature Lovers",
+		views: "1.2M",
+		date: "2 days ago",
+		duration: "4:32",
+		thumbnail:
+			"https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
+		avatar: "https://randomuser.me/api/portraits/men/1.jpg",
+	},
+	{
+		id: "2",
+		title: "How to Make Perfect Pasta - Quick & Easy Recipe",
+		channel: "Cooking Master",
+		views: "856K",
+		date: "1 week ago",
+		duration: "12:45",
+		thumbnail:
+			"https://images.unsplash.com/photo-1551183053-bf91a1d81111?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
+		avatar: "https://randomuser.me/api/portraits/women/1.jpg",
+	},
+	{
+		id: "3",
+		title: "Morning Yoga Routine for Beginners - 15 Minutes",
+		channel: "Yoga with Sarah",
+		views: "2.3M",
+		date: "3 weeks ago",
+		duration: "15:20",
+		thumbnail:
+			"https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
+		avatar: "https://randomuser.me/api/portraits/women/2.jpg",
+	},
+	{
+		id: "4",
+		title: "Top 10 Travel Destinations for 2023",
+		channel: "Wanderlust",
+		views: "3.1M",
+		date: "1 month ago",
+		duration: "8:56",
+		thumbnail:
+			"https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
+		avatar: "https://randomuser.me/api/portraits/men/2.jpg",
+	},
+	{
+		id: "5",
+		title: "Learn JavaScript in 1 Hour - Full Beginner's Tutorial",
+		channel: "CodeMaster",
+		views: "1.8M",
+		date: "2 months ago",
+		duration: "1:02:45",
+		thumbnail:
+			"https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
+		avatar: "https://randomuser.me/api/portraits/men/3.jpg",
+	},
+	{
+		id: "6",
+		title: "DIY Home Decoration Ideas on a Budget",
+		channel: "Home & Living",
+		views: "745K",
+		date: "3 months ago",
+		duration: "18:12",
+		thumbnail:
+			"https://images.unsplash.com/photo-1583847268964-28d60b8f6e5f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
+		avatar: "https://randomuser.me/api/portraits/women/3.jpg",
+	},
+	{
+		id: "7",
+		title: "10-Minute Ab Workout - No Equipment Needed",
+		channel: "Fitness Pro",
+		views: "1.5M",
+		date: "4 months ago",
+		duration: "10:30",
+		thumbnail:
+			"https://images.unsplash.com/photo-1571019614242-c6c68685a0e0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
+		avatar: "https://randomuser.me/api/portraits/men/4.jpg",
+	},
+	{
+		id: "8",
+		title: "Photography Tips for Beginners - Master Your Camera",
+		channel: "Photo Masters",
+		views: "2.7M",
+		date: "5 months ago",
+		duration: "22:15",
+		thumbnail:
+			"https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
+		avatar: "https://randomuser.me/api/portraits/women/4.jpg",
+	},
 ];
 
 // Computed
 const filteredVideos = computed(() => {
-  if (!searchQuery.value) return videos.value;
-  
-  const query = searchQuery.value.toLowerCase();
-  return videos.value.filter(video => 
-    video.title.toLowerCase().includes(query) || 
-    video.channel.toLowerCase().includes(query)
-  );
+	if (!searchQuery.value) return videos.value;
+
+	const query = searchQuery.value.toLowerCase();
+	return videos.value.filter(
+		(video) =>
+			video.title.toLowerCase().includes(query) ||
+			video.channel.toLowerCase().includes(query),
+	);
 });
 
 // Methods
 const searchVideos = () => {
-  if (!searchQuery.value.trim()) {
-    // If search is empty, show all videos
-    videos.value = [...mockVideos];
-    return;
-  }
-  
-  isLoading.value = true;
-  
-  // Simulate API call
-  setTimeout(() => {
-    const query = searchQuery.value.toLowerCase();
-    videos.value = mockVideos.filter(video => 
-      video.title.toLowerCase().includes(query) || 
-      video.channel.toLowerCase().includes(query)
-    );
-    isLoading.value = false;
-  }, 800);
+	if (!searchQuery.value.trim()) {
+		// If search is empty, show all videos
+		videos.value = [...mockVideos];
+		return;
+	}
+
+	isLoading.value = true;
+
+	// Simulate API call
+	setTimeout(() => {
+		const query = searchQuery.value.toLowerCase();
+		videos.value = mockVideos.filter(
+			(video) =>
+				video.title.toLowerCase().includes(query) ||
+				video.channel.toLowerCase().includes(query),
+		);
+		isLoading.value = false;
+	}, 800);
 };
 
 const openUploadModal = () => {
-  showUploadModal.value = true;
+	showUploadModal.value = true;
 };
 
 const selectFile = () => {
-  if (fileInput.value) {
-    fileInput.value.click();
-  }
+	if (fileInput.value) {
+		fileInput.value.click();
+	}
 };
 
 const handleFileSelect = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  if (target.files && target.files.length > 0) {
-    uploadFile(target.files[0]);
-  }
+	const target = event.target as HTMLInputElement;
+	if (target.files && target.files.length > 0) {
+		uploadFile(target.files[0]);
+	}
 };
 
 const handleDrop = (event: DragEvent) => {
-  event.preventDefault();
-  isDragging.value = false;
-  
-  if (event.dataTransfer && event.dataTransfer.files.length > 0) {
-    uploadFile(event.dataTransfer.files[0]);
-  }
+	event.preventDefault();
+	isDragging.value = false;
+
+	if (event.dataTransfer && event.dataTransfer.files.length > 0) {
+		uploadFile(event.dataTransfer.files[0]);
+	}
 };
 
 const uploadFile = (file: File) => {
-  // Check file type
-  if (!file.type.startsWith('video/')) {
-    alert('Please upload a video file');
-    return;
-  }
-  
-  // Check file size (max 2GB)
-  if (file.size > 2 * 1024 * 1024 * 1024) {
-    alert('File size should be less than 2GB');
-    return;
-  }
-  
-  // Simulate upload progress
-  let progress = 0;
-  const interval = setInterval(() => {
-    progress += Math.random() * 10;
-    if (progress >= 100) {
-      progress = 100;
-      clearInterval(interval);
-      
-      // Add to videos after upload
-      setTimeout(() => {
-        const newVideo: Video = {
-          id: (mockVideos.length + 1).toString(),
-          title: file.name.replace(/\.[^/.]+$/, ''), // Remove file extension
-          channel: 'You',
-          views: '0',
-          date: 'Just now',
-          duration: '0:00',
-          thumbnail: 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80',
-          avatar: 'https://randomuser.me/api/portraits/men/5.jpg'
-        };
-        
-        videos.value.unshift(newVideo);
-        showUploadModal.value = false;
-        uploadProgress.value = 0;
-      }, 500);
-    }
-    uploadProgress.value = progress;
-  }, 200);
+	// Check file type
+	if (!file.type.startsWith("video/")) {
+		alert("Please upload a video file");
+		return;
+	}
+
+	// Check file size (max 2GB)
+	if (file.size > 2 * 1024 * 1024 * 1024) {
+		alert("File size should be less than 2GB");
+		return;
+	}
+
+	// Simulate upload progress
+	let progress = 0;
+	const interval = setInterval(() => {
+		progress += Math.random() * 10;
+		if (progress >= 100) {
+			progress = 100;
+			clearInterval(interval);
+
+			// Add to videos after upload
+			setTimeout(() => {
+				const newVideo: Video = {
+					id: (mockVideos.length + 1).toString(),
+					title: file.name.replace(/\.[^/.]+$/, ""), // Remove file extension
+					channel: "You",
+					views: "0",
+					date: "Just now",
+					duration: "0:00",
+					thumbnail:
+						"https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
+					avatar: "https://randomuser.me/api/portraits/men/5.jpg",
+				};
+
+				videos.value.unshift(newVideo);
+				showUploadModal.value = false;
+				uploadProgress.value = 0;
+			}, 500);
+		}
+		uploadProgress.value = progress;
+	}, 200);
 };
 
 // Lifecycle
 onMounted(() => {
-  // Load initial videos
-  videos.value = [...mockVideos];
+	// Load initial videos
+	videos.value = [...mockVideos];
 });
 </script>

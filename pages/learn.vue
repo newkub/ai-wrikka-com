@@ -65,93 +65,102 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from "vue";
 
 interface LearningItem {
-  id: number;
-  title: string;
-  description: string;
-  duration: number;
-  level: 'Beginner' | 'Intermediate' | 'Advanced';
-  icon: string;
-  iconBg: string;
-  iconColor: string;
+	id: number;
+	title: string;
+	description: string;
+	duration: number;
+	level: "Beginner" | "Intermediate" | "Advanced";
+	icon: string;
+	iconBg: string;
+	iconColor: string;
 }
 
 // Mock data for learning items
 const learningItems: LearningItem[] = [
-  {
-    id: 1,
-    title: 'Vue 3 Fundamentals',
-    description: 'Learn the core concepts of Vue 3 including the Composition API, reactivity, and component system.',
-    duration: 45,
-    level: 'Beginner',
-    icon: 'i-mdi-code-braces',
-    iconBg: 'bg-blue-100 dark:bg-blue-900/30',
-    iconColor: 'text-blue-600 dark:text-blue-400'
-  },
-  {
-    id: 2,
-    title: 'TypeScript with Vue',
-    description: 'Master TypeScript integration with Vue 3 for type-safe and maintainable applications.',
-    duration: 60,
-    level: 'Intermediate',
-    icon: 'i-mdi-text-box-outline',
-    iconBg: 'bg-purple-100 dark:bg-purple-900/30',
-    iconColor: 'text-purple-600 dark:text-purple-400'
-  },
-  {
-    id: 3,
-    title: 'State Management with Pinia',
-    description: 'Learn how to manage global state in your Vue 3 applications using Pinia.',
-    duration: 50,
-    level: 'Intermediate',
-    icon: 'i-mdi-chip',
-    iconBg: 'bg-green-100 dark:bg-green-900/30',
-    iconColor: 'text-green-600 dark:text-green-400'
-  },
-  {
-    id: 4,
-    title: 'Vue Router Deep Dive',
-    description: 'Advanced routing techniques and patterns for Vue 3 applications.',
-    duration: 55,
-    level: 'Intermediate',
-    icon: 'i-mdi-puzzle-outline',
-    iconBg: 'bg-yellow-100 dark:bg-yellow-900/30',
-    iconColor: 'text-yellow-600 dark:text-yellow-400'
-  },
-  {
-    id: 5,
-    title: 'Testing Vue Components',
-    description: 'Write effective unit and component tests for your Vue 3 applications.',
-    duration: 65,
-    level: 'Advanced',
-    icon: 'i-mdi-code-brackets',
-    iconBg: 'bg-red-100 dark:bg-red-900/30',
-    iconColor: 'text-red-600 dark:text-red-400'
-  },
-  {
-    id: 6,
-    title: 'Server-Side Rendering',
-    description: 'Implement SSR in Vue 3 applications for better SEO and performance.',
-    duration: 70,
-    level: 'Advanced',
-    icon: 'i-mdi-server-network',
-    iconBg: 'bg-indigo-100 dark:bg-indigo-900/30',
-    iconColor: 'text-indigo-600 dark:text-indigo-400'
-  }
+	{
+		id: 1,
+		title: "Vue 3 Fundamentals",
+		description:
+			"Learn the core concepts of Vue 3 including the Composition API, reactivity, and component system.",
+		duration: 45,
+		level: "Beginner",
+		icon: "i-mdi-code-braces",
+		iconBg: "bg-blue-100 dark:bg-blue-900/30",
+		iconColor: "text-blue-600 dark:text-blue-400",
+	},
+	{
+		id: 2,
+		title: "TypeScript with Vue",
+		description:
+			"Master TypeScript integration with Vue 3 for type-safe and maintainable applications.",
+		duration: 60,
+		level: "Intermediate",
+		icon: "i-mdi-text-box-outline",
+		iconBg: "bg-purple-100 dark:bg-purple-900/30",
+		iconColor: "text-purple-600 dark:text-purple-400",
+	},
+	{
+		id: 3,
+		title: "State Management with Pinia",
+		description:
+			"Learn how to manage global state in your Vue 3 applications using Pinia.",
+		duration: 50,
+		level: "Intermediate",
+		icon: "i-mdi-chip",
+		iconBg: "bg-green-100 dark:bg-green-900/30",
+		iconColor: "text-green-600 dark:text-green-400",
+	},
+	{
+		id: 4,
+		title: "Vue Router Deep Dive",
+		description:
+			"Advanced routing techniques and patterns for Vue 3 applications.",
+		duration: 55,
+		level: "Intermediate",
+		icon: "i-mdi-puzzle-outline",
+		iconBg: "bg-yellow-100 dark:bg-yellow-900/30",
+		iconColor: "text-yellow-600 dark:text-yellow-400",
+	},
+	{
+		id: 5,
+		title: "Testing Vue Components",
+		description:
+			"Write effective unit and component tests for your Vue 3 applications.",
+		duration: 65,
+		level: "Advanced",
+		icon: "i-mdi-code-brackets",
+		iconBg: "bg-red-100 dark:bg-red-900/30",
+		iconColor: "text-red-600 dark:text-red-400",
+	},
+	{
+		id: 6,
+		title: "Server-Side Rendering",
+		description:
+			"Implement SSR in Vue 3 applications for better SEO and performance.",
+		duration: 70,
+		level: "Advanced",
+		icon: "i-mdi-server-network",
+		iconBg: "bg-indigo-100 dark:bg-indigo-900/30",
+		iconColor: "text-indigo-600 dark:text-indigo-400",
+	},
 ];
 
 const selectedItem = ref<LearningItem | null>(null);
 
 const selectItem = (item: LearningItem) => {
-  selectedItem.value = item;
+	selectedItem.value = item;
 };
 
 useHead({
-  title: 'Learn - AI Wrikka',
-  meta: [
-    { name: 'description', content: 'Learning resources and tutorials powered by AI' }
-  ]
+	title: "Learn - AI Wrikka",
+	meta: [
+		{
+			name: "description",
+			content: "Learning resources and tutorials powered by AI",
+		},
+	],
 });
 </script>

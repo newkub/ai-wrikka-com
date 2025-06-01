@@ -23,16 +23,16 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router';
+import { useRoute } from "vue-router";
 
 defineProps<{
-  navigation: Array<{
-    title: string;
-    items: Array<{
-      name: string;
-      href: string;
-    }>;
-  }>;
+	navigation: Array<{
+		title: string;
+		items: Array<{
+			name: string;
+			href: string;
+		}>;
+	}>;
 }>();
 
 const route = useRoute();

@@ -1,64 +1,67 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch } from "vue";
 
 // Icons for tabs using UnoCSS iconify
 const tabs = [
-  { 
-    id: 'code', 
-    label: 'Code', 
-    icon: 'i-mdi-code-tags' 
-  },
-  { 
-    id: 'browser', 
-    label: 'Browser', 
-    icon: 'i-mdi-web' 
-  }
+	{
+		id: "code",
+		label: "Code",
+		icon: "i-mdi-code-tags",
+	},
+	{
+		id: "browser",
+		label: "Browser",
+		icon: "i-mdi-web",
+	},
 ];
 
 interface EditorProps {
-  modelValue: string;
-  language?: string;
-  readOnly?: boolean;
-  lineNumbers?: boolean;
-  theme?: string;
-  [key: string]: string | boolean | undefined; // Index signature for component props
+	modelValue: string;
+	language?: string;
+	readOnly?: boolean;
+	lineNumbers?: boolean;
+	theme?: string;
+	[key: string]: string | boolean | undefined; // Index signature for component props
 }
 
 const props = withDefaults(defineProps<EditorProps>(), {
-  modelValue: '',
-  language: 'typescript',
-  readOnly: false,
-  lineNumbers: true,
-  theme: 'vs-dark'
+	modelValue: "",
+	language: "typescript",
+	readOnly: false,
+	lineNumbers: true,
+	theme: "vs-dark",
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(["update:modelValue"]);
 
 const editorContent = ref(props.modelValue);
-const activeTab = ref('browser'); // Default to browser tab
+const activeTab = ref("browser"); // Default to browser tab
 
-watch(() => props.modelValue, (newVal) => {
-  if (editorContent.value !== newVal) {
-    editorContent.value = newVal;
-  }
-});
+watch(
+	() => props.modelValue,
+	(newVal) => {
+		if (editorContent.value !== newVal) {
+			editorContent.value = newVal;
+		}
+	},
+);
 
 // Expose methods if needed
 const getValue = () => editorContent.value;
 const setValue = (value: string) => {
-  editorContent.value = value;
-  emit('update:modelValue', value);
+	editorContent.value = value;
+	emit("update:modelValue", value);
 };
 
 // Expose tab control
 const setActiveTab = (tabId: string) => {
-  activeTab.value = tabId;
+	activeTab.value = tabId;
 };
 
 defineExpose({
-  getValue,
-  setValue,
-  setActiveTab
+	getValue,
+	setValue,
+	setActiveTab,
 });
 </script>
 

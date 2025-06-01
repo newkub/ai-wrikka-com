@@ -1,75 +1,90 @@
 <script lang="ts" setup>
-import { ref, computed, onMounted, defineAsyncComponent, type Component } from 'vue';
+import {
+	ref,
+	computed,
+	onMounted,
+	defineAsyncComponent,
+	type Component,
+} from "vue";
 
 interface ComponentInfo {
-  name: string;
-  path: string;
-  category: string;
-  component: Component;
-  description: string;
-  props?: Record<string, unknown>;
+	name: string;
+	path: string;
+	category: string;
+	component: Component;
+	description: string;
+	props?: Record<string, unknown>;
 }
 
 const components = ref<Record<string, ComponentInfo[]>>({});
-const activeTab = ref('');
+const activeTab = ref("");
 const isLoading = ref(true);
 
 // Auto-import all Vue components
 const importAllComponents = async () => {
-  const componentFiles = import.meta.glob(['../components/**/*.vue', '!../components/DesignSystem.vue']);
-  const componentList: ComponentInfo[] = [];
+	const componentFiles = import.meta.glob([
+		"../components/**/*.vue",
+		"!../components/DesignSystem.vue",
+	]);
+	const componentList: ComponentInfo[] = [];
 
-  for (const path in componentFiles) {
-    try {
-      // Extract component name from path
-      const nameMatch = path.match(/\/([^/]+)\.vue$/) || [];
-      if (!nameMatch[1]) continue;
-      
-      const name = nameMatch[1];
-      const relativePath = path.replace('../components/', '');
-      
-      // Determine category based on directory structure
-      let category = 'General';
-      const categoryMatch = path.match(/components\/([^/]+)/);
-      if (categoryMatch && categoryMatch[1] !== 'components') {
-        category = categoryMatch[1].charAt(0).toUpperCase() + categoryMatch[1].slice(1);
-      }
+	for (const path in componentFiles) {
+		try {
+			// Extract component name from path
+			const nameMatch = path.match(/\/([^/]+)\.vue$/) || [];
+			if (!nameMatch[1]) continue;
 
-      componentList.push({
-        name,
-        path: relativePath,
-        category,
-        component: defineAsyncComponent(() => import(/* @vite-ignore */ path)),
-        description: `${name} component`,
-        props: name.toLowerCase().includes('modal') ? { isOpen: true } : undefined,
-      });
-    } catch (error) {
-      console.error(`Failed to load component at ${path}:`, error);
-    }
-  }
+			const name = nameMatch[1];
+			const relativePath = path.replace("../components/", "");
 
-  // Group components by category
-  const grouped = componentList.reduce((acc, component) => {
-    if (!acc[component.category]) {
-      acc[component.category] = [];
-    }
-    acc[component.category].push(component);
-    return acc;
-  }, {} as Record<string, ComponentInfo[]>);
+			// Determine category based on directory structure
+			let category = "General";
+			const categoryMatch = path.match(/components\/([^/]+)/);
+			if (categoryMatch && categoryMatch[1] !== "components") {
+				category =
+					categoryMatch[1].charAt(0).toUpperCase() + categoryMatch[1].slice(1);
+			}
 
-  components.value = grouped;
-  if (Object.keys(grouped).length > 0) {
-    activeTab.value = Object.keys(grouped)[0];
-  }
-  isLoading.value = false;
+			componentList.push({
+				name,
+				path: relativePath,
+				category,
+				component: defineAsyncComponent(() => import(/* @vite-ignore */ path)),
+				description: `${name} component`,
+				props: name.toLowerCase().includes("modal")
+					? { isOpen: true }
+					: undefined,
+			});
+		} catch (error) {
+			console.error(`Failed to load component at ${path}:`, error);
+		}
+	}
+
+	// Group components by category
+	const grouped = componentList.reduce(
+		(acc, component) => {
+			if (!acc[component.category]) {
+				acc[component.category] = [];
+			}
+			acc[component.category].push(component);
+			return acc;
+		},
+		{} as Record<string, ComponentInfo[]>,
+	);
+
+	components.value = grouped;
+	if (Object.keys(grouped).length > 0) {
+		activeTab.value = Object.keys(grouped)[0];
+	}
+	isLoading.value = false;
 };
 
 onMounted(() => {
-  importAllComponents();
+	importAllComponents();
 });
 
 const sortedCategories = computed(() => {
-  return Object.keys(components.value).sort();
+	return Object.keys(components.value).sort();
 });
 </script>
 

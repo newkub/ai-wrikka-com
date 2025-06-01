@@ -79,72 +79,76 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
-import Modal from '~/components/Modal.vue'
+import { ref, onMounted, watch } from "vue";
+import Modal from "~/components/Modal.vue";
 
 interface Note {
-  id?: string
-  title: string
-  content: string
-  updatedAt?: Date
+	id?: string;
+	title: string;
+	content: string;
+	updatedAt?: Date;
 }
 
 // State
-const notes = ref<Note[]>([])
-const currentNote = ref<Note>({ title: '', content: '' })
-const isOpen = ref(false)
+const notes = ref<Note[]>([]);
+const currentNote = ref<Note>({ title: "", content: "" });
+const isOpen = ref(false);
 
 // Methods
 const openNewNote = () => {
-  currentNote.value = { title: '', content: '' }
-  isOpen.value = true
-}
+	currentNote.value = { title: "", content: "" };
+	isOpen.value = true;
+};
 
 const openNote = (note: Note) => {
-  currentNote.value = { ...note }
-  isOpen.value = true
-}
+	currentNote.value = { ...note };
+	isOpen.value = true;
+};
 
 const saveNote = () => {
-  if (!currentNote.value.title && !currentNote.value.content) return
+	if (!currentNote.value.title && !currentNote.value.content) return;
 
-  const now = new Date()
-  
-  if (currentNote.value.id) {
-    // Update existing note
-    const index = notes.value.findIndex(n => n.id === currentNote.value.id)
-    if (index !== -1) {
-      notes.value[index] = {
-        ...currentNote.value,
-        updatedAt: now
-      }
-    }
-  } else {
-    // Add new note
-    notes.value.unshift({
-      ...currentNote.value,
-      id: Date.now().toString(),
-      updatedAt: now
-    })
-  }
-  
-  close()
-}
+	const now = new Date();
+
+	if (currentNote.value.id) {
+		// Update existing note
+		const index = notes.value.findIndex((n) => n.id === currentNote.value.id);
+		if (index !== -1) {
+			notes.value[index] = {
+				...currentNote.value,
+				updatedAt: now,
+			};
+		}
+	} else {
+		// Add new note
+		notes.value.unshift({
+			...currentNote.value,
+			id: Date.now().toString(),
+			updatedAt: now,
+		});
+	}
+
+	close();
+};
 
 // Load notes from localStorage on component mount
 onMounted(() => {
-  const savedNotes = localStorage.getItem('notes')
-  if (savedNotes) {
-    try {
-      notes.value = JSON.parse(savedNotes)
-    } catch (e) {
-      console.error('Failed to parse saved notes', e)
-    }
-  }
-})
+	const savedNotes = localStorage.getItem("notes");
+	if (savedNotes) {
+		try {
+			notes.value = JSON.parse(savedNotes);
+		} catch (e) {
+			console.error("Failed to parse saved notes", e);
+		}
+	}
+});
 
 // Watch for changes to notes and save to localStorage
-watch(notes, (newNotes) => {
-  localStorage.setItem('notes', JSON.stringify(newNotes))
-}, { deep: true })
+watch(
+	notes,
+	(newNotes) => {
+		localStorage.setItem("notes", JSON.stringify(newNotes));
+	},
+	{ deep: true },
+);
 </script>

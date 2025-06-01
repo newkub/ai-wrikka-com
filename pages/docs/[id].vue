@@ -1,58 +1,70 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router';
+import { useRoute } from "vue-router";
 
 definePageMeta({
-  layout: 'docs'
+	layout: "docs",
 });
 
 interface Document {
-  _path?: string;
-  title: string;
-  description?: string;
-  _id?: string;
-  _source?: string;
-  _type?: string;
-  body?: unknown;
-  // Use Record<string, unknown> instead of any for better type safety
-  [key: string]: string | number | boolean | object | unknown | undefined;
+	_path?: string;
+	title: string;
+	description?: string;
+	_id?: string;
+	_source?: string;
+	_type?: string;
+	body?: unknown;
+	// Use Record<string, unknown> instead of any for better type safety
+	[key: string]: string | number | boolean | object | unknown | undefined;
 }
 
 const route = useRoute();
-const docId = computed(() => (route.params.id as string) || 'intro');
+const docId = computed(() => (route.params.id as string) || "intro");
 
 // Fetch document from content directory
-const { data: doc, pending, error } = await useAsyncData<Document>(
-  `content:docs-${docId.value}`,
-  async () => {
-    try {
-      // @ts-ignore - queryContent will be available at runtime from Nuxt Content
-      return await queryContent('docs')
-        .where({ _path: `/docs/${docId.value}` })
-        .findOne();
-    } catch (err) {
-      console.error('Error fetching document:', err);
-      throw createError({ statusCode: 404, statusMessage: 'Document not found' });
-    }
-  },
-  {
-    watch: [docId],
-    transform: (data: Document | null) => {
-      if (!data) {
-        throw createError({ statusCode: 404, statusMessage: 'Document not found' });
-      }
-      return data;
-    }
-  }
+const {
+	data: doc,
+	pending,
+	error,
+} = await useAsyncData<Document>(
+	`content:docs-${docId.value}`,
+	async () => {
+		try {
+			// @ts-ignore - queryContent will be available at runtime from Nuxt Content
+			return await queryContent("docs")
+				.where({ _path: `/docs/${docId.value}` })
+				.findOne();
+		} catch (err) {
+			console.error("Error fetching document:", err);
+			throw createError({
+				statusCode: 404,
+				statusMessage: "Document not found",
+			});
+		}
+	},
+	{
+		watch: [docId],
+		transform: (data: Document | null) => {
+			if (!data) {
+				throw createError({
+					statusCode: 404,
+					statusMessage: "Document not found",
+				});
+			}
+			return data;
+		},
+	},
 );
 
 // Set page title
 useHead({
-  title: doc.value?.title ? `${doc.value.title} | Documentation` : 'Documentation'
+	title: doc.value?.title
+		? `${doc.value.title} | Documentation`
+		: "Documentation",
 });
 
 // Handle 404
 if (!doc.value) {
-  throw createError({ statusCode: 404, statusMessage: 'Page Not Found' });
+	throw createError({ statusCode: 404, statusMessage: "Page Not Found" });
 }
 </script>
 

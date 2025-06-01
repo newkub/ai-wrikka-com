@@ -101,67 +101,72 @@
 </template>
 
 <script setup lang="ts">
-import type { Task } from '~/types/task';
+import type { Task } from "~/types/task";
 
-type Status = 'todo' | 'inProgress' | 'review' | 'done';
-type Priority = 'low' | 'medium' | 'high';
-import { format } from 'date-fns';
+type Status = "todo" | "inProgress" | "review" | "done";
+type Priority = "low" | "medium" | "high";
+import { format } from "date-fns";
 
 const props = defineProps<{
-  tasks: Task[];
-  listName?: string;
+	tasks: Task[];
+	listName?: string;
 }>();
 
 const emit = defineEmits<{
-  (e: 'edit', task: Task): void;
-  (e: 'delete', id: string): void;
-  (e: 'update:task', task: Task): void;
+	(e: "edit", task: Task): void;
+	(e: "delete", id: string): void;
+	(e: "update:task", task: Task): void;
 }>();
 
 const statusClasses: Record<Status, string> = {
-  todo: 'bg-yellow-100 text-yellow-800',
-  inProgress: 'bg-blue-100 text-blue-800',
-  review: 'bg-purple-100 text-purple-800',
-  done: 'bg-green-100 text-green-800',
+	todo: "bg-yellow-100 text-yellow-800",
+	inProgress: "bg-blue-100 text-blue-800",
+	review: "bg-purple-100 text-purple-800",
+	done: "bg-green-100 text-green-800",
 };
 
 const priorityClasses: Record<Priority, string> = {
-  low: 'bg-blue-100 text-blue-800',
-  medium: 'bg-yellow-100 text-yellow-800',
-  high: 'bg-red-100 text-red-800',
+	low: "bg-blue-100 text-blue-800",
+	medium: "bg-yellow-100 text-yellow-800",
+	high: "bg-red-100 text-red-800",
 };
 
 const filteredTasks = computed(() => {
-  return [...props.tasks].sort((a, b) => {
-    // Sort by status (todo > inProgress > review > done)
-    const statusOrder: Record<Status, number> = { todo: 0, inProgress: 1, review: 2, done: 3 };
-    return statusOrder[a.status as Status] - statusOrder[b.status as Status];
-  });
+	return [...props.tasks].sort((a, b) => {
+		// Sort by status (todo > inProgress > review > done)
+		const statusOrder: Record<Status, number> = {
+			todo: 0,
+			inProgress: 1,
+			review: 2,
+			done: 3,
+		};
+		return statusOrder[a.status as Status] - statusOrder[b.status as Status];
+	});
 });
 
 function formatStatus(status: string) {
-  return status
-    .split(/(?=[A-Z])/)
-    .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
+	return status
+		.split(/(?=[A-Z])/)
+		.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(" ");
 }
 
 function formatDate(dateString?: string) {
-  if (!dateString) return '';
-  try {
-    return format(new Date(dateString), 'MMM d, yyyy');
-  } catch (e) {
-    return dateString;
-  }
+	if (!dateString) return "";
+	try {
+		return format(new Date(dateString), "MMM d, yyyy");
+	} catch (e) {
+		return dateString;
+	}
 }
 
 function toggleTaskStatus(task: Task) {
-  const newStatus: Status = task.status === 'done' ? 'todo' : 'done';
-  const updatedTask: Task = { 
-    ...task, 
-    status: newStatus,
-    updatedAt: new Date().toISOString() 
-  };
-  emit('update:task', updatedTask);
+	const newStatus: Status = task.status === "done" ? "todo" : "done";
+	const updatedTask: Task = {
+		...task,
+		status: newStatus,
+		updatedAt: new Date().toISOString(),
+	};
+	emit("update:task", updatedTask);
 }
 </script>

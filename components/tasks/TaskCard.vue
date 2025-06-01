@@ -45,41 +45,41 @@
 </template>
 
 <script setup lang="ts">
-import type { Task } from '~/types/task';
+import type { Task } from "~/types/task";
 // Using Bun's built-in Date formatting
 
 const props = defineProps<{
-  task: Task;
+	task: Task;
 }>();
 
 const emit = defineEmits<{
-  (e: 'edit', task: Task): void;
-  (e: 'delete', id: string): void;
+	(e: "edit", task: Task): void;
+	(e: "delete", id: string): void;
 }>();
 
 const priorityClasses: Record<string, string> = {
-  low: 'bg-blue-100 text-blue-800',
-  medium: 'bg-yellow-100 text-yellow-800',
-  high: 'bg-red-100 text-red-800',
+	low: "bg-blue-100 text-blue-800",
+	medium: "bg-yellow-100 text-yellow-800",
+	high: "bg-red-100 text-red-800",
 };
 
 function formatDate(dateString: string) {
-  try {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    }).format(date);
-  } catch (e) {
-    return dateString;
-  }
+	try {
+		const date = new Date(dateString);
+		return new Intl.DateTimeFormat("en-US", {
+			year: "numeric",
+			month: "short",
+			day: "numeric",
+		}).format(date);
+	} catch (e) {
+		return dateString;
+	}
 }
 
 function onDragStart(e: DragEvent) {
-  if (e.dataTransfer) {
-    e.dataTransfer.setData('text/plain', props.task.id);
-    e.dataTransfer.effectAllowed = 'move';
-  }
+	if (e.dataTransfer) {
+		e.dataTransfer.setData("text/plain", props.task.id);
+		e.dataTransfer.effectAllowed = "move";
+	}
 }
 </script>

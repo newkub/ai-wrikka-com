@@ -1,4 +1,4 @@
-- ใช้ color จาก uno.config.ts เท่านั้น ไม่ต้องมี :dark
+- ใช้ color จาก uno.config.ts เท่านั้น ไม่ต้องคิดเอง และไม่ต้องมี :dark
 - icon ใช้จาก iconify json mdi จาก unocss
 - ให้ script อยู่ด้านบน template
 - class ใช้จาก unocss ทั้งหมด ไม่ใช้ css เลย

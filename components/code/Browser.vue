@@ -1,28 +1,28 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch } from "vue";
 
 interface BrowserProps {
-  url?: string;
-  showControls?: boolean;
-  showAddressBar?: boolean;
-  height?: string;
-  loadingText?: string;
+	url?: string;
+	showControls?: boolean;
+	showAddressBar?: boolean;
+	height?: string;
+	loadingText?: string;
 }
 
 const props = withDefaults(defineProps<BrowserProps>(), {
-  url: 'https://example.com',
-  showControls: true,
-  showAddressBar: true,
-  height: '300px',
-  loadingText: 'Loading...'
+	url: "https://example.com",
+	showControls: true,
+	showAddressBar: true,
+	height: "300px",
+	loadingText: "Loading...",
 });
 
 const emit = defineEmits<{
-  (e: 'update:url', url: string): void;
-  (e: 'navigate', url: string): void;
-  (e: 'refresh'): void;
-  (e: 'back'): void;
-  (e: 'forward'): void;
+	(e: "update:url", url: string): void;
+	(e: "navigate", url: string): void;
+	(e: "refresh"): void;
+	(e: "back"): void;
+	(e: "forward"): void;
 }>();
 
 const currentUrl = ref(props.url);
@@ -30,56 +30,58 @@ const isLoading = ref(false);
 const iframeRef = ref<HTMLIFrameElement | null>(null);
 
 const navigate = () => {
-  if (!currentUrl.value) return;
-  
-  // Add https:// if no protocol is specified
-  if (!currentUrl.value.match(/^https?:\/\//)) {
-    currentUrl.value = `https://${currentUrl.value}`;
-  }
-  
-  emit('navigate', currentUrl.value);
+	if (!currentUrl.value) return;
+
+	// Add https:// if no protocol is specified
+	if (!currentUrl.value.match(/^https?:\/\//)) {
+		currentUrl.value = `https://${currentUrl.value}`;
+	}
+
+	emit("navigate", currentUrl.value);
 };
 
 const refresh = () => {
-  if (iframeRef.value) {
-    iframeRef.value.contentWindow?.location.reload();
-  }
-  emit('refresh');
+	if (iframeRef.value) {
+		iframeRef.value.contentWindow?.location.reload();
+	}
+	emit("refresh");
 };
 
 const goBack = () => {
-  if (iframeRef.value) {
-    iframeRef.value.contentWindow?.history.back();
-  }
-  emit('back');
+	if (iframeRef.value) {
+		iframeRef.value.contentWindow?.history.back();
+	}
+	emit("back");
 };
 
 const goForward = () => {
-  if (iframeRef.value) {
-    iframeRef.value.contentWindow?.history.forward();
-  }
-  emit('forward');
+	if (iframeRef.value) {
+		iframeRef.value.contentWindow?.history.forward();
+	}
+	emit("forward");
 };
 
 // Watch for URL changes from parent
-watch(() => props.url, (newUrl) => {
-  if (newUrl !== currentUrl.value) {
-    currentUrl.value = newUrl;
-  }
-});
-
+watch(
+	() => props.url,
+	(newUrl) => {
+		if (newUrl !== currentUrl.value) {
+			currentUrl.value = newUrl;
+		}
+	},
+);
 
 // Handle iframe load events
 const onIframeLoad = () => {
-  isLoading.value = false;
-  if (iframeRef.value?.contentWindow?.location.href) {
-    currentUrl.value = iframeRef.value.contentWindow.location.href;
-    emit('update:url', currentUrl.value);
-  }
+	isLoading.value = false;
+	if (iframeRef.value?.contentWindow?.location.href) {
+		currentUrl.value = iframeRef.value.contentWindow.location.href;
+		emit("update:url", currentUrl.value);
+	}
 };
 
 const onIframeLoadStart = () => {
-  isLoading.value = true;
+	isLoading.value = true;
 };
 </script>
 

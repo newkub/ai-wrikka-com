@@ -3,7 +3,7 @@
 const router = useRouter();
 
 onMounted(() => {
-  router.replace('/docs/introduction');
+	router.replace("/docs/introduction");
 });
 </script>
 

@@ -2,7 +2,7 @@
   <div class="w-64 bg-surface border-r border-border flex flex-col h-full">
     <div class="p-4 border-b border-border">
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-semibold text-text">My Lists</h2>
+        <h2 class="text-lg font-semibold text-foreground">My Lists</h2>
         <button 
           @click="isAddingList = true"
           class="text-text/60 hover:text-brand p-1 rounded-full hover:bg-surface/50"
@@ -41,8 +41,8 @@
           :key="list.id"
           @click="selectList(list)"
           :class="[
-            'flex items-center justify-between px-3 py-2 rounded-md cursor-pointer',
-            { 'bg-brand/10 text-brand': isActiveList(list.id) }
+            'flex items-center justify-between px-3 py-2 rounded-md cursor-pointer text-text/80 hover:text-text',
+            { 'bg-primary/10 text-primary': isActiveList(list.id) }
           ]"
         >
           <div class="flex items-center space-x-2 truncate">
@@ -63,78 +63,78 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, nextTick, watch } from 'vue';
-import { useTaskStore } from '~/stores/task';
-import type { TaskList } from '~/types/task';
+import { ref, computed, onMounted, nextTick, watch } from "vue";
+import { useTaskStore } from "~/stores/task";
+import type { TaskList } from "~/types/task";
 
 const taskStore = useTaskStore();
-const emit = defineEmits(['select']);
+const emit = defineEmits(["select"]);
 
 // State
 const isAddingList = ref(false);
-const newListName = ref('');
+const newListName = ref("");
 const selectedListId = ref<string | null>(null);
 const listNameInput = ref<HTMLInputElement | null>(null);
 
 // Computed
 const taskCounts = computed(() => {
-  return taskStore.getTaskCountsByList;
+	return taskStore.getTaskCountsByList;
 });
 
 // Methods
 function isActiveList(listId: string) {
-  return selectedListId.value === listId;
+	return selectedListId.value === listId;
 }
 
 function selectList(list: TaskList) {
-  selectedListId.value = list.id;
-  emit('select', list);
-  taskStore.fetchTasks(list.id);
+	selectedListId.value = list.id;
+	emit("select", list);
+	taskStore.fetchTasks(list.id);
 }
 
 async function createList() {
-  if (!newListName.value.trim()) return;
-  
-  const newList: Omit<TaskList, 'id'> = {
-    name: newListName.value.trim(),
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
-  
-  // In a real app, this would be an API call
-  const newListWithId = {
-    ...newList,
-    id: Date.now().toString()
-  };
-  
-  taskStore.lists.push(newListWithId);
-  
-  // Reset form
-  newListName.value = '';
-  isAddingList.value = false;
-  
-  // Select the newly created list
-  selectList(newListWithId);
+	if (!newListName.value.trim()) return;
+
+	const newList: Omit<TaskList, "id"> = {
+		name: newListName.value.trim(),
+		createdAt: new Date().toISOString(),
+		updatedAt: new Date().toISOString(),
+	};
+
+	// In a real app, this would be an API call
+	const newListWithId = {
+		...newList,
+		id: Date.now().toString(),
+	};
+
+	taskStore.lists.push(newListWithId);
+
+	// Reset form
+	newListName.value = "";
+	isAddingList.value = false;
+
+	// Select the newly created list
+	selectList(newListWithId);
 }
 
 function cancelAddList() {
-  newListName.value = '';
-  isAddingList.value = false;
+	newListName.value = "";
+	isAddingList.value = false;
 }
 
 // Lifecycle
 onMounted(() => {
-  // Select the first list by default if not already selected
-  if (taskStore.lists.length > 0 && !selectedListId.value) {
-    selectList(taskStore.lists[0]);
-  }
+	// Select the first list by default if not already selected
+	if (taskStore.lists.length > 0 && !selectedListId.value) {
+		selectList(taskStore.lists[0]);
+	}
 });
 
 // Focus the input when showing the add list form
 watch(isAddingList, async (newVal) => {
-  if (newVal) {
-    await nextTick();
-    listNameInput.value?.focus();
-  }
+	if (newVal) {
+		await nextTick();
+		listNameInput.value?.focus();
+	}
 });
 </script>

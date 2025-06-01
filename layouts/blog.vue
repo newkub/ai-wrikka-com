@@ -61,59 +61,67 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, nextTick } from 'vue';
-import { useRoute } from 'vue-router';
-import Nav from '~/components/Nav.vue';
+import { ref, onMounted, watch, nextTick } from "vue";
+import { useRoute } from "vue-router";
+import Nav from "~/components/Nav.vue";
 
 const route = useRoute();
-const tableOfContents = ref<Array<{ id: string; text: string; level: number }>>([]);
+const tableOfContents = ref<Array<{ id: string; text: string; level: number }>>(
+	[],
+);
 
 // Generate table of contents from headings
 const generateTableOfContents = () => {
-  if (process.client) {
-    const content = document.querySelector('.blog-post-content');
-    if (!content) return [];
-    
-    const headings = Array.from(content.querySelectorAll('h2, h3, h4'));
-    return headings.map((heading) => {
-      const id = heading.id || heading.textContent?.toLowerCase().replace(/[^\w]+/g, '-') || `heading-${Math.random().toString(36).substring(2, 9)}`;
-      heading.id = id;
-      return {
-        id,
-        text: heading.textContent || '',
-        level: Number.parseInt(heading.tagName.substring(1))
-      };
-    });
-  }
-  return [];
+	if (process.client) {
+		const content = document.querySelector(".blog-post-content");
+		if (!content) return [];
+
+		const headings = Array.from(content.querySelectorAll("h2, h3, h4"));
+		return headings.map((heading) => {
+			const id =
+				heading.id ||
+				heading.textContent?.toLowerCase().replace(/[^\w]+/g, "-") ||
+				`heading-${Math.random().toString(36).substring(2, 9)}`;
+			heading.id = id;
+			return {
+				id,
+				text: heading.textContent || "",
+				level: Number.parseInt(heading.tagName.substring(1)),
+			};
+		});
+	}
+	return [];
 };
 
 // Scroll to heading with offset for fixed header
 const scrollToHeading = (selector: string) => {
-  const element = document.querySelector(selector);
-  if (element) {
-    const headerOffset = 80;
-    const elementPosition = element.getBoundingClientRect().top;
-    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+	const element = document.querySelector(selector);
+	if (element) {
+		const headerOffset = 80;
+		const elementPosition = element.getBoundingClientRect().top;
+		const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
-    window.scrollTo({
-      top: offsetPosition,
-      behavior: 'smooth'
-    });
-  }
+		window.scrollTo({
+			top: offsetPosition,
+			behavior: "smooth",
+		});
+	}
 };
 
 // Update TOC when route changes
 onMounted(() => {
-  // Wait for the content to be rendered
-  setTimeout(() => {
-    tableOfContents.value = generateTableOfContents();
-  }, 100);
+	// Wait for the content to be rendered
+	setTimeout(() => {
+		tableOfContents.value = generateTableOfContents();
+	}, 100);
 });
 
-watch(() => route.path, () => {
-  nextTick(() => {
-    tableOfContents.value = generateTableOfContents();
-  });
-});
+watch(
+	() => route.path,
+	() => {
+		nextTick(() => {
+			tableOfContents.value = generateTableOfContents();
+		});
+	},
+);
 </script>

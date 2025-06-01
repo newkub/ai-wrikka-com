@@ -1,53 +1,56 @@
 <script lang="ts" setup>
-import { useRoute } from 'vue-router'
-import type { BlogPost } from '~/types/content'
+import { useRoute } from "vue-router";
+import type { BlogPost } from "~/types/content";
 
-const route = useRoute()
-const { data: post } = await useAsyncData<BlogPost>(`blog-${route.params.id}`, async () => {
-  // @ts-ignore - queryContent will be available at runtime from Nuxt Content
-  return await queryContent<BlogPost>('blog', route.params.id).findOne()
-})
+const route = useRoute();
+const { data: post } = await useAsyncData<BlogPost>(
+	`blog-${route.params.id}`,
+	async () => {
+		// @ts-ignore - queryContent will be available at runtime from Nuxt Content
+		return await queryContent<BlogPost>("blog", route.params.id).findOne();
+	},
+);
 
 useHead({
-  title: post.value?.title || 'Blog Post',
-  meta: [
-    { name: 'description', content: post.value?.description || '' },
-    { property: 'og:type', content: 'article' },
-    { property: 'og:title', content: post.value?.title || '' },
-    { property: 'og:description', content: post.value?.description || '' },
-    { property: 'og:image', content: post.value?.image || '' },
-    { name: 'twitter:card', content: 'summary_large_image' },
-    { name: 'twitter:title', content: post.value?.title || '' },
-    { name: 'twitter:description', content: post.value?.description || '' },
-    { name: 'twitter:image', content: post.value?.image || '' },
-  ],
-})
+	title: post.value?.title || "Blog Post",
+	meta: [
+		{ name: "description", content: post.value?.description || "" },
+		{ property: "og:type", content: "article" },
+		{ property: "og:title", content: post.value?.title || "" },
+		{ property: "og:description", content: post.value?.description || "" },
+		{ property: "og:image", content: post.value?.image || "" },
+		{ name: "twitter:card", content: "summary_large_image" },
+		{ name: "twitter:title", content: post.value?.title || "" },
+		{ name: "twitter:description", content: post.value?.description || "" },
+		{ name: "twitter:image", content: post.value?.image || "" },
+	],
+});
 
 const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
-}
+	return new Date(dateString).toLocaleDateString("en-US", {
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+	});
+};
 
-const headings = ref<{ id: string; text: string; level: number }[]>([])
+const headings = ref<{ id: string; text: string; level: number }[]>([]);
 
 onMounted(() => {
-  const article = document.querySelector('article')
-  if (article) {
-    const elements = Array.from(article.querySelectorAll('h2, h3, h4'))
-    headings.value = elements.map((el) => ({
-      id: el.id,
-      text: el.textContent || '',
-      level: Number.parseInt(el.tagName.substring(1), 10),
-    }))
-  }
-})
+	const article = document.querySelector("article");
+	if (article) {
+		const elements = Array.from(article.querySelectorAll("h2, h3, h4"));
+		headings.value = elements.map((el) => ({
+			id: el.id,
+			text: el.textContent || "",
+			level: Number.parseInt(el.tagName.substring(1), 10),
+		}));
+	}
+});
 
 const scrollToHeading = (id: string) => {
-  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
-}
+	document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+};
 </script>
 
 <template>

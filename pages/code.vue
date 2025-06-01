@@ -1,144 +1,110 @@
 
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import ChatInput from '~/components/chat/ChatInput.vue';
-
-// Components are used in template but TypeScript can't infer their types properly
-import type { Component } from 'vue';
-import Terminal from '~/components/code/Terminal.vue';
-import Editor from '~/components/code/Editor.vue';
-import Dependencies from '~/components/code/Dependencies.vue';
-
-// Component types
-type EditorComponent = Component & {
-  // Add editor specific methods if needed
-};
-
-type DependenciesComponent = Component & {
-  // Add dependencies specific methods if needed
-};
-
-interface Model {
-  id: string;
-  name: string;
-}
-
-interface Mode {
-  id: string;
-  name: string;
-}
-
-// Mock data for chat input
-const availableModels = ref<Model[]>([
-  { id: 'gpt-4', name: 'GPT-4' },
-  { id: 'gpt-3.5', name: 'GPT-3.5' },
-]);
-
-const availableModes = ref<Mode[]>([
-  { id: 'precise', name: 'Precise' },
-  { id: 'balanced', name: 'Balanced' },
-  { id: 'creative', name: 'Creative' },
-]);
-
-const selectedModel = ref('gpt-4');
-const selectedMode = ref('balanced');
-const chatInput = ref('');
-const chatMessages = ref<{ role: 'user' | 'assistant'; content: string }[]>([]);
-const terminal = ref<{ addLine: (text: string) => void } | null>(null);
+import { ref } from "vue";
+import Terminal from "~/components/code/Terminal.vue";
+import Dependencies from "~/components/code/Dependencies.vue";
 
 // Type for the terminal component
 type TerminalComponent = {
-  addLine: (text: string) => void;
+	addLine: (text: string) => void;
 };
 
-// Cast the terminal ref to the correct type
+const terminal = ref<{ addLine: (text: string) => void } | null>(null);
 const terminalRef = terminal as unknown as { value: TerminalComponent | null };
 
 // Active tab state
-const activeTab = ref('terminal');
+const activeTab = ref("terminal");
 
 // Dependencies data
 const dependencies = ref([
-  { name: 'vue', version: '^3.3.0', type: 'dependencies' as const },
-  { name: 'pinia', version: '^2.1.0', type: 'dependencies' as const },
-  { name: 'vue-router', version: '^4.2.0', type: 'dependencies' as const },
-  { name: '@vitejs/plugin-vue', version: '^4.3.0', type: 'devDependencies' as const },
-  { name: 'typescript', version: '^5.0.0', type: 'devDependencies' as const },
-  { name: 'vite', version: '^4.4.0', type: 'devDependencies' as const },
+	{ name: "vue", version: "^3.3.0", type: "dependencies" as const },
+	{ name: "pinia", version: "^2.1.0", type: "dependencies" as const },
+	{ name: "vue-router", version: "^4.2.0", type: "dependencies" as const },
+	{
+		name: "@vitejs/plugin-vue",
+		version: "^4.3.0",
+		type: "devDependencies" as const,
+	},
+	{ name: "typescript", version: "^5.0.0", type: "devDependencies" as const },
+	{ name: "vite", version: "^4.4.0", type: "devDependencies" as const },
 ]);
 
-const installationOutput = ref<Array<{ type: 'success' | 'error' | 'warning' | 'info'; text: string }>>([
-  { type: 'info', text: 'Installing dependencies...' },
-  { type: 'success', text: 'Successfully installed all dependencies' },
+const installationOutput = ref<
+	Array<{ type: "success" | "error" | "warning" | "info"; text: string }>
+>([
+	{ type: "info", text: "Installing dependencies..." },
+	{ type: "success", text: "Successfully installed all dependencies" },
 ]);
 
-const editorContent = ref(`import { createApp } from 'vue';
+const mainTsxContent = `import { createApp } from 'vue';
 import App from './App.vue';
 import './index.css';
 
-createApp(App).mount('#app');
-`);
+createApp(App).mount('#app');`;
+
+const editorContent = ref(mainTsxContent);
 
 // Bottom Panel Tabs
 const bottomTabs = ref([
-  { id: 'terminal', label: 'Terminal' },
-  { id: 'dependencies', label: 'Dependencies' },
+	{ id: "terminal", label: "Terminal" },
+	{ id: "dependencies", label: "Dependencies" },
 ]);
 
+// Browser URL state
+const browserUrl = ref("");
+
 useHead({
-  title: 'Code Editor - AI Wrikka',
-  meta: [
-    { name: 'description', content: 'AI-powered code editor with terminal' }
-  ]
+	title: "Code Editor - Wrikka",
+	meta: [{ name: "description", content: "Code editor with terminal" }],
 });
 
 // Handle terminal commands
 const handleTerminalCommand = (command: string) => {
-  // You can add custom command handling here
-  const response = `$ ${command}\n> Command executed: ${command}\n`;
-  terminalRef.value?.addLine(response);
+	const response = `$ ${command}\n> Command executed: ${command}\n`;
+	terminalRef.value?.addLine(response);
 };
-
-// Browser URL state
-const browserUrl = ref('https://example.com');
 
 // Handle browser navigation
 const handleBrowserNavigate = (url: string) => {
-  browserUrl.value = url;
-  // Additional navigation logic can be added here
+	browserUrl.value = url;
 };
 
 // Handle dependency installation
-const installDependency = (options: { name: string; version: string; isDev?: boolean }) => {
-  const { name, version, isDev = false } = options;
-  const type = isDev ? 'devDependencies' : 'dependencies';
-  
-  // Check if dependency already exists
-  const existingIndex = dependencies.value.findIndex(dep => dep.name === name);
-  
-  if (existingIndex >= 0) {
-    // Update existing dependency
-    dependencies.value[existingIndex] = { name, version, type };
-  } else {
-    // Add new dependency
-    dependencies.value.push({ name, version, type });
-  }
-  
-  installationOutput.value.push({
-    type: 'info',
-    text: `Installing ${name}@${version} as ${isDev ? 'dev' : 'production'} dependency...`
-  });
-  
-  // Simulate installation
-  setTimeout(() => {
-    installationOutput.value.push({
-      type: 'success',
-      text: `Successfully installed ${name}@${version}`
-    });
-  }, 1000);
-};
+const installDependency = (options: {
+	name: string;
+	version: string;
+	isDev?: boolean;
+}) => {
+	const { name, version, isDev = false } = options;
+	const type = isDev ? "devDependencies" : "dependencies";
 
+	// Check if dependency already exists
+	const existingIndex = dependencies.value.findIndex(
+		(dep) => dep.name === name,
+	);
+
+	if (existingIndex >= 0) {
+		// Update existing dependency
+		dependencies.value[existingIndex] = { name, version, type };
+	} else {
+		// Add new dependency
+		dependencies.value.push({ name, version, type });
+	}
+
+	installationOutput.value.push({
+		type: "info",
+		text: `Installing ${name}@${version} as ${isDev ? "dev" : "production"} dependency...`,
+	});
+
+	// Simulate installation
+	setTimeout(() => {
+		installationOutput.value.push({
+			type: "success",
+			text: `Successfully installed ${name}@${version}`,
+		});
+	}, 1000);
+};
 </script>
 
 <template>
@@ -147,12 +113,12 @@ const installDependency = (options: { name: string; version: string; isDev?: boo
     <header class="bg-surface border-b border-border">
       <div class="px-4 py-3 flex items-center justify-between">
         <div class="flex items-center space-x-4">
-          <h1 class="text-lg font-semibold text-white">AI Code Editor</h1>
+          <h1 class="text-lg font-semibold text-white">Code Editor</h1>
           <div class="text-sm text-gray-400">main.tsx</div>
         </div>
         <div class="flex items-center space-x-2 ml-auto text-gray-400">
-          <button class="p-1.5 rounded-md hover:bg-gray-200">
-            <div class="i-mdi-dots-vertical text-gray-500 h-5 w-5"></div>
+          <button class="p-1.5 rounded-md hover:bg-surface/50">
+            <div class="i-mdi-dots-vertical text-gray-400 h-5 w-5"></div>
           </button>
         </div>
       </div>
@@ -184,16 +150,16 @@ const installDependency = (options: { name: string; version: string; isDev?: boo
                 <div class="mb-1">
                   <div class="text-xs text-muted uppercase font-medium px-2 py-1">src</div>
                   <div class="ml-2">
-                    <div class="flex items-center text-sm text-text hover:bg-surface/50 rounded px-2 py-1">
-                      <div class="i-mdi-file-document-outline h-4 w-4 mr-1 text-muted"></div>
+                    <div class="flex items-center text-sm text-text bg-surface/50 rounded px-2 py-1">
+                      <div class="i-mdi-language-typescript h-4 w-4 mr-1 text-blue-400"></div>
                       main.tsx
                     </div>
                     <div class="flex items-center text-sm text-muted hover:bg-surface/50 rounded px-2 py-1">
-                      <div class="i-mdi-file-document-outline h-4 w-4 mr-1 text-muted"></div>
-                      App.tsx
+                      <div class="i-mdi-vuejs h-4 w-4 mr-1 text-green-400"></div>
+                      App.vue
                     </div>
                     <div class="flex items-center text-sm text-muted hover:bg-surface/50 rounded px-2 py-1">
-                      <div class="i-mdi-file-document-outline h-4 w-4 mr-1 text-muted"></div>
+                      <div class="i-mdi-language-css3 h-4 w-4 mr-1 text-blue-400"></div>
                       index.css
                     </div>
                   </div>

@@ -1,90 +1,94 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch } from "vue";
 
-type TerminalTheme = 'light' | 'dark';
+type TerminalTheme = "light" | "dark";
 
 interface TerminalProps {
-  content?: string;
-  autoScroll?: boolean;
-  theme?: TerminalTheme;
+	content?: string;
+	autoScroll?: boolean;
+	theme?: TerminalTheme;
 }
 
 const props = withDefaults(defineProps<TerminalProps>(), {
-  content: () => '',
-  autoScroll: () => true,
-  theme: () => 'dark' as TerminalTheme
+	content: () => "",
+	autoScroll: () => true,
+	theme: () => "dark" as TerminalTheme,
 });
 
-const emit = defineEmits<(e: 'execute', command: string) => void>();
+const emit = defineEmits<(e: "execute", command: string) => void>();
 
-const terminalContent = ref<string[]>(['$ Ready']);
-const commandInput = ref('');
+const terminalContent = ref<string[]>(["$ Ready"]);
+const commandInput = ref("");
 const terminalRef = ref<HTMLDivElement | null>(null);
 
 const executeCommand = () => {
-  if (!commandInput.value.trim()) return;
-  
-  const command = commandInput.value.trim();
-  terminalContent.value.push(`$ ${command}`);
-  
-  // Emit the command to parent component
-  emit('execute', command);
-  
-  // Clear input
-  commandInput.value = '';
-  
-  // Auto-scroll to bottom
-  if (props.autoScroll) {
-    setTimeout(() => {
-      if (terminalRef.value) {
-        terminalRef.value.scrollTop = terminalRef.value.scrollHeight;
-      }
-    }, 0);
-  }
+	if (!commandInput.value.trim()) return;
+
+	const command = commandInput.value.trim();
+	terminalContent.value.push(`$ ${command}`);
+
+	// Emit the command to parent component
+	emit("execute", command);
+
+	// Clear input
+	commandInput.value = "";
+
+	// Auto-scroll to bottom
+	if (props.autoScroll) {
+		setTimeout(() => {
+			if (terminalRef.value) {
+				terminalRef.value.scrollTop = terminalRef.value.scrollHeight;
+			}
+		}, 0);
+	}
 };
 
 const handleKeyDown = (event: KeyboardEvent) => {
-  if (event.key === 'Enter' && !event.shiftKey) {
-    event.preventDefault();
-    executeCommand();
-  }
+	if (event.key === "Enter" && !event.shiftKey) {
+		event.preventDefault();
+		executeCommand();
+	}
 };
 
 // Watch for content changes from parent
-watch(() => props.content, (newContent) => {
-  if (newContent) {
-    terminalContent.value.push(newContent);
-    
-    if (props.autoScroll && terminalRef.value) {
-      setTimeout(() => {
-        if (terminalRef.value) {
-          terminalRef.value.scrollTop = terminalRef.value.scrollHeight;
-        }
-      }, 0);
-    }
-  }
-}, { immediate: true });
+watch(
+	() => props.content,
+	(newContent) => {
+		if (newContent) {
+			terminalContent.value.push(newContent);
+
+			if (props.autoScroll && terminalRef.value) {
+				setTimeout(() => {
+					if (terminalRef.value) {
+						terminalRef.value.scrollTop = terminalRef.value.scrollHeight;
+					}
+				}, 0);
+			}
+		}
+	},
+	{ immediate: true },
+);
 
 // Expose methods if needed
 const clearTerminal = () => {
-  terminalContent.value = ['$ Terminal cleared'];
+	terminalContent.value = ["$ Terminal cleared"];
 };
 
 const addLine = (line: string) => {
-  terminalContent.value.push(line);
-  
-  if (props.autoScroll && terminalRef.value) {
-    setTimeout(() => {
-      if (terminalRef.value) {
-        terminalRef.value.scrollTop = terminalRef.value.scrollHeight;
-      }
-    }, 0);
-  }
+	terminalContent.value.push(line);
+
+	if (props.autoScroll && terminalRef.value) {
+		setTimeout(() => {
+			if (terminalRef.value) {
+				terminalRef.value.scrollTop = terminalRef.value.scrollHeight;
+			}
+		}, 0);
+	}
 };
 
 defineExpose({
-  clearTerminal,
-  addLine
+	clearTerminal,
+	addLine,
 });
 </script>
 

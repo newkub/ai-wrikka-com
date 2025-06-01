@@ -1,182 +1,194 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue';
-import { useTaskStore } from '~/stores/task';
-import type { Task, TaskList } from '~/types/task';
-type Status = 'todo' | 'inProgress' | 'review' | 'done';
+import { computed, defineAsyncComponent, onMounted, ref, watch } from "vue";
+import { useTaskStore } from "~/stores/task";
+import type { Task, TaskList } from "~/types/task";
+type Status = "todo" | "inProgress" | "review" | "done";
 
-type ViewMode = 'list' | 'board';
+type ViewMode = "list" | "board";
 
 // Components
-const TaskSidebar = defineAsyncComponent(() => import('~/components/tasks/TaskSidebar.vue'));
-const TaskCard = defineAsyncComponent(() => import('~/components/tasks/TaskCard.vue'));
-const TaskModal = defineAsyncComponent(() => import('~/components/tasks/TaskModal.vue'));
-const TaskListView = defineAsyncComponent(() => import('~/components/tasks/TaskListView.vue'));
+const TaskSidebar = defineAsyncComponent(
+	() => import("~/components/tasks/TaskSidebar.vue"),
+);
+const TaskCard = defineAsyncComponent(
+	() => import("~/components/tasks/TaskCard.vue"),
+);
+const TaskModal = defineAsyncComponent(
+	() => import("~/components/tasks/TaskModal.vue"),
+);
+const TaskListView = defineAsyncComponent(
+	() => import("~/components/tasks/TaskListView.vue"),
+);
 
 // Store
 const taskStore = useTaskStore();
 
 // Current task and status for the modal
 const currentTask = ref<Partial<Task>>({
-  title: '',
-  description: '',
-  status: 'todo',
-  priority: 'medium',
-  dueDate: '',
-  assignee: '',
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
-  labels: []
+	title: "",
+	description: "",
+	status: "todo",
+	priority: "medium",
+	dueDate: "",
+	assignee: "",
+	createdAt: new Date().toISOString(),
+	updatedAt: new Date().toISOString(),
+	labels: [],
 });
 
-const currentStatus = ref<Status>('todo');
+const currentStatus = ref<Status>("todo");
 const showModal = ref(false);
-const currentView = ref<ViewMode>('board');
+const currentView = ref<ViewMode>("board");
 const currentList = ref<TaskList | null>(null);
 
 // Computed
 const allTasks = computed((): Task[] => {
-  if (!currentList.value) return taskStore.tasks;
-  return taskStore.tasks.filter(task => task.listId === currentList.value?.id);
+	if (!currentList.value) return taskStore.tasks;
+	return taskStore.tasks.filter(
+		(task) => task.listId === currentList.value?.id,
+	);
 });
 
 interface TaskGroup {
-  [key: string]: Task[];
+	[key: string]: Task[];
 }
 
 const tasks = computed<TaskGroup>(() => ({
-  todo: allTasks.value.filter((task: Task) => task.status === 'todo'),
-  inProgress: allTasks.value.filter((task: Task) => task.status === 'inProgress'),
-  review: allTasks.value.filter((task: Task) => task.status === 'review'),
-  done: allTasks.value.filter((task: Task) => task.status === 'done')
+	todo: allTasks.value.filter((task: Task) => task.status === "todo"),
+	inProgress: allTasks.value.filter(
+		(task: Task) => task.status === "inProgress",
+	),
+	review: allTasks.value.filter((task: Task) => task.status === "review"),
+	done: allTasks.value.filter((task: Task) => task.status === "done"),
 }));
 
 // Status colors for UI
 const statusColors = {
-  todo: 'bg-gray-100 text-gray-800',
-  inProgress: 'bg-blue-100 text-blue-800',
-  review: 'bg-yellow-100 text-yellow-800',
-  done: 'bg-green-100 text-green-800'
+	todo: "bg-surface-100 text-surface-800",
+	inProgress: "bg-primary-100 text-primary-800",
+	review: "bg-warning-100 text-warning-800",
+	done: "bg-success-100 text-success-800",
 };
 
 // Current list name for display
 const currentListName = computed(() => {
-  return currentList.value?.name || 'All Tasks';
+	return currentList.value?.name || "All Tasks";
 });
 
 // Methods
 const openNewTaskModal = (status: Status): void => {
-  if (!currentList.value) {
-    // Using a simple alert for now, could be replaced with a toast notification
-    alert('Please select a list first');
-    return;
-  }
-  
-  currentTask.value = {
-    title: '',
-    description: '',
-    status,
-    priority: 'medium',
-    dueDate: '',
-    assignee: '',
-    listId: currentList.value.id,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
-  currentStatus.value = status;
-  showModal.value = true;
-}
+	if (!currentList.value) {
+		// Using a simple alert for now, could be replaced with a toast notification
+		alert("Please select a list first");
+		return;
+	}
+
+	currentTask.value = {
+		title: "",
+		description: "",
+		status,
+		priority: "medium",
+		dueDate: "",
+		assignee: "",
+		listId: currentList.value.id,
+		createdAt: new Date().toISOString(),
+		updatedAt: new Date().toISOString(),
+	};
+	currentStatus.value = status;
+	showModal.value = true;
+};
 
 const openEditModal = (task: Task): void => {
-  currentTask.value = { ...task };
-  currentStatus.value = task.status;
-  showModal.value = true;
-}
+	currentTask.value = { ...task };
+	currentStatus.value = task.status;
+	showModal.value = true;
+};
 
 const closeModal = (): void => {
-  showModal.value = false;
-  currentTask.value = {
-    title: '',
-    description: '',
-    status: 'todo',
-    priority: 'medium',
-    dueDate: '',
-    assignee: '',
-    listId: currentList.value?.id || '',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
-}
+	showModal.value = false;
+	currentTask.value = {
+		title: "",
+		description: "",
+		status: "todo",
+		priority: "medium",
+		dueDate: "",
+		assignee: "",
+		listId: currentList.value?.id || "",
+		createdAt: new Date().toISOString(),
+		updatedAt: new Date().toISOString(),
+	};
+};
 
 interface TaskData {
-  task: Partial<Task>;
-  status: Status;
+	task: Partial<Task>;
+	status: Status;
 }
 
 const saveTask = async (taskData: TaskData): Promise<void> => {
-  // Ensure all required fields have values to satisfy the Task interface
-  const taskToSave: Task = {
-    id: taskData.task.id ?? Date.now().toString(),
-    title: taskData.task.title ?? '',
-    description: taskData.task.description ?? '',
-    status: taskData.status,
-    priority: taskData.task.priority ?? 'medium',
-    dueDate: taskData.task.dueDate ?? '',
-    assignee: taskData.task.assignee ?? '',
-    labels: taskData.task.labels ?? [],
-    listId: taskData.task.listId ?? currentList.value?.id ?? '',
-    createdAt: taskData.task.createdAt ?? new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
+	// Ensure all required fields have values to satisfy the Task interface
+	const taskToSave: Task = {
+		id: taskData.task.id ?? Date.now().toString(),
+		title: taskData.task.title ?? "",
+		description: taskData.task.description ?? "",
+		status: taskData.status,
+		priority: taskData.task.priority ?? "medium",
+		dueDate: taskData.task.dueDate ?? "",
+		assignee: taskData.task.assignee ?? "",
+		labels: taskData.task.labels ?? [],
+		listId: taskData.task.listId ?? currentList.value?.id ?? "",
+		createdAt: taskData.task.createdAt ?? new Date().toISOString(),
+		updatedAt: new Date().toISOString(),
+	};
 
-  if (taskData.task.id) {
-    const { id, ...updates } = taskToSave;
-    taskStore.updateTask(id, updates);
-  } else {
-    taskStore.addTask(taskToSave);
-  }
-  
-  closeModal();
-}
+	if (taskData.task.id) {
+		const { id, ...updates } = taskToSave;
+		taskStore.updateTask(id, updates);
+	} else {
+		taskStore.addTask(taskToSave);
+	}
+
+	closeModal();
+};
 
 const deleteTask = async (id: string): Promise<void> => {
-  // In a real app, consider using a more user-friendly confirmation dialog
-  if (confirm('Are you sure you want to delete this task?')) {
-    await taskStore.deleteTask(id);
-  }
-}
+	// In a real app, consider using a more user-friendly confirmation dialog
+	if (confirm("Are you sure you want to delete this task?")) {
+		await taskStore.deleteTask(id);
+	}
+};
 
 const updateTask = (updatedTask: Task): void => {
-  const { id, ...updates } = updatedTask;
-  if (id) {
-    taskStore.updateTask(id, updates);
-  }
-}
+	const { id, ...updates } = updatedTask;
+	if (id) {
+		taskStore.updateTask(id, updates);
+	}
+};
 
 // Handle list selection
 const handleListSelect = (list: TaskList): void => {
-  currentList.value = list;
-  // Fetch tasks for the selected list
-  taskStore.fetchTasks(list.id);
-}
+	currentList.value = list;
+	// Fetch tasks for the selected list
+	taskStore.fetchTasks(list.id);
+};
 
 // Fetch tasks on component mount
 onMounted(async () => {
-  try {
-    await taskStore.fetchTasks();
-    
-    // If there's no current list, select the first one if available
-    if (taskStore.lists.length > 0 && !currentList.value) {
-      currentList.value = taskStore.lists[0];
-      await taskStore.fetchTasks(currentList.value.id);
-    }
-  } catch (error) {
-    console.error('Failed to fetch tasks:', error);
-  }
+	try {
+		await taskStore.fetchTasks();
+
+		// If there's no current list, select the first one if available
+		if (taskStore.lists.length > 0 && !currentList.value) {
+			currentList.value = taskStore.lists[0];
+			await taskStore.fetchTasks(currentList.value.id);
+		}
+	} catch (error) {
+		console.error("Failed to fetch tasks:", error);
+	}
 });
 </script>
 
 <template>
-  <div class="min-h-screen bg-background flex">
+  <div class="min-h-screen bg-background text-foreground flex">
     <!-- Sidebar -->
     <TaskSidebar 
       @select="handleListSelect" 
@@ -187,12 +199,7 @@ onMounted(async () => {
     <div class="flex-1 flex flex-col overflow-auto">
       <!-- Header -->
       <div class="p-6 pb-0">
-        <div class="flex justify-between items-start mb-6">
-          <div>
-            <h1 class="text-2xl font-bold text-text">{{ currentListName }}</h1>
-            <p class="text-surface">Manage your tasks efficiently</p>
-          </div>
-          
+        <div class="mb-6">
           <!-- View Toggle -->
           <div class="inline-flex rounded-md shadow-sm" role="group">
             <button
@@ -201,13 +208,13 @@ onMounted(async () => {
               :class="[
                 'px-4 py-2 text-sm font-medium rounded-l-lg border transition-colors',
                 currentView === 'list'
-                  ? 'bg-brand/10 text-brand border-brand/20'
-                  : 'bg-surface text-text border-border hover:bg-surface/50'
+                  ? 'bg-primary/10 text-primary border-primary/20'
+                  : 'bg-surface text-text/80 border-border hover:bg-surface-hover hover:text-text'
               ]"
               :aria-pressed="currentView === 'list'"
             >
               <div class="flex items-center">
-                <div class="i-mdi-format-list-bulleted h-4 w-4 mr-1.5" />
+                <div class="i-mdi-format-list-bulleted h-4 w-4 me-1.5" />
                 List View
               </div>
             </button>
@@ -217,12 +224,12 @@ onMounted(async () => {
               :class="[
                 'px-4 py-2 text-sm font-medium rounded-r-lg border transition-colors',
                 currentView === 'board'
-                  ? 'bg-brand/10 text-brand border-brand/20'
-                  : 'bg-surface text-text border-border hover:bg-surface/50'
+                  ? 'bg-primary/10 text-primary border-primary/20'
+                  : 'bg-surface text-text/80 border-border hover:bg-surface-hover hover:text-text'
               ]"
             >
               <div class="flex items-center">
-                <div class="i-mdi-view-grid h-4 w-4 mr-1.5" />
+                <div class="i-mdi-view-grid h-4 w-4 me-1.5" />
                 Board View
               </div>
             </button>
@@ -231,9 +238,9 @@ onMounted(async () => {
       </div>
       
       <!-- Content Area -->
-      <div class="p-6 pt-4 flex-1 overflow-auto">
+      <div class="p-6 pt-4 flex-1 overflow-auto flex flex-col">
         <!-- List View -->
-        <div v-if="currentView === 'list'" class="h-full">
+        <div v-if="currentView === 'list'" class="h-full w-full">
           <TaskListView 
             :tasks="allTasks" 
             :list-name="currentListName"

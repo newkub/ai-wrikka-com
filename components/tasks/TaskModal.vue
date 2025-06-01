@@ -90,65 +90,69 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, ref, watch } from 'vue';
-import type { Task } from '~/types/task';
+import { defineComponent, ref, watch } from "vue";
+import type { Task } from "~/types/task";
 
-type Status = 'todo' | 'inProgress' | 'review' | 'done';
-type Priority = 'low' | 'medium' | 'high';
+type Status = "todo" | "inProgress" | "review" | "done";
+type Priority = "low" | "medium" | "high";
 
 const props = defineProps<{
-  task: Partial<Task> | null;
-  status: Status;
+	task: Partial<Task> | null;
+	status: Status;
 }>();
 
 const emit = defineEmits<{
-  (e: 'save', data: { task: Partial<Task>; status: Status }): void;
-  (e: 'close'): void;
+	(e: "save", data: { task: Partial<Task>; status: Status }): void;
+	(e: "close"): void;
 }>();
 
 interface TaskFormData {
-  title: string;
-  description: string;
-  priority: Priority;
-  dueDate: string;
-  status: Status;
+	title: string;
+	description: string;
+	priority: Priority;
+	dueDate: string;
+	status: Status;
 }
 
 const formData = ref<Partial<Task>>({
-  title: '',
-  description: '',
-  priority: 'medium',
-  status: 'todo',
-  dueDate: '',
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString()
+	title: "",
+	description: "",
+	priority: "medium",
+	status: "todo",
+	dueDate: "",
+	createdAt: new Date().toISOString(),
+	updatedAt: new Date().toISOString(),
 });
 
 // Update form data when task prop changes
-watch(() => props.task, (newTask) => {
-  if (newTask) {
-    formData.value = { 
-      ...newTask,
-      description: newTask.description || '',
-      dueDate: newTask.dueDate || ''
-    };
-  } else {
-    formData.value = {
-      title: '',
-      description: '',
-      priority: 'medium',
-      status: props.status || 'todo',
-      dueDate: '',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-  }
-}, { immediate: true });
+watch(
+	() => props.task,
+	(newTask) => {
+		if (newTask) {
+			formData.value = {
+				...newTask,
+				description: newTask.description || "",
+				dueDate: newTask.dueDate || "",
+			};
+		} else {
+			formData.value = {
+				title: "",
+				description: "",
+				priority: "medium",
+				status: props.status || "todo",
+				dueDate: "",
+				createdAt: new Date().toISOString(),
+				updatedAt: new Date().toISOString(),
+			};
+		}
+	},
+	{ immediate: true },
+);
 
 function handleSubmit() {
-  emit('save', {
-    task: { ...formData.value },
-    status: props.status,
-  });
+	emit("save", {
+		task: { ...formData.value },
+		status: props.status,
+	});
 }
 </script>

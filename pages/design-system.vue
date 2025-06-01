@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import DesignSystem from '~/components/DesignSystem.vue';
+import DesignSystem from "~/components/DesignSystem.vue";
 </script>
 
 <template>
