@@ -5,8 +5,8 @@ const props = defineProps<{
 
 const navItems = [
   { name: 'Chat', href: '/chat', icon: 'i-mdi-chat' },
-  { name: 'Image', href: '/image', icon: 'i-mdi-image' },
-  { name: 'Video', href: '/video', icon: 'i-mdi-video' },
+  { name: 'Media', href: '/media', icon: 'i-mdi-image' },
+  { name: 'Talk', href: '/talk', icon: 'i-mdi-image' },
   { name: 'Code', href: '/code', icon: 'i-mdi-code-braces' },
   { name: 'Search', href: '/search', icon: 'i-mdi-magnify' },
   { name: 'Learn', href: '/learn', icon: 'i-mdi-school' },

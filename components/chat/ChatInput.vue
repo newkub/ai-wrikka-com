@@ -1,8 +1,60 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, type Ref } from 'vue';
+import Dropdown from '~/components/Dropdown.vue';
+import Button from '~/components/Button.vue';
+import ButtonFileUpload from '~/components/chat/ButtonFileUpload.vue';
+
+type TabType = 'computer' | 'url';
+
+interface FileWithPreview extends File {
+  preview: string;
+}
+
+interface Model {
+  id: string;
+  name: string;
+  icon: string;
+}
+
+interface Mode {
+  id: string;
+  name: string;
+  icon: string;
+}
+
+const defaultModels: Model[] = [
+  { id: "gpt-4", name: "GPT-4", icon: "i-mdi-robot-outline" },
+  { id: "gpt-3.5", name: "GPT-3.5", icon: "i-mdi-robot" },
+  { id: "claude-2", name: "Claude 2", icon: "i-mdi-account-circle-outline" },
+];
+
+const defaultModes: Mode[] = [
+  { id: "think", name: "Think", icon: "i-mdi-brain" },
+  { id: "search", name: "Search", icon: "i-mdi-magnify" },
+];
+
+interface ChatInputProps {
+  availableModels?: Model[];
+  availableModes?: Mode[];
+  selectedModel: string;
+  selectedMode: string;
+  placeholder?: string;
+  rows?: number;
+  maxLength?: number;
+  showCharacterCount?: boolean;
+  showHelperText?: boolean;
+}
+
+interface ChatInputEmits {
+  (e: 'update:selectedModel', value: string): void;
+  (e: 'update:selectedMode', value: string): void;
+  (e: 'send', payload: { text: string; files: FileWithPreview[] }): void;
+  (e: 'file-select', files: File[]): void;
+}
 
 const activeTab = ref("computer");
 const showFileModal = ref(false);
+const isModelDropdownOpen = ref(false);
 
 const openFileModal = () => {
 	showFileModal.value = true;
@@ -16,60 +68,7 @@ const selectTab = (tab: string) => {
 	activeTab.value = tab;
 };
 
-interface FileWithPreview extends File {
-	preview: string;
-}
-
-interface Model {
-	id: string;
-	name: string;
-}
-
-interface Mode {
-	id: string;
-	name: string;
-}
-
-const props = defineProps({
-	availableModels: {
-		type: Array as () => Model[],
-		required: true,
-		default: () => [],
-	},
-	availableModes: {
-		type: Array as () => Mode[],
-		required: true,
-		default: () => [],
-	},
-	selectedModel: {
-		type: String,
-		required: true,
-	},
-	selectedMode: {
-		type: String,
-		required: true,
-	},
-	placeholder: {
-		type: String,
-		default: "Type your message...",
-	},
-	rows: {
-		type: Number,
-		default: 1,
-	},
-	maxLength: {
-		type: Number,
-		default: 4000,
-	},
-	showCharacterCount: {
-		type: Boolean,
-		default: false,
-	},
-	showHelperText: {
-		type: Boolean,
-		default: true,
-	},
-});
+const props = defineProps<ChatInputProps>();
 
 const emit = defineEmits([
 	"update:selectedModel",
@@ -79,9 +78,16 @@ const emit = defineEmits([
 ]);
 
 const files = ref<FileWithPreview[]>([]);
-const inputValue = ref("");
+const inputValue = ref('');
 const fileInput = ref<HTMLInputElement | null>(null);
 const messageInput = ref<HTMLTextAreaElement | null>(null);
+
+// Auto-resize textarea
+const autoResize = (event: Event) => {
+  const textarea = event.target as HTMLTextAreaElement;
+  textarea.style.height = 'auto';
+  textarea.style.height = `${Math.min(textarea.scrollHeight, 128)}px`;
+};
 
 const canSend = computed(() => {
 	return inputValue.value.trim().length > 0 || files.value.length > 0;
@@ -149,6 +155,11 @@ const handleSend = () => {
 	files.value = [];
 };
 
+const handleFileUpload = (files: File[]) => {
+  // Handle the uploaded files here
+  console.log('Files uploaded:', files)
+};
+
 // Expose methods if needed
 const focus = () => {
 	messageInput.value?.focus();
@@ -160,213 +171,112 @@ defineExpose({
 </script>
 
 <template>
-  <div class="border-t border-surface p-4 bg-background">
-    <div class="max-w-3xl mx-auto">
-      <!-- File Upload Modal -->
-      <div v-if="showFileModal" class="fixed inset-0 z-50 overflow-y-auto">
-        <!-- Overlay -->
-        <div 
-          class="fixed inset-0 bg-black/50 transition-opacity"
-          @click="closeFileModal"
-        ></div>
-
-        <!-- Modal Container -->
-        <div class="flex min-h-full items-center justify-center p-4">
-          <!-- Modal Panel -->
-          <div class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-background text-left shadow-xl transition-all">
-            <!-- Header -->
-            <div class="p-4 border-b border-surface">
-              <h3 class="text-lg font-medium text-text">
-                Upload File
-              </h3>
-            </div>
-            
-            <!-- Tabs -->
-            <div class="border-b border-surface">
-              <nav class="flex -mb-px">
-                <button
-                  v-for="tab in [
-                    { id: 'computer', name: 'Computer', icon: 'i-mdi-desktop-mac' },
-                    { id: 'github', name: 'GitHub', icon: 'i-mdi-github' },
-                    { id: 'drive', name: 'Google Drive', icon: 'i-mdi-google-drive' }
-                  ]"
-                  :key="tab.id"
-                  @click="selectTab(tab.id)"
-                  class="flex-1 py-3 px-1 text-center border-b-2 font-medium text-sm"
-                  :class="[
-                    activeTab === tab.id
-                      ? 'border-brand text-brand'
-                      : 'border-transparent text-text/60 hover:text-text/80 hover:border-surface',
-                    'group inline-flex items-center justify-center gap-2'
-                  ]"
-                >
-                  <div :class="[tab.icon, 'h-5 w-5']" />
-                  {{ tab.name }}
-                </button>
-              </nav>
-            </div>
-            
-            <!-- Tab Panels -->
-            <div class="p-4">
-              <!-- Computer Panel -->
-              <div v-if="activeTab === 'computer'" class="space-y-4">
-                <div 
-                  @click="triggerFileInput"
-                  class="mt-2 flex justify-center rounded-lg border border-dashed border-surface px-6 py-10 cursor-pointer hover:bg-surface/50 transition-colors"
-                >
-                  <div class="text-center">
-                    <div class="i-mdi-cloud-upload text-4xl text-text/40 mx-auto mb-3" />
-                    <div class="text-sm text-text/60">
-                      <p class="font-medium text-text">Click to upload</p>
-                      <p class="text-xs">or drag and drop</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- GitHub Panel -->
-              <div v-else-if="activeTab === 'github'" class="flex flex-col items-center justify-center py-8">
-                <div class="i-mdi-github text-4xl text-text/60 mb-4" />
-                <p class="text-text/80 text-center mb-4">Connect your GitHub account to browse repositories</p>
-                <button class="bg-white text-gray-900 px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2">
-                  <div class="i-mdi-github h-5 w-5" />
-                  Connect GitHub
-                </button>
-              </div>
-              
-              <!-- Google Drive Panel -->
-              <div v-else class="flex flex-col items-center justify-center py-8">
-                <div class="i-mdi-google-drive text-4xl text-text/60 mb-4" />
-                <p class="text-text/80 text-center mb-4">Connect your Google Drive to browse files</p>
-                <button class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2">
-                  <div class="i-mdi-google h-5 w-5" />
-                  Sign in with Google
-                </button>
-              </div>
-            </div>
-            
-            <!-- Footer -->
-            <div class="bg-surface/50 px-4 py-3 flex justify-end gap-3 border-t border-surface">
-              <button
-                @click="closeFileModal"
-                class="px-4 py-2 text-sm font-medium text-text/80 hover:text-text"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
+  <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-4xl px-4 z-50">
+    <div class="bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden">
+    <div class="relative flex items-center">
       <!-- File preview -->
-      <div v-if="files.length > 0" class="flex flex-wrap gap-2 mb-3">
+      <div v-if="files.length > 0" class="absolute -top-20 left-0 right-0 flex gap-2 overflow-x-auto pb-2 px-4">
         <div v-for="(file, index) in files" :key="index" class="relative group">
-          <img :src="file.preview" class="h-16 w-16 object-cover rounded-lg border border-surface" />
+          <img :src="file.preview" class="h-16 w-16 object-cover rounded-lg border border-gray-200" />
           <button 
-            @click="removeFile(index)"
-            class="absolute -top-2 -right-2 bg-error text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-opacity-80 transition-colors"
+            @click.stop="removeFile(index)"
+            class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 transition-colors"
             aria-label="Remove file"
           >
             <div class="i-mdi-close h-3 w-3" />
           </button>
         </div>
       </div>
-      
-      <div class="relative rounded-lg border border-surface bg-background shadow-sm">
-        <!-- Model and Mode Selectors -->
-        <div class="flex border-b border-surface">
-          <div class="relative flex-1 border-r border-surface">
-            <select 
-              :value="selectedModel"
-              @change="$emit('update:selectedModel', ($event.target as HTMLSelectElement).value)"
-              class="w-full bg-transparent px-4 py-2.5 text-sm text-text focus:outline-none focus:ring-0 border-0 focus:border-brand"
-            >
-              <option v-for="model in availableModels" :key="model.id" :value="model.id">
-                {{ model.name }}
-              </option>
-            </select>
-          </div>
+
+      <div class="relative w-full">
+        <div class="relative flex items-center">
+          <ButtonFileUpload 
+            @upload="handleFileUpload"
+            class="text-gray-500 hover:text-gray-700 mr-2"
+          />
+          
           <div class="relative flex-1">
-            <select 
-              :value="selectedMode"
-              @change="$emit('update:selectedMode', ($event.target as HTMLSelectElement).value)"
-              class="w-full bg-transparent px-4 py-2.5 text-sm text-text focus:outline-none focus:ring-0 border-0 focus:border-brand"
-            >
-              <option v-for="mode in availableModes" :key="mode.id" :value="mode.id">
-                {{ mode.name }}
-              </option>
-            </select>
-          </div>
-        </div>
-        
-        <!-- Text Input Area -->
-        <div class="relative">
-          <div class="absolute left-3 top-3">
-            <button 
-              type="button"
-              @click="openFileModal"
-              class="text-text/40 hover:text-text/60 transition-colors"
-              title="Attach file"
-              aria-label="Attach file"
-            >
-              <div class="i-mdi-paperclip h-5 w-5" />
-            </button>
-            <input 
-              ref="fileInput"
-              type="file" 
-              class="hidden" 
-              multiple 
-              @change="handleFileSelect"
-              accept="image/*"
+            <div v-if="!inputValue" class="absolute inset-0 flex items-center pointer-events-none">
+              <span class="text-gray-400 pl-3 text-sm">
+                {{ props.placeholder || 'Message...' }}
+              </span>
+            </div>
+            <textarea
+              ref="messageInput"
+              v-model="inputValue"
+              class="w-full bg-gray-100 rounded-full py-2 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none pr-12"
+              :rows="1"
+              :maxlength="props.maxLength"
+              @keydown.enter.exact.prevent="handleSend"
+              @paste="handlePaste"
+              @input="autoResize"
             />
           </div>
           
-          <textarea
-            ref="messageInput"
-            v-model="inputValue"
-            @paste="handlePaste"
-            @keydown.enter.exact.prevent="handleSend"
-            @keydown.enter.shift.exact.prevent="inputValue += '\n'"
-            :placeholder="placeholder || 'Type your message...'"
-            :rows="rows || 1"
-            class="w-full px-4 py-3 pl-12 pr-20 text-text bg-transparent border-0 focus:ring-0 focus:outline-none resize-none min-h-[60px] max-h-40"
-            style="min-height: 60px"
-          ></textarea>
-          
-          <div class="absolute right-3 bottom-3 flex items-center space-x-2">
-            <span v-if="showCharacterCount" class="text-xs text-text/40">
-              {{ inputValue.length }}/{{ maxLength || 4000 }}
-            </span>
+          <button
+            type="button"
+            :disabled="!canSend"
+            class="absolute right-2 w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+            :class="canSend ? 'text-blue-500 hover:text-blue-600' : 'text-gray-400'"
+            @click="handleSend"
+          >
+            <div v-if="inputValue.trim().length > 0" class="i-mdi-send h-5 w-5" />
+            <div v-else class="i-mdi-microphone h-5 w-5" />
+          </button>
+        </div>
+
+        <!-- Mode/Model Row -->
+        <div class="flex items-center justify-between mt-2 pb-2 px-2">
+          <!-- Modes (Left) -->
+          <div class="flex space-x-1">
             <button
-              type="button"
-              @click="handleSend"
-              :disabled="!canSend"
-              :class="[
-                'flex items-center justify-center w-8 h-8 rounded-full text-white transition-colors',
-                canSend 
-                  ? 'bg-brand hover:bg-opacity-80' 
-                  : 'bg-surface cursor-not-allowed'
-              ]"
-              aria-label="Send message"
+              v-for="mode in props.availableModes || defaultModes"
+              :key="mode.id"
+              @click="$emit('update:selectedMode', mode.id)"
+              class="px-2.5 py-1 text-xs rounded-md flex items-center gap-1.5 transition-colors"
+              :class="{
+                'bg-blue-100 text-blue-700': props.selectedMode === mode.id,
+                'text-gray-500 hover:bg-gray-100': props.selectedMode !== mode.id
+              }"
             >
-              <slot name="send-icon">
-                <div class="i-mdi-send h-4 w-4" />
-              </slot>
+              <div :class="`${mode.icon} text-sm`" />
+              <span>{{ mode.name }}</span>
             </button>
           </div>
-        </div>
-        
-        <!-- Character Counter -->
-        <div v-if="showHelperText" class="px-4 py-2 text-xs text-text/40 border-t border-surface">
-          <div class="flex justify-between items-center">
-            <slot name="helper-text-left">
-              <span>Shift + Enter for new line</span>
-            </slot>
-            <slot name="helper-text-right">
-              <span>Press Enter to send</span>
-            </slot>
+          
+          <!-- Model (Right) -->
+          <div class="relative">
+            <button 
+              @click="isModelDropdownOpen = !isModelDropdownOpen"
+              class="px-2.5 py-1 text-xs text-gray-600 hover:bg-gray-100 rounded-md flex items-center gap-1.5 transition-colors"
+            >
+              <div v-if="props.availableModels?.find(model => model.id === props.selectedModel)?.icon" 
+                   :class="`${props.availableModels?.find(model => model.id === props.selectedModel)?.icon} text-sm`" />
+              <span class="truncate max-w-[100px]">
+                {{ props.availableModels?.find(model => model.id === props.selectedModel)?.name }}
+              </span>
+              <div class="i-mdi-chevron-down text-xs transition-transform duration-200" :class="{'transform rotate-180': isModelDropdownOpen}" />
+            </button>
+            <Dropdown 
+              :isOpen="isModelDropdownOpen" 
+              @close="isModelDropdownOpen = false"
+              position="top"
+              class="w-48"
+            >
+              <button
+                v-for="model in props.availableModels || defaultModels"
+                :key="model.id"
+                @click="$emit('update:selectedModel', model.id); isModelDropdownOpen = false"
+                class="px-3 py-2 text-sm text-left w-full hover:bg-gray-100 flex items-center gap-2"
+                :class="{'text-blue-600': model.id === props.selectedModel}"
+              >
+                <div :class="model.icon" class="text-base" />
+                <span>{{ model.name }}</span>
+              </button>
+            </Dropdown>
           </div>
         </div>
+      </div>
       </div>
     </div>
   </div>

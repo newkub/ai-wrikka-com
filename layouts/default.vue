@@ -9,7 +9,7 @@ import Nav from "~/components/Nav.vue";
     <Nav />
 
     <!-- Page Content -->
-    <main class="flex-1">
+    <main class="flex-1 h-ful">
       <slot />
     </main>
   </div>

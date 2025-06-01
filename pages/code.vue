@@ -108,7 +108,7 @@ const installDependency = (options: {
 </script>
 
 <template>
-  <div class="h-screen flex flex-col bg-background">
+  <div class="h-full flex flex-col bg-background overflow-hidden">
     <!-- Header -->
     <header class="bg-surface border-b border-border">
       <div class="px-4 py-3 flex items-center justify-between">

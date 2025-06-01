@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen flex flex-col">
+  <div class="h-full flex flex-col">
     <header class="bg-white border-b border-gray-200">
       <div class="container mx-auto px-4 py-3 flex items-center justify-between">
         <h1 class="text-xl font-bold text-gray-800">Whiteboard</h1>
