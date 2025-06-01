@@ -7,6 +7,7 @@ import ModalSettings from './ModalSettings.vue';
 import Avatar from './Avatar.vue';
 import Dropdown from './Dropdown.vue';
 import NavItems from './NavItems.vue';
+import Button from './Button.vue'; // Import the Button component
 
 // Modal states
 const showModalSettings = ref(false);
@@ -109,6 +110,18 @@ const toggleDropdown = (event: Event) => {
             <div class="i-mdi-magnify h-5 w-5" />
           </button>
 
+          <!-- Sign In Button -->
+          <Button 
+            variant="ghost"
+            size="sm"
+            icon="i-mdi-login"
+            @click="showAuthModal = true"
+            aria-label="Sign in"
+            class="p-2"
+          >
+            Sign In
+          </Button>
+
           <!-- Theme Toggle -->
           <button
             @click="toggleTheme"
@@ -121,9 +134,22 @@ const toggleDropdown = (event: Event) => {
 
           <!-- User Menu -->
           <div class="relative">
-            <Avatar :is-open="isDropdownOpen" @toggle="toggleDropdown" />
+            <button 
+              @click.stop="toggleDropdown($event)"
+              class="flex items-center focus:outline-none"
+              aria-haspopup="true"
+              :aria-expanded="isDropdownOpen"
+            >
+              <Avatar :is-open="isDropdownOpen" />
+            </button>
             
-            <Dropdown :is-open="isDropdownOpen" position="right" @close="closeModals">
+            <Dropdown 
+              v-if="isDropdownOpen" 
+              :is-open="isDropdownOpen" 
+              position="right" 
+              @close="closeModals"
+              class="z-50"
+            >
               <button
                 @click="openModal('profile')($event)"
                 class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
@@ -187,6 +213,12 @@ const toggleDropdown = (event: Event) => {
     <!-- Command Palette Modal -->
     <ModalCommandPalette 
       v-model="showModalCommandPalette"
+      @close="closeModals"
+    />
+
+    <!-- Settings Modal -->
+    <ModalSettings 
+      v-model="showModalSettings"
       @close="closeModals"
     />
   </nav>
