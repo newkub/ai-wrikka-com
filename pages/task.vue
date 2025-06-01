@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue';
 import { useTaskStore } from '~/stores/task';
-import type { Task } from '~/types/task';
+import type { Task, TaskList } from '~/types/task';
 type Status = 'todo' | 'inProgress' | 'review' | 'done';
 
 type ViewMode = 'list' | 'board';
@@ -30,16 +30,14 @@ const currentTask = ref<Partial<Task>>({
 
 const currentStatus = ref<Status>('todo');
 const showModal = ref(false);
-const currentView = ref<'list' | 'board'>('board');
-interface TaskList {
-  id: string;
-  name: string;
-}
-
+const currentView = ref<ViewMode>('board');
 const currentList = ref<TaskList | null>(null);
 
 // Computed
-const allTasks = computed((): Task[] => taskStore.tasks);
+const allTasks = computed((): Task[] => {
+  if (!currentList.value) return taskStore.tasks;
+  return taskStore.tasks.filter(task => task.listId === currentList.value?.id);
+});
 
 interface TaskGroup {
   [key: string]: Task[];
@@ -52,8 +50,27 @@ const tasks = computed<TaskGroup>(() => ({
   done: allTasks.value.filter((task: Task) => task.status === 'done')
 }));
 
+// Status colors for UI
+const statusColors = {
+  todo: 'bg-gray-100 text-gray-800',
+  inProgress: 'bg-blue-100 text-blue-800',
+  review: 'bg-yellow-100 text-yellow-800',
+  done: 'bg-green-100 text-green-800'
+};
+
+// Current list name for display
+const currentListName = computed(() => {
+  return currentList.value?.name || 'All Tasks';
+});
+
 // Methods
 const openNewTaskModal = (status: Status): void => {
+  if (!currentList.value) {
+    // Using a simple alert for now, could be replaced with a toast notification
+    alert('Please select a list first');
+    return;
+  }
+  
   currentTask.value = {
     title: '',
     description: '',
@@ -61,6 +78,7 @@ const openNewTaskModal = (status: Status): void => {
     priority: 'medium',
     dueDate: '',
     assignee: '',
+    listId: currentList.value.id,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
@@ -83,6 +101,7 @@ const closeModal = (): void => {
     priority: 'medium',
     dueDate: '',
     assignee: '',
+    listId: currentList.value?.id || '',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
@@ -104,6 +123,7 @@ const saveTask = async (taskData: TaskData): Promise<void> => {
     dueDate: taskData.task.dueDate ?? '',
     assignee: taskData.task.assignee ?? '',
     labels: taskData.task.labels ?? [],
+    listId: taskData.task.listId ?? currentList.value?.id ?? '',
     createdAt: taskData.task.createdAt ?? new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
@@ -119,8 +139,9 @@ const saveTask = async (taskData: TaskData): Promise<void> => {
 }
 
 const deleteTask = async (id: string): Promise<void> => {
+  // In a real app, consider using a more user-friendly confirmation dialog
   if (confirm('Are you sure you want to delete this task?')) {
-    taskStore.deleteTask(id);
+    await taskStore.deleteTask(id);
   }
 }
 
@@ -134,22 +155,33 @@ const updateTask = (updatedTask: Task): void => {
 // Handle list selection
 const handleListSelect = (list: TaskList): void => {
   currentList.value = list;
-  // In a real app, you would fetch tasks for the selected list
-  console.log('Selected list:', list);
-  // For now, we'll just fetch all tasks
-  taskStore.fetchTasks();
+  // Fetch tasks for the selected list
+  taskStore.fetchTasks(list.id);
 }
 
 // Fetch tasks on component mount
-onMounted(() => {
-  taskStore.fetchTasks();
+onMounted(async () => {
+  try {
+    await taskStore.fetchTasks();
+    
+    // If there's no current list, select the first one if available
+    if (taskStore.lists.length > 0 && !currentList.value) {
+      currentList.value = taskStore.lists[0];
+      await taskStore.fetchTasks(currentList.value.id);
+    }
+  } catch (error) {
+    console.error('Failed to fetch tasks:', error);
+  }
 });
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 flex">
+  <div class="min-h-screen bg-background flex">
     <!-- Sidebar -->
-    <TaskSidebar @select="handleListSelect" class="hidden md:block" />
+    <TaskSidebar 
+      @select="handleListSelect" 
+      class="hidden md:block" 
+    />
     
     <!-- Main Content -->
     <div class="flex-1 flex flex-col overflow-auto">
@@ -157,8 +189,8 @@ onMounted(() => {
       <div class="p-6 pb-0">
         <div class="flex justify-between items-start mb-6">
           <div>
-            <h1 class="text-2xl font-bold text-gray-800">Task Board</h1>
-            <p class="text-gray-600">Manage your tasks efficiently</p>
+            <h1 class="text-2xl font-bold text-text">{{ currentListName }}</h1>
+            <p class="text-surface">Manage your tasks efficiently</p>
           </div>
           
           <!-- View Toggle -->
@@ -167,16 +199,15 @@ onMounted(() => {
               @click="currentView = 'list'"
               type="button"
               :class="[
-                'px-4 py-2 text-sm font-medium rounded-l-lg border',
+                'px-4 py-2 text-sm font-medium rounded-l-lg border transition-colors',
                 currentView === 'list'
-                  ? 'bg-blue-50 text-blue-700 border-blue-200'
-                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                  ? 'bg-brand/10 text-brand border-brand/20'
+                  : 'bg-surface text-text border-border hover:bg-surface/50'
               ]"
+              :aria-pressed="currentView === 'list'"
             >
               <div class="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                </svg>
+                <div class="i-mdi-format-list-bulleted h-4 w-4 mr-1.5" />
                 List View
               </div>
             </button>
@@ -184,16 +215,14 @@ onMounted(() => {
               @click="currentView = 'board'"
               type="button"
               :class="[
-                'px-4 py-2 text-sm font-medium rounded-r-lg border',
+                'px-4 py-2 text-sm font-medium rounded-r-lg border transition-colors',
                 currentView === 'board'
-                  ? 'bg-blue-50 text-blue-700 border-blue-200'
-                  : 'bg-white text-gray-700 border-l-0 border-gray-300 hover:bg-gray-50'
+                  ? 'bg-brand/10 text-brand border-brand/20'
+                  : 'bg-surface text-text border-border hover:bg-surface/50'
               ]"
             >
               <div class="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                </svg>
+                <div class="i-mdi-view-grid h-4 w-4 mr-1.5" />
                 Board View
               </div>
             </button>
@@ -207,7 +236,7 @@ onMounted(() => {
         <div v-if="currentView === 'list'" class="h-full">
           <TaskListView 
             :tasks="allTasks" 
-            :list-name="currentList?.name || 'All Tasks'"
+            :list-name="currentListName"
             @edit="openEditModal"
             @delete="deleteTask"
             @update:task="updateTask"
@@ -217,11 +246,9 @@ onMounted(() => {
           <div class="mt-4 flex justify-end">
             <button 
               @click="openNewTaskModal('todo')"
-              class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-brand hover:bg-brand/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand/50"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
+              <div class="i-mdi-plus -ml-1 mr-2 h-5 w-5" />
               Add Task
             </button>
           </div>
@@ -322,13 +349,21 @@ onMounted(() => {
       </div>
     </div>
     <!-- Task Modal -->
-    <div v-if="showModal">
-      <TaskModal 
-        :task="currentTask"
-        :status="currentStatus"
-        @save="saveTask"
-        @close="closeModal"
-      />
+    <div v-if="showModal" class="fixed inset-0 z-50 overflow-y-auto">
+      <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="closeModal">
+          <div class="absolute inset-0 bg-text/50"></div>
+        </div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block align-bottom bg-surface rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+          <TaskModal 
+            :task="currentTask"
+            :status="currentStatus"
+            @save="saveTask"
+            @close="closeModal"
+          />
+        </div>
+      </div>
     </div>
-  </div>
+    </div>
 </template>

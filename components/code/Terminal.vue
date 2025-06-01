@@ -1,23 +1,22 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
 
-const props = defineProps({
-  content: {
-    type: String,
-    default: ''
-  },
-  autoScroll: {
-    type: Boolean,
-    default: true
-  },
-  theme: {
-    type: String,
-    default: 'dark',
-    validator: (value: string) => ['light', 'dark'].includes(value)
-  }
+type TerminalTheme = 'light' | 'dark';
+
+interface TerminalProps {
+  content?: string;
+  autoScroll?: boolean;
+  theme?: TerminalTheme;
+}
+
+const props = withDefaults(defineProps<TerminalProps>(), {
+  content: () => '',
+  autoScroll: () => true,
+  theme: () => 'dark' as TerminalTheme
 });
 
-const emit = defineEmits(['execute']);
+const emit = defineEmits<(e: 'execute', command: string) => void>();
+
 const terminalContent = ref<string[]>(['$ Ready']);
 const commandInput = ref('');
 const terminalRef = ref<HTMLDivElement | null>(null);
@@ -90,38 +89,16 @@ defineExpose({
 </script>
 
 <template>
-  <div 
-    class="h-full flex flex-col rounded-b-lg overflow-hidden shadow-lg"
-    :class="{
-      'bg-gray-900 text-gray-100': theme === 'dark',
-      'bg-gray-50 text-gray-900': theme === 'light'
-    }"
-  >
+  <div class="h-full flex flex-col rounded-b-lg overflow-hidden shadow-lg bg-surface-1 text-text">
     <!-- Header -->
-    <div 
-      class="flex items-center justify-between px-4 py-2 border-b" 
-      :class="theme === 'dark' ? 'border-gray-700' : 'border-gray-200'"
-    >
+    <div class="flex items-center justify-between px-4 py-2 border-b border-border">
       <div class="text-sm font-mono font-medium">Terminal</div>
       <div class="flex space-x-2">
         <button 
-          class="p-1 rounded hover:bg-opacity-20 hover:bg-white transition-colors"
+          class="p-1 rounded hover:bg-surface-3 transition-colors"
           aria-label="Menu"
         >
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            class="h-4 w-4" 
-            fill="none" 
-            viewBox="0 0 24 24" 
-            stroke="currentColor"
-          >
-            <path 
-              stroke-linecap="round" 
-              stroke-linejoin="round" 
-              stroke-width="2" 
-              d="M4 6h16M4 12h16M4 18h16" 
-            />
-          </svg>
+          <div class="i-mdi-menu h-4 w-4"></div>
         </button>
       </div>
     </div>
@@ -129,11 +106,7 @@ defineExpose({
     <!-- Terminal Content -->
     <div 
       ref="terminalRef"
-      class="flex-1 p-4 font-mono text-sm overflow-y-auto"
-      :class="{
-        'bg-gray-900': theme === 'dark',
-        'bg-gray-50': theme === 'light'
-      }"
+      class="flex-1 p-4 font-mono text-sm overflow-y-auto scrollbar scrollbar-rounded scrollbar-thumb-surface-3 hover:scrollbar-thumb-surface-4 scrollbar-track-transparent scrollbar-w-1.5 scrollbar-h-1.5 bg-surface-1"
     >
       <div 
         v-for="(line, index) in terminalContent" 
@@ -142,7 +115,7 @@ defineExpose({
       >
         <span 
           v-if="line.startsWith('$')" 
-          class="text-green-400 font-semibold"
+          class="text-brand font-semibold"
         >
           {{ line }}
         </span>
@@ -151,21 +124,14 @@ defineExpose({
     </div>
     
     <!-- Command Input -->
-    <div 
-      class="p-2 border-t" 
-      :class="theme === 'dark' ? 'border-gray-700' : 'border-gray-200'"
-    >
+    <div class="p-2 border-t border-border">
       <div class="flex items-center">
-        <span class="text-green-400 font-bold mr-2">$</span>
+        <span class="text-green-500 font-bold mr-2">$</span>
         <input
           v-model="commandInput"
           @keydown="handleKeyDown"
           type="text"
-          class="flex-1 bg-transparent outline-none font-mono text-sm"
-          :class="{
-            'text-gray-100 placeholder-gray-500': theme === 'dark',
-            'text-gray-900 placeholder-gray-400': theme === 'light'
-          }"
+          class="flex-1 bg-transparent outline-none font-mono text-sm text-text placeholder-text/50"
           :placeholder="terminalContent.length <= 1 ? 'Enter command...' : ''"
           spellcheck="false"
           autocomplete="off"
@@ -175,21 +141,3 @@ defineExpose({
     </div>
   </div>
 </template>
-
-<style>
-.scrollbar-terminal::-webkit-scrollbar {
-  @apply w-1.5 h-1.5;
-}
-
-.scrollbar-terminal::-webkit-scrollbar-track {
-  @apply bg-transparent;
-}
-
-.scrollbar-terminal::-webkit-scrollbar-thumb {
-  @apply bg-gray-500 rounded;
-}
-
-.scrollbar-terminal::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-400;
-}
-</style>

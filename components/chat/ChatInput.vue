@@ -150,9 +150,7 @@ defineExpose({
             class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 transition-colors"
             aria-label="Remove file"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <div class="i-mdi-close h-3 w-3" />
           </button>
         </div>
       </div>
@@ -194,9 +192,7 @@ defineExpose({
               title="Attach file"
               aria-label="Attach file"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-              </svg>
+              <div class="i-mdi-paperclip h-5 w-5" />
             </button>
             <input 
               ref="fileInput"
@@ -237,9 +233,7 @@ defineExpose({
               aria-label="Send message"
             >
               <slot name="send-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-                </svg>
+                <div class="i-mdi-send h-4 w-4" />
               </slot>
             </button>
           </div>

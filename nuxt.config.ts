@@ -1,12 +1,16 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { defineNuxtConfig } from 'nuxt/config';
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-05-21',
   nitro: {
-    preset: 'bun'
+    preset: 'cloudflare_pages',
+     experimental: {
+      openAPI: true
+    }
   },
   devtools: { enabled: false },
-  css: ["@unocss/reset/tailwind.css", "~/assets/index.css"],
+  css: ["@unocss/reset/tailwind.css", "@unocss/reset/normalize.css", "~/assets/index.css", "~/assets/content.css"],
   app: {
     head: {
       charset: "utf-8",
@@ -16,12 +20,20 @@ export default defineNuxtConfig({
       link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
     },
   },
+  
+  hub: {
+    ai: true
+  },
   modules: [
     "@unocss/nuxt",
     "@vueuse/nuxt",
     "@pinia/nuxt",
     "@nuxtjs/mdc",
+    //"@nuxt/content",
+    //'nuxt-content-twoslash',
+    "@nuxthub/core",
   ],
+
   
   mdc: {
     highlight: {
@@ -42,8 +54,8 @@ export default defineNuxtConfig({
     }
   },
   typescript: {
-    // strict: true,
-    // typeCheck: true,
+    strict: true,
+    typeCheck: true,
   },
   runtimeConfig: {
     openaiApiKey: process.env.OPENAI_API_KEY,
@@ -57,4 +69,4 @@ export default defineNuxtConfig({
       workosApiKey: process.env.WORKOS_API_KEY,
     },
   },
-});
+})

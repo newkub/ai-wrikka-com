@@ -1,13 +1,13 @@
 <template>
-  <div class="flex flex-col min-h-screen bg-gray-50">
+  <div class="flex flex-col min-h-screen bg-background">
     <!-- Navbar Component -->
     <Nav />
     
     <!-- Docs Header -->
-    <header class="bg-white shadow-sm sticky top-0 z-40 py-4 border-b border-gray-200">
+    <header class="bg-surface sticky top-0 z-40 py-4 border-b border-border shadow-sm">
       <div class="w-full max-w-7xl mx-auto px-6">
         <div class="flex justify-between items-center">
-          <NuxtLink to="/docs" class="text-gray-900 font-bold text-2xl transition-colors hover:text-blue-500">
+          <NuxtLink to="/docs" class="text-foreground font-bold text-2xl transition-colors hover:text-primary">
             <h1>Documentation</h1>
           </NuxtLink>
           <div class="flex items-center gap-4">
@@ -15,22 +15,9 @@
               <input
                 type="text"
                 placeholder="Search docs..."
-                class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-64"
+                class="pl-10 pr-4 py-2 border border-input rounded-lg text-sm focus:ring-2 focus:ring-ring focus:border-ring w-64 bg-background text-foreground"
               >
-              <svg
-                class="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                ></path>
-              </svg>
+              <div class="i-mdi-magnify w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
             </div>
           </div>
         </div>
@@ -41,28 +28,14 @@
     <!-- Main Content -->
     <div class="flex flex-1 max-w-7xl w-full mx-auto px-6 py-8">
       <!-- Sidebar -->
-      <aside class="w-64 flex-shrink-0 pr-8 border-r border-gray-200 h-[calc(100vh-120px)] sticky top-20 overflow-y-auto">
-        <nav class="space-y-1">
-          <div v-for="(section, sectionKey) in navigation" :key="sectionKey" class="mb-6">
-            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-              {{ section.title }}
-            </h3>
-            <ul class="space-y-2">
-              <li v-for="item in section.items" :key="item.href">
-                <NuxtLink
-                  :to="item.href"
-                  class="flex items-center px-3 py-2 text-sm font-medium rounded-md"
-                  :class="{
-                    'bg-blue-50 text-blue-600': isActive(item.href),
-                    'text-gray-700 hover:bg-gray-100': !isActive(item.href)
-                  }"
-                >
-                  {{ item.name }}
-                </NuxtLink>
-              </li>
-            </ul>
+      <aside class="w-64 flex-shrink-0 pr-8 border-r border-border h-[calc(100vh-120px)] sticky top-20 overflow-y-auto">
+        <DocsList v-if="navigation" :navigation="navigation" />
+        <div v-else class="animate-pulse space-y-4">
+          <div v-for="i in 3" :key="i" class="space-y-2">
+            <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+            <div v-for="j in 3" :key="j" class="ml-4 h-3 bg-gray-100 rounded w-1/2"></div>
           </div>
-        </nav>
+        </div>
       </aside>
 
       <!-- Content -->
@@ -73,28 +46,8 @@
       </main>
 
       <!-- Table of Contents -->
-      <aside class="hidden xl:block w-64 flex-shrink-0 pl-8 border-l border-gray-200">
-        <div class="sticky top-24">
-          <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">
-            On this page
-          </h3>
-          <nav class="space-y-2">
-            <a
-              v-for="heading in tableOfContents"
-              :key="heading.id"
-              :href="`#${heading.id}`"
-              class="block text-sm text-gray-600 hover:text-blue-600 transition-colors"
-              :class="{
-                'pl-4': heading.level === 3,
-                'pl-8': heading.level === 4,
-                'font-medium text-blue-600': isActiveHeading(heading.id)
-              }"
-              @click.prevent="scrollToHeading(`#${heading.id}`)"
-            >
-              {{ heading.text }}
-            </a>
-          </nav>
-        </div>
+      <aside class="hidden xl:block w-64 flex-shrink-0 pl-8 border-l border-border">
+        <DocsToc :items="tableOfContents" />
       </aside>
     </div>
 
@@ -117,69 +70,43 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import DocsList from '~/components/docs/List.vue';
+import DocsToc from '~/components/docs/Toc.vue';
+import type { NavigationItem } from '~/types/content';
 
 const route = useRoute();
-
-// Navigation items
-const navigation = [
-  {
-    title: 'Getting Started',
-    items: [
-      { name: 'Introduction', href: '/docs/introduction' },
-      { name: 'Installation', href: '/docs/installation' },
-      { name: 'Configuration', href: '/docs/configuration' },
-    ],
-  },
-  {
-    title: 'Core Concepts',
-    items: [
-      { name: 'Authentication', href: '/docs/authentication' },
-      { name: 'API Reference', href: '/docs/api-reference' },
-      { name: 'Examples', href: '/docs/examples' },
-    ],
-  },
-  {
-    title: 'Guides',
-    items: [
-      { name: 'Deployment', href: '/docs/deployment' },
-      { name: 'Troubleshooting', href: '/docs/troubleshooting' },
-      { name: 'FAQ', href: '/docs/faq' },
-    ],
-  },
-];
 
 // Table of contents state
 const tableOfContents = ref<Array<{ id: string; text: string; level: number }>>([]);
 
-// Check if a navigation item is active
-const isActive = (path: string) => {
-  return route.path.startsWith(path);
-};
-
-// Check if a heading is currently in view
-const isActiveHeading = (id: string) => {
-  if (typeof window === 'undefined') return false;
-  const element = document.getElementById(id);
-  if (!element) return false;
-  
-  const rect = element.getBoundingClientRect();
-  return rect.top >= 0 && rect.top <= 100;
-};
-
-// Scroll to heading with offset for fixed header
-const scrollToHeading = (selector: string) => {
-  const element = document.querySelector(selector);
-  if (element) {
-    const headerOffset = 100;
-    const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-    const offsetPosition = elementPosition - headerOffset;
-
-    window.scrollTo({
-      top: offsetPosition,
-      behavior: 'smooth',
-    });
-  }
-};
+// Fetch navigation from content directory
+const { data: navigation } = await useAsyncData<NavigationItem[]>('navigation', async () => {
+  return Promise.resolve([
+    {
+      title: 'Getting Started',
+      items: [
+        { name: 'Introduction', href: '/docs/intro' },
+        { name: 'Installation', href: '/docs/installation' },
+        { name: 'Configuration', href: '/docs/configuration' },
+      ],
+    },
+    {
+      title: 'Authentication',
+      items: [
+        { name: 'Overview', href: '/docs/auth' },
+      ],
+    },
+    {
+      title: 'Guides',
+      items: [
+        { name: 'Best Practices', href: '/docs/best-practices' },
+        { name: 'Endpoints', href: '/docs/endpoints' },
+        { name: 'Examples', href: '/docs/examples' },
+        { name: 'Troubleshooting', href: '/docs/troubleshooting' },
+      ],
+    },
+  ]);
+});
 
 // Generate table of contents from headings
 const generateTableOfContents = () => {
@@ -226,18 +153,3 @@ watch(
   }
 );
 </script>
-
-<style scoped>
-.prose {
-  max-width: 100%;
-}
-
-/* Style for active navigation item */
-.router-link-active {
-  @apply bg-blue-50 text-blue-600;
-}
-
-/* Smooth scrolling for anchor links */nhtml {
-  scroll-behavior: smooth;
-}
-</style>

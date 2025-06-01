@@ -51,25 +51,23 @@ const language = ref('en');
 
 
 <template>
-  <div class="flex flex-col h-screen bg-gray-50">
+  <div class="flex flex-col h-screen bg-background">
     <Nav />
     <div class="flex flex-1 overflow-hidden">
       <!-- Sidebar - Chat History -->
-      <div class="w-64 bg-white border-r border-gray-200 flex flex-col">
+      <div class="w-64 bg-surface border-r border-border flex flex-col">
         <!-- Logo -->
-        <div class="p-4 border-b border-gray-200">
-          <h1 class="text-xl font-semibold text-gray-800">Chat App</h1>
+        <div class="p-4 border-b border-border">
+          <h1 class="text-xl font-semibold text-foreground">Chat App</h1>
         </div>
         
         <!-- New Chat Button -->
         <div class="p-4">
           <button 
             @click="newChat"
-            class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center space-x-2"
+            class="w-full bg-primary text-primary-foreground py-2 px-4 rounded-lg hover:bg-primary/90 transition-colors flex items-center justify-center space-x-2"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
+            <div class="i-mdi-plus h-5 w-5"></div>
             <span>New Chat</span>
           </button>
         </div>
@@ -77,19 +75,19 @@ const language = ref('en');
         <!-- Chat History -->
         <div class="flex-1 overflow-y-auto">
           <div class="px-4 py-2">
-            <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Recent Chats</h2>
+            <h2 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Recent Chats</h2>
             <ul class="space-y-1">
               <li 
                 v-for="chat in chatHistory" 
                 :key="chat.id"
                 @click="navigateToChat(chat.id)"
                 :class="[
-                  'px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-100',
-                  { 'bg-blue-50 text-blue-600': isActiveChat(chat.id) }
+                  'px-3 py-2 rounded-lg cursor-pointer hover:bg-accent',
+                  { 'bg-accent text-accent-foreground': isActiveChat(chat.id) }
                 ]"
               >
                 <div class="truncate">{{ chat.title || 'New Chat' }}</div>
-                <div class="text-xs text-gray-400">{{ formatDate(chat.updatedAt) }}</div>
+                <div class="text-xs text-muted-foreground">{{ formatDate(chat.updatedAt) }}</div>
               </li>
             </ul>
           </div>
@@ -102,9 +100,9 @@ const language = ref('en');
       </div>
       
       <!-- Settings Panel -->
-      <div class="w-64 bg-white border-l border-gray-200 flex flex-col">
-        <div class="p-4 border-b border-gray-200">
-          <h2 class="text-lg font-semibold text-gray-800">Settings</h2>
+      <div class="w-64 bg-surface border-l border-border flex flex-col">
+        <div class="p-4 border-b border-border">
+          <h2 class="text-lg font-semibold text-foreground">Settings</h2>
         </div>
         
         <div class="p-4 overflow-y-auto">

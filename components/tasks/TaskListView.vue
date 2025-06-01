@@ -2,27 +2,27 @@
   <div class="space-y-4">
     <!-- Task List Header -->
     <div class="flex items-center justify-between mb-4">
-      <h2 class="text-xl font-semibold text-gray-800">{{ listName || 'All Tasks' }}</h2>
-      <div class="text-sm text-gray-500">
+      <h2 class="text-xl font-semibold text-text">{{ listName || 'All Tasks' }}</h2>
+      <div class="text-sm text-text/60">
         {{ filteredTasks.length }} {{ filteredTasks.length === 1 ? 'task' : 'tasks' }}
       </div>
     </div>
 
     <!-- Task Table -->
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
+    <div class="bg-surface rounded-lg shadow overflow-hidden border border-border">
+      <table class="min-w-full divide-y divide-border">
+        <thead class="bg-surface">
           <tr>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-text/60 uppercase tracking-wider">
               Task
             </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-text/60 uppercase tracking-wider">
               Status
             </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-text/60 uppercase tracking-wider">
               Priority
             </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-text/60 uppercase tracking-wider">
               Due Date
             </th>
             <th scope="col" class="relative px-6 py-3">
@@ -30,67 +30,67 @@
             </th>
           </tr>
         </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
+        <tbody class="bg-surface divide-y divide-border">
           <tr 
             v-for="task in filteredTasks" 
             :key="task.id"
-            class="hover:bg-gray-50"
+            class="hover:bg-surface/50"
           >
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center">
                 <input 
                   type="checkbox" 
-                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  class="h-4 w-4 text-brand focus:ring-brand border-border rounded"
                   :checked="task.status === 'done'"
                   @change="toggleTaskStatus(task)"
                 >
                 <span 
-                  class="ml-3 text-sm font-medium text-gray-900"
-                  :class="{ 'line-through text-gray-400': task.status === 'done' }"
+                  class="ml-3 text-sm font-medium text-text"
+                  :class="{ 'line-through text-text/40': task.status === 'done' }"
                 >
                   {{ task.title }}
                 </span>
               </div>
-              <div class="ml-7 text-sm text-gray-500">
+              <div class="ml-7 text-sm text-text/60">
                 {{ task.description }}
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <span 
-                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                class="px-2 py-1 inline-flex text-xs leading-4 font-medium rounded-full"
                 :class="statusClasses[task.status]"
               >
                 {{ formatStatus(task.status) }}
               </span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            <td class="px-6 py-4 whitespace-nowrap">
               <span 
-                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                class="px-2 py-1 inline-flex text-xs leading-4 font-medium rounded-full"
                 :class="priorityClasses[task.priority || 'medium']"
               >
                 {{ task.priority || 'Medium' }}
               </span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-text/80">
               {{ formatDate(task.dueDate) }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
               <button 
                 @click="$emit('edit', task)"
-                class="text-blue-600 hover:text-blue-900 mr-4"
+                class="text-brand hover:text-brand/80 mr-4"
               >
                 Edit
               </button>
               <button 
                 @click="$emit('delete', task.id)"
-                class="text-red-600 hover:text-red-900"
+                class="text-alert hover:text-alert/80"
               >
                 Delete
               </button>
             </td>
           </tr>
           <tr v-if="filteredTasks.length === 0">
-            <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
+            <td colspan="5" class="px-6 py-4 text-center text-sm text-text/60">
               No tasks found. Create a new task to get started.
             </td>
           </tr>

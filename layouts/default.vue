@@ -4,7 +4,7 @@ import Nav from "~/components/Nav.vue";
 </script>
 
 <template>
-  <div class="h-screen w-full flex flex-col">
+  <div class="h-screen w-full flex flex-col bg-background">
     <!-- Navbar Component -->
     <Nav />
 

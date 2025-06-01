@@ -1,5 +1,6 @@
 export interface Task {
   id: string
+  listId: string
   title: string
   description: string
   status: 'todo' | 'inProgress' | 'review' | 'done'
@@ -11,8 +12,16 @@ export interface Task {
   updatedAt: string
 }
 
+export interface TaskList {
+  id: string
+  name: string
+  createdAt: string
+  updatedAt: string
+}
+
 export interface TaskState {
   tasks: Task[]
+  lists: TaskList[]
   loading: boolean
   error: string | null
 }

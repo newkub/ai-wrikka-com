@@ -60,10 +60,7 @@
         class="p-2 hover:bg-gray-700 rounded-md transition-colors"
         title="Select"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="m3 3 7.07 16.97 2.51-7.39 7.39-2.51L3 3z"></path>
-          <path d="m13 13 6 6"></path>
-        </svg>
+        <div class="i-mdi-cursor-default-outline w-6 h-6 text-white" />
       </button>
       
       <!-- Hand Tool -->
@@ -73,12 +70,7 @@
         class="p-2 hover:bg-gray-700 rounded-md transition-colors"
         title="Hand"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"></path>
-          <path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"></path>
-          <path d="M10 10.5V6.5a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"></path>
-          <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"></path>
-        </svg>
+        <div class="i-mdi-hand-back-right-outline w-6 h-6 text-white" />
       </button>
       
       <!-- Pen Tool -->
@@ -88,9 +80,7 @@
         class="p-2 hover:bg-gray-700 rounded-md transition-colors"
         title="Pen"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
-        </svg>
+        <div class="i-mdi-pen w-6 h-6 text-white" />
       </button>
       
       <!-- Eraser Tool -->
@@ -100,11 +90,7 @@
         class="p-2 hover:bg-gray-700 rounded-md transition-colors"
         title="Eraser"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"></path>
-          <path d="M22 21H7"></path>
-          <path d="m5 11 9 9"></path>
-        </svg>
+        <div class="i-mdi-eraser w-6 h-6 text-white" />
       </button>
       
       <!-- Line Tool -->
@@ -114,9 +100,7 @@
         class="p-2 hover:bg-gray-700 rounded-md transition-colors"
         title="Line"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 20L20 4"></path>
-        </svg>
+        <div class="i-mdi-vector-line w-6 h-6 text-white" />
       </button>
       
       <!-- Text Tool -->
@@ -126,10 +110,7 @@
         class="p-2 hover:bg-gray-700 rounded-md transition-colors"
         title="Text"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 20h16"></path>
-          <path d="M12 4v16"></path>
-        </svg>
+        <div class="i-mdi-format-text w-6 h-6 text-white" />
       </button>
       
       <!-- Shape Tool -->
@@ -140,9 +121,7 @@
           :class="{'bg-blue-500': shapeMenuOpen}"
           title="Shapes"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-          </svg>
+          <div class="i-mdi-shape w-6 h-6 text-white" />
         </button>
         <!-- Shape Dropdown Menu -->
         <div v-if="shapeMenuOpen" class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-48 bg-gray-700 rounded-md shadow-lg z-10">
@@ -161,11 +140,7 @@
         class="p-2 hover:bg-gray-700 rounded-md transition-colors"
         title="Image"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-          <circle cx="8.5" cy="8.5" r="1.5"></circle>
-          <polyline points="21 15 16 10 5 21"></polyline>
-        </svg>
+        <div class="i-mdi-image-outline w-6 h-6 text-white" />
       </button>
       
       <!-- Color Picker -->

@@ -40,8 +40,7 @@ export default defineConfig({
       error: 'var(--error)',
       success: 'var(--success)',
       surface: 'var(--surface)',
-      border: 'var(--border)',
-      muted: 'var(--muted)'
+      border: 'var(--border)'
     },
     spacing: {
       sm: 'var(--spacing-unit)',

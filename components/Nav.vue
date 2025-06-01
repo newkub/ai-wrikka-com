@@ -3,10 +3,85 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useColorMode } from '@vueuse/core';
+import CommandPalette from './CommandPalette.vue';
+import Settings from './Settings.vue';
+
+interface SearchItem {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  icon?: string;
+  content?: string;
+  href?: string;
+}
 
 const showSettings = ref(false);
 const showProfile = ref(false);
 const isDropdownOpen = ref(false);
+const showCommandPalette = ref(false);
+
+// Sample search items - replace with your actual data
+const searchItems: SearchItem[] = [
+  {
+    id: '1',
+    title: 'Chat',
+    description: 'Start a new chat conversation',
+    category: 'Chat',
+    icon: 'i-mdi-chat',
+    content: 'Start a new chat session to interact with the AI assistant.'
+  },
+  {
+    id: '2',
+    title: 'Notes',
+    description: 'View and manage your notes',
+    category: 'Notes',
+    icon: 'i-mdi-note',
+    content: 'Access your personal notes and create new ones.'
+  },
+  {
+    id: '3',
+    title: 'Whiteboard',
+    description: 'Create or open a whiteboard',
+    category: 'Whiteboard',
+    icon: 'i-mdi-monitor-dashboard',
+    content: 'Collaborative whiteboard for brainstorming and drawing.'
+  },
+  {
+    id: '4',
+    title: 'Settings',
+    description: 'Application settings and preferences',
+    category: 'System',
+    icon: 'i-mdi-cog',
+    content: 'Configure application settings and preferences.'
+  },
+  {
+    id: '5',
+    title: 'Documentation',
+    description: 'View application documentation',
+    category: 'Help',
+    icon: 'i-mdi-help-circle',
+    content: 'Access the application documentation and help resources.'
+  }
+];
+
+const openCommandPalette = (event: Event) => {
+  event.stopPropagation();
+  showCommandPalette.value = true;
+};
+
+const closeCommandPalette = () => {
+  showCommandPalette.value = false;
+};
+
+const handleCommandSelect = (item: SearchItem) => {
+  console.log('Selected item:', item);
+  // Handle navigation or action based on the selected item
+  if (item.href) {
+    navigateTo(item.href);
+  }
+  closeCommandPalette();
+};
 const mode = useColorMode({
   selector: 'html',
   attribute: 'class',
@@ -47,6 +122,15 @@ const openSettings = (event: Event) => {
   showSettings.value = true;
   showProfile.value = false;
   isDropdownOpen.value = false;
+  // Prevent body scroll when modal is open
+  document.body.style.overflow = 'hidden';
+};
+
+const closeModals = () => {
+  showSettings.value = false;
+  showProfile.value = false;
+  // Re-enable body scroll when modal is closed
+  document.body.style.overflow = '';
 };
 
 const openProfile = (event: Event) => {
@@ -54,11 +138,8 @@ const openProfile = (event: Event) => {
   showProfile.value = true;
   showSettings.value = false;
   isDropdownOpen.value = false;
-};
-
-const closeModals = () => {
-  showSettings.value = false;
-  showProfile.value = false;
+  // Prevent body scroll when modal is open
+  document.body.style.overflow = 'hidden';
 };
 
 const signOut = () => {
@@ -80,6 +161,7 @@ const navItems = [
   { name: 'Notes', href: '/notes' },
   { name: 'Docs', href: '/docs' },
   { name: 'Blog', href: '/blog' },
+  { name: 'Design System', href: '/design-system' },
 ];
 
 // Close profile dropdown when clicking outside
@@ -91,12 +173,29 @@ const onClickOutside = (event: MouseEvent) => {
   }
 };
 
+// Handle keyboard shortcuts
+const handleKeyDown = (e: KeyboardEvent) => {
+  // Check for Ctrl+K or Cmd+K (for Mac)
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault();
+    if (!showCommandPalette.value) {
+      openCommandPalette(e);
+    }
+  }
+  // Close with Escape key
+  if (e.key === 'Escape' && showCommandPalette.value) {
+    closeCommandPalette();
+  }
+};
+
 onMounted(() => {
   document.addEventListener('click', onClickOutside);
+  document.addEventListener('keydown', handleKeyDown);
 });
 
 onUnmounted(() => {
   document.removeEventListener('click', onClickOutside);
+  document.removeEventListener('keydown', handleKeyDown);
 });
 </script>
 
@@ -125,6 +224,15 @@ onUnmounted(() => {
 
         <!-- Right side -->
         <div class="flex items-center space-x-4">
+          <!-- Search Button -->
+          <button 
+            @click="openCommandPalette"
+            class="p-2 rounded-full text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+            title="Search"
+          >
+            <div class="i-mdi-magnify h-5 w-5" />
+          </button>
+
           <!-- Theme Toggle -->
           <button 
             @click="toggleTheme" 
@@ -174,39 +282,10 @@ onUnmounted(() => {
             </div>
 
             <!-- Settings Modal -->
-            <div v-if="showSettings" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" @click.self="closeModals">
-              <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full max-h-[80vh] overflow-y-auto">
-                <div class="p-6">
-                  <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">Settings</h3>
-                    <button @click="closeModals" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
-                      <span class="sr-only">Close</span>
-                      <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
-                  <div class="space-y-4">
-                    <div class="flex items-center justify-between">
-                      <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Dark Mode</span>
-                      <button 
-                        @click="toggleTheme" 
-                        type="button" 
-                        class="bg-gray-200 dark:bg-gray-600 relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                        :class="{ 'bg-indigo-600': isDark, 'bg-gray-200': !isDark }"
-                      >
-                        <span class="sr-only">Toggle dark mode</span>
-                        <span 
-                          class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
-                          :class="{ 'translate-x-5': isDark, 'translate-x-0': !isDark }"
-                        />
-                      </button>
-                    </div>
-                    <!-- Add more settings options here -->
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Settings 
+              v-model:isOpen="showSettings"
+              @close="closeModals"
+            />
 
             <!-- Profile Modal -->
             <div v-if="showProfile" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" @click.self="closeModals">
@@ -216,14 +295,12 @@ onUnmounted(() => {
                     <h3 class="text-lg font-medium text-gray-900 dark:text-white">Profile</h3>
                     <button @click="closeModals" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
                       <span class="sr-only">Close</span>
-                      <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
+                      <div class="i-mdi-close h-6 w-6" />
                     </button>
                   </div>
                   <div class="text-center">
                     <div class="mx-auto h-20 w-20 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-2xl font-bold text-gray-700 dark:text-white mb-4">
-                      U
+                      <div class="i-mdi-account-circle h-16 w-16 text-gray-700 dark:text-white" />
                     </div>
                     <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-1">User Name</h4>
                     <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">user@example.com</p>
@@ -244,5 +321,13 @@ onUnmounted(() => {
         </div>
       </div>
     </div>
+
+    <!-- Command Palette -->
+    <CommandPalette 
+      v-model:isOpen="showCommandPalette"
+      :items="searchItems"
+      @close="closeCommandPalette"
+      @select="handleCommandSelect"
+    />
   </nav>
 </template>
