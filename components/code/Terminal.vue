@@ -1,94 +1,66 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
-
-type TerminalTheme = "light" | "dark";
+import { watch, onMounted } from 'vue';
+import { useTerminal, type TerminalLine, type TerminalLineType, type TerminalTheme } from '~/composables/useTerminal';
 
 interface TerminalProps {
-	content?: string;
-	autoScroll?: boolean;
-	theme?: TerminalTheme;
+  content?: string;
+  autoScroll?: boolean;
+  theme?: TerminalTheme;
+  lines?: TerminalLine[];
 }
 
 const props = withDefaults(defineProps<TerminalProps>(), {
-	content: () => "",
-	autoScroll: () => true,
-	theme: () => "dark" as TerminalTheme,
+  content: () => '',
+  autoScroll: () => true,
+  theme: () => 'dark' as TerminalTheme,
 });
 
-const emit = defineEmits<(e: "execute", command: string) => void>();
+const emit = defineEmits<{
+  (e: 'execute', command: string): void;
+  (e: 'output', output: string): void;
+}>();
 
-const terminalContent = ref<string[]>(["$ Ready"]);
-const commandInput = ref("");
-const terminalRef = ref<HTMLDivElement | null>(null);
+const {
+  terminalContent,
+  commandInput,
+  terminalRef,
+  autoScroll,
+  executeCommand,
+  addOutput,
+  clearTerminal,
+  handleKeyDown
+} = useTerminal();
 
-const executeCommand = () => {
-	if (!commandInput.value.trim()) return;
-
-	const command = commandInput.value.trim();
-	terminalContent.value.push(`$ ${command}`);
-
-	// Emit the command to parent component
-	emit("execute", command);
-
-	// Clear input
-	commandInput.value = "";
-
-	// Auto-scroll to bottom
-	if (props.autoScroll) {
-		setTimeout(() => {
-			if (terminalRef.value) {
-				terminalRef.value.scrollTop = terminalRef.value.scrollHeight;
-			}
-		}, 0);
-	}
-};
-
-const handleKeyDown = (event: KeyboardEvent) => {
-	if (event.key === "Enter" && !event.shiftKey) {
-		event.preventDefault();
-		executeCommand();
-	}
+// Handle command execution
+const handleCommand = (command: string) => {
+  const executedCommand = executeCommand(command);
+  if (executedCommand) {
+    emit('execute', executedCommand);
+  }
 };
 
 // Watch for content changes from parent
 watch(
-	() => props.content,
-	(newContent) => {
-		if (newContent) {
-			terminalContent.value.push(newContent);
-
-			if (props.autoScroll && terminalRef.value) {
-				setTimeout(() => {
-					if (terminalRef.value) {
-						terminalRef.value.scrollTop = terminalRef.value.scrollHeight;
-					}
-				}, 0);
-			}
-		}
-	},
-	{ immediate: true },
+  () => props.content,
+  (newContent) => {
+    if (newContent) {
+      addOutput(newContent, 'info');
+    }
+  },
+  { immediate: true }
 );
 
-// Expose methods if needed
-const clearTerminal = () => {
-	terminalContent.value = ["$ Terminal cleared"];
-};
-
-const addLine = (line: string) => {
-	terminalContent.value.push(line);
-
-	if (props.autoScroll && terminalRef.value) {
-		setTimeout(() => {
-			if (terminalRef.value) {
-				terminalRef.value.scrollTop = terminalRef.value.scrollHeight;
-			}
-		}, 0);
-	}
+// Handle keydown events
+const onKeyDown = (event: KeyboardEvent) => {
+  const command = handleKeyDown(event);
+  if (command) {
+    handleCommand(command);
+  }
 };
 
 defineExpose({
-	clearTerminal,
-	addLine,
+  clearTerminal,
+  addLine: (text: string) => addOutput(text, 'info')
 });
 </script>
 
@@ -98,6 +70,14 @@ defineExpose({
     <div class="flex items-center justify-between px-4 py-2 border-b border-border">
       <div class="text-sm font-mono font-medium">Terminal</div>
       <div class="flex space-x-2">
+        <button 
+          @click="clearTerminal"
+          class="p-1 rounded hover:bg-surface-3 transition-colors"
+          aria-label="Clear terminal"
+          title="Clear terminal"
+        >
+          <div class="i-mdi-notification-clear-all h-4 w-4"></div>
+        </button>
         <button 
           class="p-1 rounded hover:bg-surface-3 transition-colors"
           aria-label="Menu"
@@ -116,24 +96,30 @@ defineExpose({
         v-for="(line, index) in terminalContent" 
         :key="index" 
         class="whitespace-pre-wrap break-words font-mono text-sm leading-relaxed"
+        :class="{
+          'text-brand font-semibold': line.type === 'command',
+          'text-green-500': line.type === 'success',
+          'text-red-500': line.type === 'error',
+          'text-yellow-500': line.type === 'warning',
+          'text-blue-500': line.type === 'info',
+          'text-foreground': line.type !== 'command' && 
+                           line.type !== 'success' && 
+                           line.type !== 'error' && 
+                           line.type !== 'warning' && 
+                           line.type !== 'info'
+        }"
       >
-        <span 
-          v-if="line.startsWith('$')" 
-          class="text-brand font-semibold"
-        >
-          {{ line }}
-        </span>
-        <template v-else>{{ line }}</template>
+        {{ line.text }}
       </div>
     </div>
     
     <!-- Command Input -->
     <div class="p-2 border-t border-border">
       <div class="flex items-center">
-        <span class="text-green-500 font-bold mr-2">$</span>
+        <span class="text-brand font-bold mr-2">$</span>
         <input
           v-model="commandInput"
-          @keydown="handleKeyDown"
+          @keydown="onKeyDown"
           type="text"
           class="flex-1 bg-transparent outline-none font-mono text-sm text-text placeholder-text/50"
           :placeholder="terminalContent.length <= 1 ? 'Enter command...' : ''"
