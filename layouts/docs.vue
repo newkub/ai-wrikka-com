@@ -55,7 +55,7 @@
     <footer class="bg-surface py-6 border-t border-border mt-auto">
       <div class="max-w-7xl mx-auto px-6">
         <div class="flex justify-between items-center text-muted-foreground text-sm">
-          <p>© {{ new Date().getFullYear() }} Documentation. All rights reserved.</p>
+          <p> 2023 Documentation. All rights reserved.</p>
           <div class="flex space-x-4">
             <a href="#" class="hover:text-foreground">Terms</a>
             <a href="#" class="hover:text-foreground">Privacy</a>
@@ -70,8 +70,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import DocsList from "~/components/docs/List.vue";
-import DocsToc from "~/components/docs/Toc.vue";
+import DocsList from "~/components/List.vue";
+import DocsToc from "~/components/Toc.vue";
 import type { NavigationItem } from "~/types/content";
 
 const route = useRoute();
