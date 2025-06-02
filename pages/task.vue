@@ -4,6 +4,10 @@ import { useTaskStore } from "~/stores/task";
 import type { Task, TaskList } from "~/types/task";
 type Status = "todo" | "inProgress" | "review" | "done";
 
+definePageMeta({
+	layout: "default",
+});
+
 type ViewMode = "list" | "board";
 
 // Components

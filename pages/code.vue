@@ -1,9 +1,12 @@
-
-
 <script setup lang="ts">
 import { ref } from "vue";
 import Terminal from "~/components/code/Terminal.vue";
 import Dependencies from "~/components/code/Dependencies.vue";
+import Browser from "~/components/code/Browser.vue";
+
+definePageMeta({
+	layout: "fullscreen",
+});
 
 // Type for the terminal component
 type TerminalComponent = {
@@ -48,6 +51,7 @@ const editorContent = ref(mainTsxContent);
 // Bottom Panel Tabs
 const bottomTabs = ref([
 	{ id: "terminal", label: "Terminal" },
+	{ id: "browser", label: "Browser" },
 	{ id: "dependencies", label: "Dependencies" },
 ]);
 
@@ -235,7 +239,6 @@ const installDependency = (options: {
                   class="h-full"
                 />
               </div>
-
 
               <!-- Browser -->
               <div v-else-if="activeTab === 'browser'" class="h-full">

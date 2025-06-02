@@ -1,55 +1,55 @@
 <script setup lang="ts">
-import { ref, computed, type Ref } from 'vue';
-import Dropdown from '~/components/Dropdown.vue';
-import Button from '~/components/Button.vue';
-import ButtonFileUpload from '~/components/chat/ButtonFileUpload.vue';
+import { ref, computed, type Ref } from "vue";
+import Dropdown from "~/components/Dropdown.vue";
+import Button from "~/components/Button.vue";
+import ButtonFileUpload from "~/components/chat/ButtonFileUpload.vue";
 
-type TabType = 'computer' | 'url';
+type TabType = "computer" | "url";
 
 interface FileWithPreview extends File {
-  preview: string;
+	preview: string;
 }
 
 interface Model {
-  id: string;
-  name: string;
-  icon: string;
+	id: string;
+	name: string;
+	icon: string;
 }
 
 interface Mode {
-  id: string;
-  name: string;
-  icon: string;
+	id: string;
+	name: string;
+	icon: string;
 }
 
 const defaultModels: Model[] = [
-  { id: "gpt-4", name: "GPT-4", icon: "i-mdi-robot-outline" },
-  { id: "gpt-3.5", name: "GPT-3.5", icon: "i-mdi-robot" },
-  { id: "claude-2", name: "Claude 2", icon: "i-mdi-account-circle-outline" },
+	{ id: "gpt-4", name: "GPT-4", icon: "i-mdi-robot-outline" },
+	{ id: "gpt-3.5", name: "GPT-3.5", icon: "i-mdi-robot" },
+	{ id: "claude-2", name: "Claude 2", icon: "i-mdi-account-circle-outline" },
 ];
 
 const defaultModes: Mode[] = [
-  { id: "think", name: "Think", icon: "i-mdi-brain" },
-  { id: "search", name: "Search", icon: "i-mdi-magnify" },
+	{ id: "think", name: "Think", icon: "i-mdi-brain" },
+	{ id: "search", name: "Search", icon: "i-mdi-magnify" },
 ];
 
 interface ChatInputProps {
-  availableModels?: Model[];
-  availableModes?: Mode[];
-  selectedModel: string;
-  selectedMode: string;
-  placeholder?: string;
-  rows?: number;
-  maxLength?: number;
-  showCharacterCount?: boolean;
-  showHelperText?: boolean;
+	availableModels?: Model[];
+	availableModes?: Mode[];
+	selectedModel: string;
+	selectedMode: string;
+	placeholder?: string;
+	rows?: number;
+	maxLength?: number;
+	showCharacterCount?: boolean;
+	showHelperText?: boolean;
 }
 
 interface ChatInputEmits {
-  (e: 'update:selectedModel', value: string): void;
-  (e: 'update:selectedMode', value: string): void;
-  (e: 'send', payload: { text: string; files: FileWithPreview[] }): void;
-  (e: 'file-select', files: File[]): void;
+	(e: "update:selectedModel", value: string): void;
+	(e: "update:selectedMode", value: string): void;
+	(e: "send", payload: { text: string; files: FileWithPreview[] }): void;
+	(e: "file-select", files: File[]): void;
 }
 
 const activeTab = ref("computer");
@@ -78,15 +78,15 @@ const emit = defineEmits([
 ]);
 
 const files = ref<FileWithPreview[]>([]);
-const inputValue = ref('');
+const inputValue = ref("");
 const fileInput = ref<HTMLInputElement | null>(null);
 const messageInput = ref<HTMLTextAreaElement | null>(null);
 
 // Auto-resize textarea
 const autoResize = (event: Event) => {
-  const textarea = event.target as HTMLTextAreaElement;
-  textarea.style.height = 'auto';
-  textarea.style.height = `${Math.min(textarea.scrollHeight, 128)}px`;
+	const textarea = event.target as HTMLTextAreaElement;
+	textarea.style.height = "auto";
+	textarea.style.height = `${Math.min(textarea.scrollHeight, 128)}px`;
 };
 
 const canSend = computed(() => {
@@ -156,8 +156,8 @@ const handleSend = () => {
 };
 
 const handleFileUpload = (files: File[]) => {
-  // Handle the uploaded files here
-  console.log('Files uploaded:', files)
+	// Handle the uploaded files here
+	console.log("Files uploaded:", files);
 };
 
 // Expose methods if needed

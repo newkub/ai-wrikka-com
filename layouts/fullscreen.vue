@@ -3,9 +3,9 @@ import Nav from "~/components/Nav.vue";
 </script>
 
 <template>
-  <div class="flex flex-col min-h-screen">
+  <div class="flex flex-col h-screen overflow-hidden">
     <Nav />
-    <main class="flex-1">
+    <main class="flex-1 overflow-hidden">
       <slot />
     </main>
   </div>

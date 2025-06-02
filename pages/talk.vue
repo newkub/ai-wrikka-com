@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted } from "vue";
+
+definePageMeta({
+	layout: "fullscreen",
+});
 
 // AI Model State
-const selectedModel = ref('gpt-4');
+const selectedModel = ref("gpt-4");
 const isRecording = ref(false);
 const isMuted = ref(false);
 const isCameraOn = ref(true);
@@ -10,14 +14,19 @@ const isScreenSharing = ref(false);
 
 // Messages
 const messages = ref([
-  { id: 1, sender: 'ai', text: 'สวัสดีครับ! มีอะไรให้ช่วยไหมครับ?', timestamp: new Date() },
+	{
+		id: 1,
+		sender: "ai",
+		text: "สวัสดีครับ! มีอะไรให้ช่วยไหมครับ?",
+		timestamp: new Date(),
+	},
 ]);
 
 // Available AI Models
 const aiModels = [
-  { id: 'gpt-4', name: 'GPT-4', icon: 'i-mdi-robot-outline' },
-  { id: 'gpt-3.5', name: 'GPT-3.5', icon: 'i-mdi-robot' },
-  { id: 'claude', name: 'Claude', icon: 'i-mdi-account-circle-outline' },
+	{ id: "gpt-4", name: "GPT-4", icon: "i-mdi-robot-outline" },
+	{ id: "gpt-3.5", name: "GPT-3.5", icon: "i-mdi-robot" },
+	{ id: "claude", name: "Claude", icon: "i-mdi-account-circle-outline" },
 ];
 
 // Video Refs
@@ -26,124 +35,124 @@ let stream: MediaStream | null = null;
 
 // Initialize Camera
 const initCamera = async () => {
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({ 
-      video: true, 
-      audio: true 
-    });
-    if (videoRef.value) {
-      videoRef.value.srcObject = stream;
-    }
-  } catch (err) {
-    console.error('Error accessing camera:', err);
-  }
+	try {
+		stream = await navigator.mediaDevices.getUserMedia({
+			video: true,
+			audio: true,
+		});
+		if (videoRef.value) {
+			videoRef.value.srcObject = stream;
+		}
+	} catch (err) {
+		console.error("Error accessing camera:", err);
+	}
 };
 
 // Toggle Camera
 const toggleCamera = () => {
-  if (stream) {
-    const videoTrack = stream.getVideoTracks()[0];
-    if (videoTrack) {
-      videoTrack.enabled = !videoTrack.enabled;
-      isCameraOn.value = videoTrack.enabled;
-    }
-  }
+	if (stream) {
+		const videoTrack = stream.getVideoTracks()[0];
+		if (videoTrack) {
+			videoTrack.enabled = !videoTrack.enabled;
+			isCameraOn.value = videoTrack.enabled;
+		}
+	}
 };
 
 // Toggle Microphone
 const toggleMicrophone = () => {
-  if (stream) {
-    const audioTrack = stream.getAudioTracks()[0];
-    if (audioTrack) {
-      audioTrack.enabled = !audioTrack.enabled;
-      isMuted.value = !audioTrack.enabled;
-    }
-  }
+	if (stream) {
+		const audioTrack = stream.getAudioTracks()[0];
+		if (audioTrack) {
+			audioTrack.enabled = !audioTrack.enabled;
+			isMuted.value = !audioTrack.enabled;
+		}
+	}
 };
 
 // Toggle Screen Sharing
 const toggleScreenShare = async () => {
-  try {
-    if (!isScreenSharing.value) {
-      const screenStream = await navigator.mediaDevices.getDisplayMedia({ 
-        video: true,
-        audio: true 
-      });
-      
-      if (stream) {
-        // Stop existing tracks
-        for (const track of stream.getTracks()) {
-          track.stop();
-        }
-      }
-      
-      stream = screenStream;
-      if (videoRef.value) {
-        videoRef.value.srcObject = stream;
-      }
-      
-      // Handle when screen sharing is stopped
-      screenStream.getVideoTracks()[0].onended = () => {
-        isScreenSharing.value = false;
-        initCamera();
-      };
-      
-      isScreenSharing.value = true;
-    } else {
-      if (stream) {
-        for (const track of stream.getTracks()) {
-          track.stop();
-        }
-        initCamera();
-        isScreenSharing.value = false;
-      }
-    }
-  } catch (err) {
-    console.error('Error sharing screen:', err);
-  }
+	try {
+		if (!isScreenSharing.value) {
+			const screenStream = await navigator.mediaDevices.getDisplayMedia({
+				video: true,
+				audio: true,
+			});
+
+			if (stream) {
+				// Stop existing tracks
+				for (const track of stream.getTracks()) {
+					track.stop();
+				}
+			}
+
+			stream = screenStream;
+			if (videoRef.value) {
+				videoRef.value.srcObject = stream;
+			}
+
+			// Handle when screen sharing is stopped
+			screenStream.getVideoTracks()[0].onended = () => {
+				isScreenSharing.value = false;
+				initCamera();
+			};
+
+			isScreenSharing.value = true;
+		} else {
+			if (stream) {
+				for (const track of stream.getTracks()) {
+					track.stop();
+				}
+				initCamera();
+				isScreenSharing.value = false;
+			}
+		}
+	} catch (err) {
+		console.error("Error sharing screen:", err);
+	}
 };
 
 // Start/Stop Recording
 const toggleRecording = () => {
-  isRecording.value = !isRecording.value;
-  // TODO: Implement recording functionality
+	isRecording.value = !isRecording.value;
+	// TODO: Implement recording functionality
 };
 
 // Send message to AI
 const sendMessage = (message: string) => {
-  if (!message.trim()) return;
-  
-  // Add user message
-  messages.value.push({
-    id: Date.now(),
-    sender: 'user',
-    text: message,
-    timestamp: new Date()
-  });
-  
-  // Simulate AI response
-  setTimeout(() => {
-    messages.value.push({
-      id: Date.now() + 1,
-      sender: 'ai',
-      text: 'ผมเข้าใจที่คุณพูดครับ. มีอะไรให้ช่วยอีกไหมครับ?',
-      timestamp: new Date()
-    });
-  }, 1000);
+	if (!message.trim()) return;
+
+	// Add user message
+	messages.value.push({
+		id: Date.now(),
+		sender: "user",
+		text: message,
+		timestamp: new Date(),
+	});
+
+	// Simulate AI response
+	setTimeout(() => {
+		messages.value.push({
+			id: Date.now() + 1,
+			sender: "ai",
+			text: "ผมเข้าใจที่คุณพูดครับ. มีอะไรให้ช่วยอีกไหมครับ?",
+			timestamp: new Date(),
+		});
+	}, 1000);
 };
 
 // Clean up on component unmount
 onUnmounted(() => {
-  if (stream) {
-    for (const track of stream.getTracks()) {
-      track.stop();
-    }
-  }
+	if (stream) {
+		for (const track of stream.getTracks()) {
+			track.stop();
+		}
+	}
 });
 
 // Initialize camera when component mounts
 onMounted(() => {
-  initCamera();
+	initCamera();
 });
 </script>
 

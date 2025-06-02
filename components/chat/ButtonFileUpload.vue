@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import ModalFileUpload from './ModalFileUpload.vue'
+import ModalFileUpload from "./ModalFileUpload.vue";
 
-const isOpen = ref<boolean>(false)
+const isOpen = ref<boolean>(false);
 const emit = defineEmits<{
-  upload: (files: File[]) => void
-}>()
+	upload: (files: File[]) => void;
+}>();
 
 function openModal() {
-  isOpen.value = true
+	isOpen.value = true;
 }
 
 function handleUpload(files: File[]) {
-  emit('upload', files)
-  isOpen.value = false
+	emit("upload", files);
+	isOpen.value = false;
 }
 </script>
 

@@ -1,51 +1,53 @@
-
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import ChatInput from '~/components/chat/ChatInput.vue';
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+
+definePageMeta({
+	layout: "chatpage",
+});
 
 interface Model {
-  id: string;
-  name: string;
+	id: string;
+	name: string;
 }
 
 interface Mode {
-  id: string;
-  name: string;
+	id: string;
+	name: string;
 }
 
 interface MediaItem {
-  id: string;
-  title: string;
+	id: string;
+	title: string;
 }
 
 const availableModels: Model[] = [
-  { id: 'gpt-4', name: 'GPT-4' },
-  { id: 'gpt-3.5', name: 'GPT-3.5' },
-  { id: 'claude-2', name: 'Claude 2' },
+	{ id: "gpt-4", name: "GPT-4" },
+	{ id: "gpt-3.5", name: "GPT-3.5" },
+	{ id: "claude-2", name: "Claude 2" },
 ];
 
 const availableModes: Mode[] = [
-  { id: 'chat', name: 'Chat' },
-  { id: 'code', name: 'Code' },
-  { id: 'creative', name: 'Creative' },
-  { id: 'precise', name: 'Precise' },
+	{ id: "chat", name: "Chat" },
+	{ id: "code", name: "Code" },
+	{ id: "creative", name: "Creative" },
+	{ id: "precise", name: "Precise" },
 ];
 
 // Sample media items
 const mediaItems = ref<MediaItem[]>([
-  { id: '1', title: 'Modern Architecture' },
-  { id: '2', title: 'Fashion Shoes' },
-  { id: '3', title: 'Gourmet Food' },
-  { id: '4', title: 'Travel Destination' },
-  { id: '5', title: 'Tech Gadgets' },
-  { id: '6', title: 'Home Decor' },
-  { id: '7', title: 'Abstract Art' },
-  { id: '8', title: 'Sports Action' },
-  { id: '9', title: 'Music Concert' },
-  { id: '10', title: 'Mountain Lake' },
-  { id: '11', title: 'City Skyline' },
-  { id: '12', title: 'Minimalist Design' },
+	{ id: "1", title: "Modern Architecture" },
+	{ id: "2", title: "Fashion Shoes" },
+	{ id: "3", title: "Gourmet Food" },
+	{ id: "4", title: "Travel Destination" },
+	{ id: "5", title: "Tech Gadgets" },
+	{ id: "6", title: "Home Decor" },
+	{ id: "7", title: "Abstract Art" },
+	{ id: "8", title: "Sports Action" },
+	{ id: "9", title: "Music Concert" },
+	{ id: "10", title: "Mountain Lake" },
+	{ id: "11", title: "City Skyline" },
+	{ id: "12", title: "Minimalist Design" },
 ]);
 
 const selectedModel = ref(availableModels[0].id);
@@ -53,53 +55,39 @@ const selectedMode = ref(availableModes[0].id);
 const isLoading = ref(false);
 const router = useRouter();
 
-async function startNewChat(message = '') {
-  const newChatId = Date.now().toString();
-  if (message) {
-    await router.push({
-      path: `/chat/${newChatId}`,
-      query: { initialMessage: message },
-    });
-  } else {
-    await router.push(`/chat/${newChatId}`);
-  }
+async function startNewChat(message = "") {
+	const newChatId = Date.now().toString();
+	if (message) {
+		await router.push({
+			path: `/chat/${newChatId}`,
+			query: { initialMessage: message },
+		});
+	} else {
+		await router.push(`/chat/${newChatId}`);
+	}
 }
 
 async function handleSend({
-  text,
-  model,
-  mode,
-  files = [],
+	text,
+	model,
+	mode,
+	files = [],
 }: { text: string; model: string; mode: string; files?: File[] }) {
-  if (!text.trim() && (!files || files.length === 0)) return;
+	if (!text.trim() && (!files || files.length === 0)) return;
 
-  try {
-    isLoading.value = true;
-    await startNewChat(text);
-  } finally {
-    isLoading.value = false;
-  }
+	try {
+		isLoading.value = true;
+		await startNewChat(text);
+	} finally {
+		isLoading.value = false;
+	}
 }
 </script>
 
 <template>
-  <div class="relative h-full w-full overflow-hidden pb-32">
-    <!-- Chat Input (always visible) -->
-    <div class="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200">
-      <div class="max-w-6xl mx-auto">
-        <ChatInput
-          v-model:selectedModel="selectedModel"
-          v-model:selectedMode="selectedMode"
-          :available-models="availableModels"
-          :available-modes="availableModes"
-          @send="handleSend"
-          class="w-full"
-        />
-      </div>
-    </div>
-
+  <div class="relative h-full w-full overflow-hidden">
     <!-- Text Card Grid Layout -->
-    <div class="container mx-auto p-4 pb-40">
+    <div class="container mx-auto p-4">
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         <div v-for="item in mediaItems" :key="item.id" class="break-inside-avoid">
           <div class="rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 bg-white p-6">

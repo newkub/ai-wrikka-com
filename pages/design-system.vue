@@ -1,5 +1,9 @@
 <script lang="ts" setup>
 import DesignSystem from "~/components/DesignSystem.vue";
+
+definePageMeta({
+  layout: 'default'
+});
 </script>
 
 <template>

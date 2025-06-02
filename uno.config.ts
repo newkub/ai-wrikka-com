@@ -72,4 +72,11 @@ export default defineConfig({
 			linear: "var(--transition-timing-linear)",
 		},
 	},
+	getCSS: ({ theme }) => `
+      * {
+        color: ${theme.colors.gray?.[700] ?? "#333"};
+        padding: 50;
+        margin: 0;
+      }
+    `,
 });

@@ -13,7 +13,6 @@ export default defineNuxtConfig({
 	devtools: { enabled: false },
 	css: [
 		"@unocss/reset/tailwind.css",
-		"@unocss/reset/normalize.css",
 		"~/assets/index.css",
 		"~/assets/content.css",
 	],

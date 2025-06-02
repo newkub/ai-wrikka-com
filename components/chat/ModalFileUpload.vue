@@ -1,59 +1,59 @@
 <script setup lang="ts">
-import Modal from '../Modal.vue'
+import Modal from "../Modal.vue";
 
 interface Tab {
-  id: string
-  name: string
-  icon: string
+	id: string;
+	name: string;
+	icon: string;
 }
 
 interface FileType {
-  id: string
-  name: string
-  icon: string
+	id: string;
+	name: string;
+	icon: string;
 }
 
 const props = defineProps<{
-  modelValue: boolean
-}>()
+	modelValue: boolean;
+}>();
 
 const emit = defineEmits<{
-  'update:modelValue': [value: boolean]
-  'upload': [files: File[]]
-}>()
+	"update:modelValue": [value: boolean];
+	upload: [files: File[]];
+}>();
 
-const activeTab = ref<string>('computer')
+const activeTab = ref<string>("computer");
 const connectedServices = ref<Record<string, boolean>>({
-  github: false,
-  'google-drive': false,
-  onedrive: false
-})
+	github: false,
+	"google-drive": false,
+	onedrive: false,
+});
 
 // Mock function to toggle service connection
 function toggleService(serviceId: string) {
-  connectedServices.value[serviceId] = !connectedServices.value[serviceId]
+	connectedServices.value[serviceId] = !connectedServices.value[serviceId];
 }
 
 const tabs: Tab[] = [
-  { id: 'computer', name: 'Computer', icon: 'i-mdi-desktop-mac' },
-  { id: 'github', name: 'GitHub', icon: 'i-mdi-github' },
-  { id: 'google-drive', name: 'Google Drive', icon: 'i-mdi-google-drive' },
-  { id: 'onedrive', name: 'OneDrive', icon: 'i-mdi-microsoft-onedrive' }
-]
+	{ id: "computer", name: "Computer", icon: "i-mdi-desktop-mac" },
+	{ id: "github", name: "GitHub", icon: "i-mdi-github" },
+	{ id: "google-drive", name: "Google Drive", icon: "i-mdi-google-drive" },
+	{ id: "onedrive", name: "OneDrive", icon: "i-mdi-microsoft-onedrive" },
+];
 
 const fileTypes: FileType[] = [
-  { id: 'file', name: 'File', icon: 'i-mdi-file-outline' },
-  { id: 'image', name: 'Image', icon: 'i-mdi-image-outline' },
-  { id: 'video', name: 'Video', icon: 'i-mdi-video-outline' }
-]
+	{ id: "file", name: "File", icon: "i-mdi-file-outline" },
+	{ id: "image", name: "Image", icon: "i-mdi-image-outline" },
+	{ id: "video", name: "Video", icon: "i-mdi-video-outline" },
+];
 
 function handleUpload(files: File[]) {
-  emit('upload', files)
-  closeModal()
+	emit("upload", files);
+	closeModal();
 }
 
 function closeModal() {
-  emit('update:modelValue', false)
+	emit("update:modelValue", false);
 }
 </script>
 

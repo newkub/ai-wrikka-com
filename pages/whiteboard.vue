@@ -184,7 +184,7 @@ import { nextTick, onMounted, onUnmounted, ref } from "vue";
 import { useWhiteboard } from "~/composables/useWhiteboard";
 
 definePageMeta({
-	layout: "default",
+	layout: "fullscreen",
 });
 
 type Tool =

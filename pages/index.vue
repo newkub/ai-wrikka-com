@@ -1,9 +1,9 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-blue-50">
     <div class="max-w-7xl mx-auto">
       <div class="text-center mb-12">
         <h1 class="text-4xl font-bold text-gray-900 mb-4">Welcome to Our Platform</h1>
-        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        <p class="max-w-3xl mx-auto">
           Discover amazing features designed to boost your productivity
         </p>
       </div>
@@ -19,10 +19,10 @@
           </div>
           <div class="p-6">
             <h3 class="text-xl font-semibold text-gray-900 mb-2">Feature {{ i }}</h3>
-            <p class="text-gray-600 mb-4">
+            <p class="mb-4">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor.
             </p>
-            <div class="flex items-center text-sm text-blue-600 font-medium">
+            <div class="flex items-center font-medium">
               <span>Learn more</span>
               <div class="i-mdi-arrow-right ml-1" />
             </div>
@@ -41,4 +41,7 @@
 
 <script setup lang="ts">
 // You can add any necessary component logic here
+definePageMeta({
+  layout: 'default'
+})
 </script>

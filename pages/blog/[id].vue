@@ -54,9 +54,9 @@ const scrollToHeading = (id: string) => {
 </script>
 
 <template>
-  <div v-if="post" class="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
+  <div v-if="post" class="min-h-screen bg-background py-12">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <article class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
+      <article class="bg-surface rounded-xl shadow-md overflow-hidden">
         <!-- Featured Image -->
         <div class="relative h-64 md:h-96 overflow-hidden">
           <img
@@ -70,15 +70,15 @@ const scrollToHeading = (id: string) => {
               <span
                 v-for="tag in post.tags"
                 :key="tag"
-                class="inline-block px-3 py-1 text-sm font-medium text-white bg-primary-600 rounded-full"
+                class="inline-block px-3 py-1 text-sm font-medium text-surface bg-brand rounded-full"
               >
                 {{ tag }}
               </span>
             </div>
-            <h1 class="text-3xl md:text-4xl font-bold text-white">
+            <h1 class="text-3xl md:text-4xl font-bold text-surface">
               {{ post.title }}
             </h1>
-            <div class="mt-4 flex items-center text-white">
+            <div class="mt-4 flex items-center text-surface">
               <img
                 :src="post.author.avatar"
                 :alt="post.author.name"
@@ -96,16 +96,16 @@ const scrollToHeading = (id: string) => {
 
         <!-- Article Content -->
         <div class="p-6 md:p-8 lg:p-12">
-          <div class="prose prose-headings:mt-8 prose-headings:mb-4 prose-headings:text-gray-900 dark:prose-headings:text-white prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h2:border-b prose-h2:border-gray-200 dark:prose-h2:border-gray-700 prose-h2:pb-2 prose-h3:text-xl prose-h3:font-semibold prose-h3:mt-6 prose-h3:mb-3 prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed prose-p:mb-4 prose-a:text-primary-600 dark:prose-a:text-primary-400 hover:prose-a:underline prose-ul:my-4 prose-ul:pl-6 prose-ol:my-4 prose-ol:pl-6 prose-li:mb-2 prose-li:text-gray-700 dark:prose-li:text-gray-300 prose-blockquote:border-l-4 prose-blockquote:border-primary-500 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray-600 dark:prose-blockquote:text-gray-400 prose-blockquote:my-6 prose-img:rounded-lg prose-img:my-6 max-w-none">
+          <div class="prose prose-headings:mt-8 prose-headings:mb-4 prose-headings:text-text prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h2:border-b prose-h2:border-border prose-h2:pb-2 prose-h3:text-xl prose-h3:font-semibold prose-h3:mt-6 prose-h3:mb-3 prose-p:text-text prose-p:leading-relaxed prose-p:mb-4 prose-a:text-brand hover:prose-a:underline prose-ul:my-4 prose-ul:pl-6 prose-ol:my-4 prose-ol:pl-6 prose-li:mb-2 prose-li:text-text prose-blockquote:border-l-4 prose-blockquote:border-brand prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-text prose-blockquote:my-6 prose-img:rounded-lg prose-img:my-6 max-w-none">
             <ContentRenderer :value="post">
               <template #empty>
-                <p class="text-gray-700 dark:text-gray-300">No content found.</p>
+                <p class="text-text">No content found.</p>
               </template>
             </ContentRenderer>
           </div>
 
           <!-- Author Bio -->
-          <div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+          <div class="mt-12 pt-8 border-t border-border">
             <div class="flex items-center">
               <img
                 :src="post.author.avatar"
@@ -113,10 +113,10 @@ const scrollToHeading = (id: string) => {
                 class="w-16 h-16 rounded-full"
               />
               <div class="ml-4">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white">
+                <h3 class="text-lg font-medium text-text">
                   {{ post.author.name }}
                 </h3>
-                <p class="text-gray-600 dark:text-gray-300">
+                <p class="text-text">
                   {{ post.author.bio || 'Author bio goes here...' }}
                 </p>
               </div>
@@ -127,14 +127,14 @@ const scrollToHeading = (id: string) => {
 
       <!-- Table of Contents (Desktop) -->
       <div class="hidden lg:block fixed right-8 top-32 w-64">
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
-          <h3 class="font-medium text-gray-900 dark:text-white mb-3">Table of Contents</h3>
+        <div class="bg-surface rounded-lg shadow-md p-4">
+          <h3 class="font-medium text-text mb-3">Table of Contents</h3>
           <nav class="space-y-2">
             <a
               v-for="heading in headings"
               :key="heading.id"
               :href="`#${heading.id}`"
-              class="block text-sm text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+              class="block text-sm text-text hover:text-brand transition-colors"
               :class="{
                 'pl-2': heading.level === 3,
                 'pl-4': heading.level === 4,
@@ -149,7 +149,7 @@ const scrollToHeading = (id: string) => {
     </div>
   </div>
   <div v-else class="min-h-screen flex items-center justify-center">
-    <p class="text-gray-600 dark:text-gray-300">Loading post...</p>
+    <p class="text-text">Loading post...</p>
   </div>
 </template>
 

@@ -29,9 +29,7 @@
     <div class="sticky bottom-0 left-0 right-0 bg-surface border-t border-border w-full">
       <ChatInput
         v-model:selectedModel="selectedModel"
-        v-model:selectedMode="selectedMode"
         :available-models="availableModels"
-        :available-modes="availableModes"
         @send="handleSend"
         @file-select="handleFileAdd"
         class="w-full border-0"

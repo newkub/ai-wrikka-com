@@ -10,17 +10,17 @@
             v-for="(item, index) in learningItems" 
             :key="index"
             @click="selectItem(item)"
-            class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 cursor-pointer hover:shadow-lg transition-shadow duration-200 border border-gray-200 dark:border-gray-700"
-            :class="{ 'ring-2 ring-blue-500': selectedItem?.id === item.id }"
+            class="bg-surface rounded-lg shadow-md p-4 cursor-pointer hover:shadow-lg transition-shadow duration-200 border border-border"
+            :class="{ 'ring-2 ring-brand': selectedItem?.id === item.id }"
           >
             <div class="flex items-center mb-2">
               <div class="p-2 rounded-full mr-3" :class="item.iconBg">
                 <div class="w-5 h-5" :class="[item.icon, item.iconColor]" />
               </div>
-              <h3 class="font-semibold text-gray-900 dark:text-white">{{ item.title }}</h3>
+              <h3 class="font-semibold text-text">{{ item.title }}</h3>
             </div>
-            <p class="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{{ item.description }}</p>
-            <div class="mt-3 flex justify-between items-center text-xs text-gray-500 dark:text-gray-400">
+            <p class="text-sm text-text/70 line-clamp-2">{{ item.description }}</p>
+            <div class="mt-3 flex justify-between items-center text-xs text-text/50">
               <span>{{ item.duration }} min</span>
               <span>{{ item.level }}</span>
             </div>
@@ -31,32 +31,32 @@
       <!-- Right Panel - Preview (1/4 width) -->
       <div class="w-full lg:w-1/4">
         <div class="sticky top-4">
-          <div v-if="selectedItem" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+          <div v-if="selectedItem" class="bg-surface rounded-lg shadow-md p-6 border border-border">
             <div class="flex items-center mb-4">
               <div class="p-2 rounded-full mr-3" :class="selectedItem.iconBg">
                 <div class="w-6 h-6" :class="[selectedItem.icon, selectedItem.iconColor]" />
               </div>
-              <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ selectedItem.title }}</h2>
+              <h2 class="text-xl font-bold text-text">{{ selectedItem.title }}</h2>
             </div>
-            <p class="text-gray-700 dark:text-gray-300 mb-4">{{ selectedItem.description }}</p>
+            <p class="text-text/80 mb-4">{{ selectedItem.description }}</p>
             <div class="space-y-2 mb-4">
               <div class="flex items-center">
-                <div class="i-mdi-clock-outline w-4 h-4 mr-2 text-gray-500" />
+                <div class="i-mdi-clock-outline w-4 h-4 mr-2 text-text/50" />
                 <span class="text-sm">{{ selectedItem.duration }} minutes</span>
               </div>
               <div class="flex items-center">
-                <div class="i-mdi-school-outline w-4 h-4 mr-2 text-gray-500" />
+                <div class="i-mdi-school-outline w-4 h-4 mr-2 text-text/50" />
                 <span class="text-sm">{{ selectedItem.level }} level</span>
               </div>
             </div>
-            <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition-colors">
+            <button class="w-full bg-brand hover:bg-brand/80 text-white py-2 px-4 rounded-md transition-colors">
               Start Learning
             </button>
           </div>
-          <div v-else class="bg-gray-50 dark:bg-gray-800 rounded-lg p-8 text-center border border-dashed border-gray-300 dark:border-gray-600">
-            <div class="i-mdi-text-box-outline w-12 h-12 mx-auto text-gray-400 mb-3" />
-            <h3 class="text-gray-500 dark:text-gray-400 font-medium">Select a topic to preview</h3>
-            <p class="text-sm text-gray-400 mt-1">Click on any learning card to see details here</p>
+          <div v-else class="bg-surface/50 rounded-lg p-8 text-center border border-dashed border-border">
+            <div class="i-mdi-text-box-outline w-12 h-12 mx-auto text-text/30 mb-3" />
+            <h3 class="text-text/60 font-medium">Select a topic to preview</h3>
+            <p class="text-sm text-text/40 mt-1">Click on any learning card to see details here</p>
           </div>
         </div>
       </div>
@@ -88,8 +88,8 @@ const learningItems: LearningItem[] = [
 		duration: 45,
 		level: "Beginner",
 		icon: "i-mdi-code-braces",
-		iconBg: "bg-blue-100 dark:bg-blue-900/30",
-		iconColor: "text-blue-600 dark:text-blue-400",
+		iconBg: "bg-blue-100",
+		iconColor: "text-brand",
 	},
 	{
 		id: 2,
@@ -99,8 +99,8 @@ const learningItems: LearningItem[] = [
 		duration: 60,
 		level: "Intermediate",
 		icon: "i-mdi-text-box-outline",
-		iconBg: "bg-purple-100 dark:bg-purple-900/30",
-		iconColor: "text-purple-600 dark:text-purple-400",
+		iconBg: "bg-purple-100",
+		iconColor: "text-purple-600",
 	},
 	{
 		id: 3,
@@ -110,8 +110,8 @@ const learningItems: LearningItem[] = [
 		duration: 50,
 		level: "Intermediate",
 		icon: "i-mdi-chip",
-		iconBg: "bg-green-100 dark:bg-green-900/30",
-		iconColor: "text-green-600 dark:text-green-400",
+		iconBg: "bg-green-100",
+		iconColor: "text-success",
 	},
 	{
 		id: 4,
@@ -121,8 +121,8 @@ const learningItems: LearningItem[] = [
 		duration: 55,
 		level: "Intermediate",
 		icon: "i-mdi-puzzle-outline",
-		iconBg: "bg-yellow-100 dark:bg-yellow-900/30",
-		iconColor: "text-yellow-600 dark:text-yellow-400",
+		iconBg: "bg-yellow-100",
+		iconColor: "text-yellow-600",
 	},
 	{
 		id: 5,
@@ -132,8 +132,8 @@ const learningItems: LearningItem[] = [
 		duration: 65,
 		level: "Advanced",
 		icon: "i-mdi-code-brackets",
-		iconBg: "bg-red-100 dark:bg-red-900/30",
-		iconColor: "text-red-600 dark:text-red-400",
+		iconBg: "bg-red-100",
+		iconColor: "text-error",
 	},
 	{
 		id: 6,
@@ -143,8 +143,8 @@ const learningItems: LearningItem[] = [
 		duration: 70,
 		level: "Advanced",
 		icon: "i-mdi-server-network",
-		iconBg: "bg-indigo-100 dark:bg-indigo-900/30",
-		iconColor: "text-indigo-600 dark:text-indigo-400",
+		iconBg: "bg-indigo-100",
+		iconColor: "text-indigo-600",
 	},
 ];
 

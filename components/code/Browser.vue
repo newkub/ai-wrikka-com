@@ -88,26 +88,26 @@ const onIframeLoadStart = () => {
 <template>
   <div class="flex flex-col border border-border rounded-lg overflow-hidden shadow-lg h-full bg-surface">
     <!-- Browser Toolbar -->
-    <div v-if="showControls || showAddressBar" class="bg-surface-2 p-2 border-b border-border flex items-center">
+    <div v-if="showControls || showAddressBar" class="bg-surface p-2 border-b border-border flex items-center">
       <!-- Navigation Buttons -->
       <div v-if="showControls" class="flex space-x-2 mr-4">
         <button 
           @click="goBack"
-          class="p-1.5 rounded-full hover:bg-surface-3 text-text/80 hover:text-text"
+          class="p-1.5 rounded-full hover:bg-surface text-text/80 hover:text-text"
           title="Go back"
         >
           <div class="i-mdi-arrow-left h-4 w-4" />
         </button>
         <button 
           @click="goForward"
-          class="p-1.5 rounded-full hover:bg-surface-3 text-text/80 hover:text-text"
+          class="p-1.5 rounded-full hover:bg-surface text-text/80 hover:text-text"
           title="Go forward"
         >
           <div class="i-mdi-arrow-right h-4 w-4" />
         </button>
         <button 
           @click="refresh"
-          class="p-1.5 rounded-full hover:bg-surface-3 text-text/80 hover:text-text"
+          class="p-1.5 rounded-full hover:bg-surface text-text/80 hover:text-text"
           title="Refresh"
         >
           <div class="i-mdi-refresh h-4 w-4" />
@@ -121,7 +121,7 @@ const onIframeLoadStart = () => {
             v-model="currentUrl"
             @keyup.enter="navigate"
             type="text"
-            class="w-full px-3 py-1.5 text-sm bg-surface-3 border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-brand focus:border-brand text-text placeholder-text/50"
+            class="w-full px-3 py-1.5 text-sm bg-surface border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-brand focus:border-brand text-text placeholder-text/50"
             placeholder="Enter URL..."
           />
           <button 
@@ -135,7 +135,7 @@ const onIframeLoadStart = () => {
     </div>
     
     <!-- Browser Content -->
-    <div class="relative flex-1 bg-surface-1" :style="{ height: height }">
+    <div class="relative flex-1 bg-background" :style="{ height: height }">
       <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center bg-surface/80">
         <div class="animate-pulse text-text/60">
           {{ loadingText }}
