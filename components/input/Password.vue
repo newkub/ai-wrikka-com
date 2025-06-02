@@ -1,73 +1,75 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import Input from './Input.vue'
+import { computed, ref } from "vue";
+import Input from "./BaseInput.vue";
 
 interface Props {
-  modelValue?: string | number
-  placeholder?: string
-  disabled?: boolean
-  error?: boolean
-  errorMessage?: string
-  label?: string
-  id?: string
-  name?: string
-  required?: boolean
-  showStrength?: boolean
+	modelValue?: string | number;
+	placeholder?: string;
+	disabled?: boolean;
+	error?: boolean;
+	errorMessage?: string;
+	label?: string;
+	id?: string;
+	name?: string;
+	required?: boolean;
+	showStrength?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: '',
-  placeholder: 'Enter your password',
-  disabled: false,
-  error: false,
-  errorMessage: '',
-  label: 'Password',
-  id: '',
-  name: 'password',
-  required: false,
-  showStrength: false
-})
+	modelValue: "",
+	placeholder: "Enter your password",
+	disabled: false,
+	error: false,
+	errorMessage: "",
+	label: "Password",
+	id: "",
+	name: "password",
+	required: false,
+	showStrength: false,
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: string | number]
-}>()
+	"update:modelValue": [value: string | number];
+}>();
 
-const showPassword = ref(false)
-const inputId = computed(() => props.id || `password-${Math.random().toString(36).substr(2, 9)}`)
+const showPassword = ref(false);
+const inputId = computed(
+	() => props.id || `password-${Math.random().toString(36).substr(2, 9)}`,
+);
 
 const togglePassword = () => {
-  showPassword.value = !showPassword.value
-}
+	showPassword.value = !showPassword.value;
+};
 
 const computedValue = computed({
-  get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value)
-})
+	get: () => props.modelValue,
+	set: (value) => emit("update:modelValue", value),
+});
 
 const passwordStrength = computed(() => {
-  if (!props.modelValue) return 0
-  let strength = 0
-  const value = String(props.modelValue)
-  
-  if (value.length >= 8) strength += 1
-  if (/[A-Z]/.test(value)) strength += 1
-  if (/[0-9]/.test(value)) strength += 1
-  if (/[^A-Za-z0-9]/.test(value)) strength += 1
-  
-  return Math.min(4, strength)
-})
+	if (!props.modelValue) return 0;
+	let strength = 0;
+	const value = String(props.modelValue);
+
+	if (value.length >= 8) strength += 1;
+	if (/[A-Z]/.test(value)) strength += 1;
+	if (/[0-9]/.test(value)) strength += 1;
+	if (/[^A-Za-z0-9]/.test(value)) strength += 1;
+
+	return Math.min(4, strength);
+});
 
 const strengthColor = computed(() => {
-  const strength = passwordStrength.value
-  if (strength <= 1) return 'bg-red-500'
-  if (strength === 2) return 'bg-yellow-500'
-  if (strength === 3) return 'bg-blue-500'
-  return 'bg-green-500'
-})
+	const strength = passwordStrength.value;
+	if (strength <= 1) return "bg-red-500";
+	if (strength === 2) return "bg-yellow-500";
+	if (strength === 3) return "bg-blue-500";
+	return "bg-green-500";
+});
 
 defineOptions({
-  name: 'PasswordInput'
-})
+	name: "PasswordInput",
+});
 </script>
 
 <template>

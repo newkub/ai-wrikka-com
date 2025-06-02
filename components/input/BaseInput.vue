@@ -38,7 +38,7 @@ const computedValue = computed({
   set: (value) => emit('update:modelValue', value)
 })
 
-const inputId = computed(() => props.id || `input-${Math.random().toString(36).substr(2, 9)}`)
+const inputId = computed(() => props.id || `input-${Math.random().toString(36).slice(2, 11)}`)
 
 const inputClasses = computed(() => ({
   'w-full px-3 py-2 border rounded-md': true,
@@ -60,7 +60,11 @@ defineOptions({
 
 <template>
   <div class="w-full space-y-1">
-    <label v-if="label" :for="inputId" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+    <label 
+      v-if="label" 
+      :for="inputId" 
+      class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+    >
       {{ label }}
       <span v-if="required" class="text-red-500">*</span>
     </label>
@@ -76,7 +80,10 @@ defineOptions({
       :class="inputClasses"
       class="w-full px-3 py-2 border rounded-md focus:outline-none"
     >
-    <p v-if="error && errorMessage" class="mt-1 text-sm text-red-600 dark:text-red-400">
+    <p 
+      v-if="error && errorMessage" 
+      class="mt-1 text-sm text-red-600 dark:text-red-400"
+    >
       {{ errorMessage }}
     </p>
   </div>

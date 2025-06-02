@@ -44,10 +44,10 @@ definePageMeta({
 	layout: "chat",
 });
 
-import { ref, onUnmounted, nextTick, watch, onMounted, computed } from "vue";
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 
 import { useRoute, useRouter } from "vue-router";
-import ChatInput from "~/components/chat/ChatInput.vue";
+import ChatInput from "~/components/input/BaseInput.vue";
 
 interface FileWithPreview extends File {
 	preview: string;

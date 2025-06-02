@@ -1,74 +1,79 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted } from 'vue'
-import Input from './Input.vue'
+import { computed, onMounted, onUnmounted, ref } from "vue";
+import Input from "./BaseInput.vue";
 
 interface Props {
-  modelValue?: string | Date
-  placeholder?: string
-  disabled?: boolean
-  error?: boolean
-  errorMessage?: string
-  label?: string
-  id?: string
-  name?: string
-  required?: boolean
-  min?: string
-  max?: string
+	modelValue?: string | Date;
+	placeholder?: string;
+	disabled?: boolean;
+	error?: boolean;
+	errorMessage?: string;
+	label?: string;
+	id?: string;
+	name?: string;
+	required?: boolean;
+	min?: string;
+	max?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: '',
-  placeholder: 'Select a date',
-  disabled: false,
-  error: false,
-  errorMessage: '',
-  label: 'Date',
-  id: '',
-  name: 'date',
-  required: false,
-  min: '',
-  max: ''
-})
+	modelValue: "",
+	placeholder: "Select a date",
+	disabled: false,
+	error: false,
+	errorMessage: "",
+	label: "Date",
+	id: "",
+	name: "date",
+	required: false,
+	min: "",
+	max: "",
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: string]
-}>()
+	"update:modelValue": [value: string];
+}>();
 
-const showPicker = ref(false)
-const datePickerRef = ref<HTMLElement | null>(null)
-const inputId = computed(() => props.id || `date-${Math.random().toString(36).substr(2, 9)}`)
+const showPicker = ref(false);
+const datePickerRef = ref<HTMLElement | null>(null);
+const inputId = computed(
+	() => props.id || `date-${Math.random().toString(36).substr(2, 9)}`,
+);
 
 const formattedDate = computed(() => {
-  if (!props.modelValue) return ''
-  const date = new Date(props.modelValue)
-  return date.toISOString().split('T')[0]
-})
+	if (!props.modelValue) return "";
+	const date = new Date(props.modelValue);
+	return date.toISOString().split("T")[0];
+});
 
 const handleDateChange = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  emit('update:modelValue', target.value)
-  showPicker.value = false
-}
+	const target = event.target as HTMLInputElement;
+	emit("update:modelValue", target.value);
+	showPicker.value = false;
+};
 
 const handleClickOutside = (event: MouseEvent) => {
-  if (datePickerRef.value && !datePickerRef.value.contains(event.target as Node)) {
-    showPicker.value = false
-  }
-}
+	if (
+		datePickerRef.value &&
+		!datePickerRef.value.contains(event.target as Node)
+	) {
+		showPicker.value = false;
+	}
+};
 
 onMounted(() => {
-  document.addEventListener('mousedown', handleClickOutside)
-})
+	document.addEventListener("mousedown", handleClickOutside);
+});
 
 onUnmounted(() => {
-  document.removeEventListener('mousedown', handleClickOutside)
-})
+	document.removeEventListener("mousedown", handleClickOutside);
+});
 
-const today = new Date().toISOString().split('T')[0]
+const today = new Date().toISOString().split("T")[0];
 
 defineOptions({
-  name: 'DateInput'
-})
+	name: "DateInput",
+});
 </script>
 
 <template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import Nav from "~/components/Nav.vue";
-import ChatInput from "~/components/chat/ChatInput.vue";
-import { ref } from 'vue';
+import ChatInput from "~/components/input/BaseInput.vue";
 
 // รับ event จาก ChatInput
 const handleSend = (event: { text: string; files?: File[] }) => {
@@ -12,8 +12,8 @@ const handleSend = (event: { text: string; files?: File[] }) => {
 	}
 };
 
-const selectedModel = ref('')
-const selectedMode = ref('')
+const selectedModel = ref("");
+const selectedMode = ref("");
 </script>
 
 <template>
