@@ -80,7 +80,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
-import Modal from "~/components/Modal.vue";
+import Modal from "~/components/modal/Modal.vue";
 
 interface Note {
 	id?: string;

@@ -29,7 +29,8 @@
     <div class="sticky bottom-0 left-0 right-0 bg-surface border-t border-border w-full">
       <ChatInput
         v-model:selectedModel="selectedModel"
-        :available-models="availableModels"
+        :selectedMode="selectedMode"
+        :availableModels="availableModels"
         @send="handleSend"
         @file-select="handleFileAdd"
         class="w-full border-0"
@@ -77,9 +78,9 @@ const initialMessage = computed(() => {
 });
 
 const availableModels = [
-	{ id: "gpt-4", name: "GPT-4" },
-	{ id: "gpt-3.5", name: "GPT-3.5" },
-	{ id: "claude-2", name: "Claude 2" },
+	{ id: "gpt-4", name: "GPT-4", icon: "i-mdi-robot" },
+	{ id: "gpt-3.5", name: "GPT-3.5", icon: "i-mdi-robot-outline" },
+	{ id: "claude-2", name: "Claude 2", icon: "i-mdi-brain" },
 ];
 
 const availableModes = [
