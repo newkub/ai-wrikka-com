@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, type Ref } from "vue";
-import Dropdown from "~/components/Dropdown.vue";
-import Button from "~/components/Button.vue";
-import ButtonFileUpload from "~/components/chat/ButtonFileUpload.vue";
+import Dropdown from "~/components/input/Dropdown.vue";
+import Button from "~/components/button/Button.vue";
+import ButtonFileUpload from "~/components/button/ButtonFileUpload.vue";
 
 type TabType = "computer" | "url";
 
@@ -260,7 +260,7 @@ defineExpose({
             <Dropdown 
               :isOpen="isModelDropdownOpen" 
               @close="isModelDropdownOpen = false"
-              position="top"
+              position="left"
               class="w-48"
             >
               <button

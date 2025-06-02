@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Modal from "../Modal.vue";
+import Modal from "~/components/modal/Modal.vue";
 
 interface Tab {
 	id: string;
@@ -54,6 +54,12 @@ function handleUpload(files: File[]) {
 
 function closeModal() {
 	emit("update:modelValue", false);
+}
+
+function handleFileTypeSelect(typeId: string) {
+	// You can use this to filter file types or set accept attribute on file input
+	// For now, just trigger the file input click
+	document.getElementById('file-upload')?.click();
 }
 </script>
 
@@ -113,7 +119,11 @@ function closeModal() {
             type="file" 
             class="hidden" 
             multiple 
-            @change="handleUpload($event.target.files)"
+            @change="(event) => {
+              const target = event.target as HTMLInputElement
+              const files = target.files
+              if (files) handleUpload(Array.from(files));
+            }"
           >
         </label>
       </div>
