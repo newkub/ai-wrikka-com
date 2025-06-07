@@ -1,46 +1,46 @@
 <script setup lang="ts">
-
-import { ref } from 'vue';
-import CodeEditor from '~/components/code/CodeEditor.vue';
-import FileStructure from '~/components/code/FileStructure.vue';
-import BottomPanel from '~/components/code/bottom/index.vue';
+import { ref } from "vue";
+import CodeEditor from "~/components/code/CodeEditor.vue";
+import FileStructure from "~/components/code/FileStructure.vue";
+import BottomPanel from "~/components/code/bottom/index.vue";
 
 definePageMeta({
-  layout: 'fullscreen'
+	layout: "fullscreen",
 });
 
-
 // File system logic
-const { 
-  activeFile, 
-  fileStructure, 
-  handleFileSelect: handleFileSelectOriginal 
+const {
+	activeFile,
+	fileStructure,
+	handleFileSelect: handleFileSelectOriginal,
 } = useFileSystem();
 
 // Code editor state
-const code = ref('// Welcome to Code Editor\n// Start coding here...\n\nfunction helloWorld() {\n  console.log("Hello, World!");\n}\n\nhelloWorld();');
-const chatInput = ref('');
-const editorTheme = 'vs';
+const code = ref(
+	'// Welcome to Code Editor\n// Start coding here...\n\nfunction helloWorld() {\n  console.log("Hello, World!");\n}\n\nhelloWorld();',
+);
+const chatInput = ref("");
+const editorTheme = "vs";
 
 // Handle file selection with code update
 const handleFileSelect = (fileName: string) => {
-  const fileContent = handleFileSelectOriginal(fileName);
-  if (fileContent) {
-    code.value = fileContent;
-  }
+	const fileContent = handleFileSelectOriginal(fileName);
+	if (fileContent) {
+		code.value = fileContent;
+	}
 };
 
 // Handle code changes
 const handleCodeUpdate = (newCode: string) => {
-  code.value = newCode;
+	code.value = newCode;
 };
 
 // Resize logic
-const { 
-  leftPanelWidth,
-  editorHeight,
-  startVerticalResize,
-  startHorizontalResize 
+const {
+	leftPanelWidth,
+	editorHeight,
+	startVerticalResize,
+	startHorizontalResize,
 } = useResize();
 
 // Theme

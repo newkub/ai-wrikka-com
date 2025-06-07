@@ -1,34 +1,33 @@
 
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue';
-import { useToggle } from '@vueuse/core';
-import { useChat, type Message, type ChatSession } from '~/composables/useChat';
-import ChatContent from '~/components/chat/ChatContent.vue';
-import ChatInput from '~/components/chat/ChatInput.vue';
+import { ref, onMounted, nextTick } from "vue";
+import { useToggle } from "@vueuse/core";
+import { useChat, type Message, type ChatSession } from "~/composables/useChat";
+import ChatContent from "~/components/chat/ChatContent.vue";
+import ChatInput from "~/components/chat/ChatInput.vue";
 
 definePageMeta({
-  layout: 'fullscreen'
+	layout: "fullscreen",
 });
-
 
 // Initialize chat composable
 const {
-  messages,
-  chatSessions,
-  currentSessionId,
-  addMessage,
-  startNewChat: startNewChatInComposable,
-  loadSession: loadSessionInComposable,
-  deleteSession,
-  formatTimeAgo,
-  copyToClipboard,
-  replyToMessage: replyToMessageInComposable,
-  saveMessage: saveMessageInComposable
+	messages,
+	chatSessions,
+	currentSessionId,
+	addMessage,
+	startNewChat: startNewChatInComposable,
+	loadSession: loadSessionInComposable,
+	deleteSession,
+	formatTimeAgo,
+	copyToClipboard,
+	replyToMessage: replyToMessageInComposable,
+	saveMessage: saveMessageInComposable,
 } = useChat();
 
 // Refs
-const userInput = ref('');
+const userInput = ref("");
 const isLoading = ref(false);
 const showChatHistory = ref(false);
 const chatContainerRef = ref<HTMLElement | null>(null);
@@ -36,104 +35,104 @@ const [isMobileMenuOpen, toggleMobileMenu] = useToggle(false);
 
 // Toggle chat history panel
 const toggleChatHistory = (): void => {
-  showChatHistory.value = !showChatHistory.value;
+	showChatHistory.value = !showChatHistory.value;
 };
 
 // Start a new chat
 const startNewChat = (): void => {
-  startNewChatInComposable();
-  userInput.value = '';
-  showChatHistory.value = false;
-  nextTick(() => {
-    addMessage('ai', 'สวัสดีครับ! ฉันคือ AI Assistant ยินดีที่ได้รู้จักครับ');
-  });};
+	startNewChatInComposable();
+	userInput.value = "";
+	showChatHistory.value = false;
+	nextTick(() => {
+		addMessage("ai", "สวัสดีครับ! ฉันคือ AI Assistant ยินดีที่ได้รู้จักครับ");
+	});
+};
 
 // Load a chat session
 const loadSession = (sessionId: string): void => {
-  loadSessionInComposable(sessionId);
-  showChatHistory.value = false;
-  scrollToBottom();
+	loadSessionInComposable(sessionId);
+	showChatHistory.value = false;
+	scrollToBottom();
 };
 
 // Handle reply from ChatContent
 const handleReply = (content: string): void => {
-  userInput.value = replyToMessageInComposable(content);
-  nextTick(() => {
-    const textarea = document.querySelector('textarea');
-    if (textarea) {
-      textarea.focus();
-      const length = userInput.value.length;
-      textarea.setSelectionRange(length, length);
-    }
-  });
+	userInput.value = replyToMessageInComposable(content);
+	nextTick(() => {
+		const textarea = document.querySelector("textarea");
+		if (textarea) {
+			textarea.focus();
+			const length = userInput.value.length;
+			textarea.setSelectionRange(length, length);
+		}
+	});
 };
 
 // Handle copy message
 const handleCopy = (content: string): void => {
-  copyToClipboard(content);
+	copyToClipboard(content);
 };
 
 // Handle save message
 const handleSave = (message: Message): void => {
-  saveMessageInComposable(message);
+	saveMessageInComposable(message);
 };
 
 // Send a new message
 const sendMessage = async (): Promise<void> => {
-  const content = userInput.value.trim();
-  if (!content || isLoading.value) return;
-  
-  // Add user message
-  const userMessage = addMessage('user', content);
-  userInput.value = '';
-  
-  // Show typing indicator
-  const typingMessage = addMessage('ai', '');
-  typingMessage.isTyping = true;
-  
-  isLoading.value = true;
-  
-  try {
-    // Simulate AI response (replace with actual API call)
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Replace typing indicator with actual response
-    typingMessage.content = `นี่คือการตอบกลับสำหรับ: ${userMessage.content}`;
-    typingMessage.isTyping = false;
-    
-  } catch (error) {
-    console.error('Error sending message:', error);
-    typingMessage.content = 'ขออภัย เกิดข้อผิดพลาดในการส่งข้อความ';
-    typingMessage.isTyping = false;
-  } finally {
-    isLoading.value = false;
-    scrollToBottom();
-  }
+	const content = userInput.value.trim();
+	if (!content || isLoading.value) return;
+
+	// Add user message
+	const userMessage = addMessage("user", content);
+	userInput.value = "";
+
+	// Show typing indicator
+	const typingMessage = addMessage("ai", "");
+	typingMessage.isTyping = true;
+
+	isLoading.value = true;
+
+	try {
+		// Simulate AI response (replace with actual API call)
+		await new Promise((resolve) => setTimeout(resolve, 1000));
+
+		// Replace typing indicator with actual response
+		typingMessage.content = `นี่คือการตอบกลับสำหรับ: ${userMessage.content}`;
+		typingMessage.isTyping = false;
+	} catch (error) {
+		console.error("Error sending message:", error);
+		typingMessage.content = "ขออภัย เกิดข้อผิดพลาดในการส่งข้อความ";
+		typingMessage.isTyping = false;
+	} finally {
+		isLoading.value = false;
+		scrollToBottom();
+	}
 };
 
 // Scroll to bottom of chat using the composable's method
 const scrollToBottom = (): void => {
-  nextTick(() => {
-    if (chatContainerRef.value) {
-      chatContainerRef.value.scrollTop = chatContainerRef.value.scrollHeight;
-    }
-  });
+	nextTick(() => {
+		if (chatContainerRef.value) {
+			chatContainerRef.value.scrollTop = chatContainerRef.value.scrollHeight;
+		}
+	});
 };
 
 // Initial setup
 onMounted(() => {
-  // Set up chat container ref
-  chatContainerRef.value = document.querySelector('.chat-container');
-  
-  // Load last session or start new chat
-  if (chatSessions.value.length > 0) {
-    loadSession(chatSessions.value[0].id);
-  } else {
-    startNewChat();
-  }
-  
-  // Scroll to bottom on initial load
-  nextTick(scrollToBottom);
+	// Set up chat container ref
+	chatContainerRef.value = document.querySelector(".chat-container");
+
+	// Load last session or start new chat
+	if (chatSessions.value.length > 0) {
+		loadSession(chatSessions.value[0].id);
+	} else {
+		startNewChat();
+	}
+
+	// Scroll to bottom on initial load
+	nextTick(scrollToBottom);
 });
 </script>
 
