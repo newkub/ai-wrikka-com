@@ -1,215 +1,192 @@
-<script setup lang="ts">
-import ModalCommandPalette from "~/components/modal/ModalCommandPalette.vue";
-import ModalAuth from "~/components/modal/ModalAuth.vue";
-import ModalSettings from "~/components/modal/ModalSettings.vue";
-import Avatar from "~/components/Avatar.vue";
-import Dropdown from "~/components/input/Dropdown.vue";
-import NavItems from "~/components/navigation/NavItems.vue";
-import Button from "~/components/button/Button.vue";
-import { useTheme } from "~/composables/useTheme";
-import { useModal } from "~/composables/useModal";
-import { useDropdown } from "~/composables/useDropdown";
-
-// Theme
-const { isDark, toggleTheme } = useTheme();
-
-// Modals
-const { isOpen: showModalSettings, toggle: toggleSettings } = useModal();
-const { isOpen: showAuthModal, toggle: toggleAuth } = useModal();
-const { isOpen: showModalCommandPalette, toggle: toggleCommandPalette } =
-	useModal();
-
-// Dropdown
-const {
-	isOpen: isProfileOpen,
-	dropdownRef: profileDropdownRef,
-	toggle: toggleProfile,
-} = useDropdown();
-const isDropdownOpen = ref(false);
-
-// Theme toggle is now handled by useTheme composable
-
-// Modal controls
-const openModal =
-	(modal: "settings" | "profile" | "commandPalette") => (event: Event) => {
-		event.stopPropagation();
-		closeModals();
-
-		// Open the requested modal
-		switch (modal) {
-			case "settings":
-				showModalSettings.value = true;
-				break;
-			case "profile":
-				isProfileOpen.value = true;
-				isDropdownOpen.value = true;
-				break;
-			case "commandPalette":
-				showModalCommandPalette.value = true;
-				break;
-		}
-
-		// Prevent body scroll when modal is open
-		document.body.style.overflow = "hidden";
-	};
-
-const closeModals = () => {
-	showModalSettings.value = false;
-	showAuthModal.value = false;
-	showModalCommandPalette.value = false;
-	isProfileOpen.value = false;
-	isDropdownOpen.value = false;
-	document.body.style.overflow = "";
-};
-
-// User actions
-const signOut = () => {
-	console.log("Signing out...");
-	closeModals();
-};
-
-const openBilling = (event: Event) => {
-	event.stopPropagation();
-	closeModals();
-	console.log("Open billing page");
-	// navigateTo('/billing');
-};
-
-const toggleDropdown = (event: Event) => {
-	event.stopPropagation();
-	isDropdownOpen.value = !isDropdownOpen.value;
-	if (!isDropdownOpen.value) {
-		isProfileOpen.value = false;
-	}
-};
-</script>
-
-
 <template>
-  <nav class="bg-background shadow-sm sticky top-0 z-50">
+  <nav class="bg-white dark:bg-gray-900 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
-        <!-- Logo -->
-        <NuxtLink to="/" class="flex-shrink-0 flex items-center space-x-2 hover:opacity-80 transition-opacity">
-          <div class="i-mdi-home h-6 w-6 text-brand" />
-          <span class="text-xl font-bold text-text">AI Wrikka</span>
-        </NuxtLink>
-
-        <!-- Desktop Navigation -->
-        <div class="hidden md:flex items-center space-x-8">
-          <NavItems />
+        <!-- Left section - Logo -->
+        <div class="flex-shrink-0 flex items-center">
+          <NuxtLink to="/" class="flex items-center">
+            <Logo />
+          </NuxtLink>
         </div>
 
-        <!-- Right side items -->
+        <!-- Center section - Navigation Links -->
+        <div class="hidden md:flex items-center justify-center flex-1">
+          <div class="flex space-x-8">
+            <NuxtLink 
+              to="/" 
+              class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium transition-colors duration-200"
+              :class="{ 'text-indigo-600 dark:text-indigo-400': $route.path === '/' }"
+            >
+              หน้าแรก
+            </NuxtLink>
+            <NuxtLink 
+              to="/chat" 
+              class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium transition-colors duration-200"
+              :class="{ 'text-indigo-600 dark:text-indigo-400': $route.path === '/chat' }"
+            >
+              แชท
+            </NuxtLink>
+            <NuxtLink 
+              to="/blog" 
+              class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium transition-colors duration-200"
+              :class="{ 'text-indigo-600 dark:text-indigo-400': $route.path === '/blog' }"
+            >
+              บทความ
+            </NuxtLink>
+            <NuxtLink 
+              to="/code" 
+              class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium transition-colors duration-200"
+              :class="{ 'text-indigo-600 dark:text-indigo-400': $route.path === '/code' }"
+            >
+              เขียนโค้ด
+            </NuxtLink>
+          </div>
+        </div>
+
+        <!-- Right section - Theme Toggle and Buttons -->
         <div class="flex items-center space-x-4">
-          <!-- Search Button -->
-          <button 
-            @click="openModal('commandPalette')($event)"
-            class="p-2 rounded-full text-text hover:bg-surface"
-            aria-label="Search"
-          >
-            <div class="i-mdi-magnify h-5 w-5" />
-          </button>
-
-
           <!-- Theme Toggle -->
-          <button
-            @click="toggleTheme"
-            class="p-2 rounded-full text-text hover:bg-surface"
-            :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+          <div class="flex items-center">
+            <Toggle v-model="isDark" />
+          </div>
+          
+          <!-- Sign In Button -->
+          <Button 
+            variant="secondary" 
+            size="sm"
+            class="hidden md:inline-flex"
+            @click="signIn"
           >
-            <div v-if="isDark" class="i-mdi-weather-sunny h-5 w-5" />
-            <div v-else class="i-mdi-weather-night h-5 w-5" />
-          </button>
-
-          <!-- User Menu -->
-          <div class="relative">
+            เข้าสู่ระบบ
+          </Button>
+          
+          <!-- Get Started Button -->
+          <Button
+            size="sm"
+            class="hidden md:inline-flex"
+            @click="getStarted"
+          >
+            เริ่มต้นใช้งาน
+          </Button>
+          
+          <!-- Mobile menu button -->
+          <div class="md:hidden flex items-center">
             <button 
-              @click.stop="toggleDropdown($event)"
-              class="flex items-center focus:outline-none"
-              aria-haspopup="true"
-              :aria-expanded="isDropdownOpen"
+              class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 focus:outline-none" 
+              @click="isMobileMenuOpen = !isMobileMenuOpen"
             >
-              <Avatar :is-open="isDropdownOpen" />
+              <div class="i-mdi-menu text-2xl" />
             </button>
-            
-            <Dropdown 
-              v-if="isDropdownOpen" 
-              :is-open="isDropdownOpen" 
-              position="right" 
-              @close="closeModals"
-              class="z-50"
-            >
-              <button
-                @click="openModal('profile')($event)"
-                class="w-full text-left px-4 py-2 text-sm text-text hover:bg-surface flex items-center space-x-2"
-                role="menuitem"
-                tabindex="-1"
-              >
-                <div class="i-mdi-account h-5 w-5" />
-                <span>Your Profile</span>
-              </button>
-              <button
-                @click="openBilling($event)"
-                class="w-full text-left px-4 py-2 text-sm text-text hover:bg-surface flex items-center space-x-2"
-                role="menuitem"
-                tabindex="-1"
-              >
-                <div class="i-mdi-credit-card h-5 w-5" />
-                <span>Billing</span>
-              </button>
-              <button
-                @click="openModal('settings')($event)"
-                class="w-full text-left px-4 py-2 text-sm text-text hover:bg-surface flex items-center space-x-2"
-                role="menuitem"
-                tabindex="-1"
-              >
-                <div class="i-mdi-cog h-5 w-5" />
-                <span>Settings</span>
-              </button>
-              <div class="border-t border-border my-1"></div>
-              <button
-                @click="signOut"
-                class="w-full text-left px-4 py-2 text-sm text-error hover:bg-surface flex items-center space-x-2"
-                role="menuitem"
-                tabindex="-1"
-              >
-                <div class="i-mdi-logout h-5 w-5" />
-                <span>Sign out</span>
-              </button>
-            </Dropdown>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Mobile menu button -->
-    <div class="md:hidden">
-      <button class="mobile-menu-button p-2 rounded-md text-text hover:bg-surface focus:outline-none focus:ring-2 focus:ring-inset focus:ring-brand">
-        <div class="i-mdi-menu h-6 w-6" />
-      </button>
-    </div>
-
-    <!-- Mobile menu, show/hide based on menu state. -->
-    <div class="md:hidden mobile-menu hidden">
-      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-        <NavItems vertical />
+    <!-- Mobile menu -->
+    <div v-if="isMobileMenuOpen" class="md:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+      <div class="px-2 pt-2 pb-3 space-y-1">
+        <NuxtLink 
+          to="/" 
+          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+          :class="{ 'bg-gray-100 dark:bg-gray-800': $route.path === '/' }"
+          @click="isMobileMenuOpen = false"
+        >
+          หน้าแรก
+        </NuxtLink>
+        <NuxtLink 
+          to="/chat" 
+          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+          :class="{ 'bg-gray-100 dark:bg-gray-800': $route.path === '/chat' }"
+          @click="isMobileMenuOpen = false"
+        >
+          แชท
+        </NuxtLink>
+        <NuxtLink 
+          to="/blog" 
+          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+          :class="{ 'bg-gray-100 dark:bg-gray-800': $route.path === '/blog' }"
+          @click="isMobileMenuOpen = false"
+        >
+          บทความ
+        </NuxtLink>
+        <NuxtLink 
+          to="/code" 
+          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+          :class="{ 'bg-gray-100 dark:bg-gray-800': $route.path === '/code' }"
+          @click="isMobileMenuOpen = false"
+        >
+          เขียนโค้ด
+        </NuxtLink>
+        <div class="pt-4 pb-2 border-t border-gray-200 dark:border-gray-700">
+          <Button 
+            variant="secondary" 
+            class="w-full mb-2"
+            @click="signIn"
+          >
+            เข้าสู่ระบบ
+          </Button>
+          <Button
+            class="w-full"
+            @click="getStarted"
+          >
+            เริ่มต้นใช้งาน
+          </Button>
+        </div>
       </div>
     </div>
-
-    <!-- Auth Modal -->
-    <ModalAuth v-model="showAuthModal" @close="showAuthModal = false" />
-
-    <!-- Command Palette Modal -->
-    <ModalCommandPalette 
-      v-model="showModalCommandPalette"
-      @close="closeModals"
-    />
-
-    <!-- Settings Modal -->
-    <ModalSettings 
-      v-model="showModalSettings"
-      @close="closeModals"
-    />
   </nav>
 </template>
+
+<script setup lang="ts">
+import { ref, watch, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import Logo from './Logo.vue';
+import Toggle from './Toggle.vue';
+import Button from './Button.vue';
+
+const route = useRoute();
+const isDark = ref(false);
+const isMobileMenuOpen = ref(false);
+
+// Watch for theme changes
+watch(isDark, (newVal) => {
+  if (newVal) {
+    document.documentElement.classList.add('dark');
+    localStorage.theme = 'dark';
+  } else {
+    document.documentElement.classList.remove('dark');
+    localStorage.theme = 'light';
+  }
+});
+
+// Close mobile menu when route changes
+watch(() => route.path, () => {
+  isMobileMenuOpen.value = false;
+});
+
+// Check for saved theme preference
+onMounted(() => {
+  if (typeof window !== 'undefined') {
+    isDark.value = localStorage.theme === 'dark' || 
+      (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  }
+});
+
+const signIn = () => {
+  // Handle sign in
+  console.log('Sign in clicked');
+  // Example: navigate to sign in page
+  // navigateTo('/signin');
+};
+
+const getStarted = () => {
+  // Handle get started
+  console.log('Get started clicked');
+  // Example: navigate to sign up page
+  // navigateTo('/signup');
+};
+</script>
+
+<style scoped>
+/* Add any custom styles here if needed */
+</style>

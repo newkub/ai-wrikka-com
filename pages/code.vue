@@ -1,267 +1,100 @@
-<script setup lang="ts">
-import { ref } from "vue";
-import Terminal from "~/components/code/Terminal.vue";
-import Dependencies from "~/components/code/Dependencies.vue";
-import Browser from "~/components/code/Browser.vue";
-
-definePageMeta({
-	layout: "fullscreen",
-});
-
-// Type for the terminal component
-type TerminalComponent = {
-	addLine: (text: string) => void;
-};
-
-const terminal = ref<{ addLine: (text: string) => void } | null>(null);
-const terminalRef = terminal as unknown as { value: TerminalComponent | null };
-
-// Active tab state
-const activeTab = ref("terminal");
-
-// Dependencies data
-const dependencies = ref([
-	{ name: "vue", version: "^3.3.0", type: "dependencies" as const },
-	{ name: "pinia", version: "^2.1.0", type: "dependencies" as const },
-	{ name: "vue-router", version: "^4.2.0", type: "dependencies" as const },
-	{
-		name: "@vitejs/plugin-vue",
-		version: "^4.3.0",
-		type: "devDependencies" as const,
-	},
-	{ name: "typescript", version: "^5.0.0", type: "devDependencies" as const },
-	{ name: "vite", version: "^4.4.0", type: "devDependencies" as const },
-]);
-
-const installationOutput = ref<
-	Array<{ type: "success" | "error" | "warning" | "info"; text: string }>
->([
-	{ type: "info", text: "Installing dependencies..." },
-	{ type: "success", text: "Successfully installed all dependencies" },
-]);
-
-const mainTsxContent = `import { createApp } from 'vue';
-import App from './App.vue';
-import './index.css';
-
-createApp(App).mount('#app');`;
-
-const editorContent = ref(mainTsxContent);
-
-// Bottom Panel Tabs
-const bottomTabs = ref([
-	{ id: "terminal", label: "Terminal" },
-	{ id: "browser", label: "Browser" },
-	{ id: "dependencies", label: "Dependencies" },
-]);
-
-// Browser URL state
-const browserUrl = ref("");
-
-useHead({
-	title: "Code Editor - Wrikka",
-	meta: [{ name: "description", content: "Code editor with terminal" }],
-});
-
-// Handle terminal commands
-const handleTerminalCommand = (command: string) => {
-	const response = `$ ${command}\n> Command executed: ${command}\n`;
-	terminalRef.value?.addLine(response);
-};
-
-// Handle browser navigation
-const handleBrowserNavigate = (url: string) => {
-	browserUrl.value = url;
-};
-
-// Handle dependency installation
-const installDependency = (options: {
-	name: string;
-	version: string;
-	isDev?: boolean;
-}) => {
-	const { name, version, isDev = false } = options;
-	const type = isDev ? "devDependencies" : "dependencies";
-
-	// Check if dependency already exists
-	const existingIndex = dependencies.value.findIndex(
-		(dep) => dep.name === name,
-	);
-
-	if (existingIndex >= 0) {
-		// Update existing dependency
-		dependencies.value[existingIndex] = { name, version, type };
-	} else {
-		// Add new dependency
-		dependencies.value.push({ name, version, type });
-	}
-
-	installationOutput.value.push({
-		type: "info",
-		text: `Installing ${name}@${version} as ${isDev ? "dev" : "production"} dependency...`,
-	});
-
-	// Simulate installation
-	setTimeout(() => {
-		installationOutput.value.push({
-			type: "success",
-			text: `Successfully installed ${name}@${version}`,
-		});
-	}, 1000);
-};
-</script>
-
 <template>
-  <div class="h-full flex flex-col bg-background overflow-hidden">
-    <!-- Header -->
-    <header class="bg-surface border-b border-border">
-      <div class="px-4 py-3 flex items-center justify-between">
-        <div class="flex items-center space-x-4">
-          <h1 class="text-lg font-semibold text-white">Code Editor</h1>
-          <div class="text-sm text-gray-400">main.tsx</div>
-        </div>
-        <div class="flex items-center space-x-2 ml-auto text-gray-400">
-          <button class="p-1.5 rounded-md hover:bg-surface/50">
-            <div class="i-mdi-dots-vertical text-gray-400 h-5 w-5"></div>
-          </button>
-        </div>
-      </div>
-    </header>
-
-    <!-- Main Content -->
-    <div class="flex flex-1 overflow-hidden">
-      <!-- Sidebar - File Explorer -->
-      <div class="w-64 bg-surface/50 text-text flex flex-col border-r border-border">
-        <div class="p-3 border-b border-border">
-          <div class="flex items-center justify-between">
-            <h2 class="text-sm font-medium text-text">EXPLORER</h2>
-            <button class="text-muted hover:text-text">
-              <div class="i-mdi-plus h-4 w-4"></div>
+  <div class="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          <div class="flex items-center">
+            <span class="text-xl font-bold text-indigo-600">AI Wrikka</span>
+          </div>
+          <div class="hidden md:flex items-center space-x-8">
+            <NuxtLink to="/" class="text-gray-700 hover:text-indigo-600 font-medium">หน้าแรก</NuxtLink>
+            <NuxtLink to="/chat" class="text-gray-700 hover:text-indigo-600 font-medium">แชท</NuxtLink>
+            <NuxtLink to="/about" class="text-gray-700 hover:text-indigo-600 font-medium">เกี่ยวกับเรา</NuxtLink>
+          </div>
+          <div class="flex items-center">
+            <button class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors">
+              เริ่มต้นใช้งาน
             </button>
           </div>
         </div>
-        <div class="flex-1 overflow-y-auto">
-          <div class="py-1">
-            <!-- Project Root -->
-            <div class="px-2 py-1">
-              <button class="flex items-center w-full text-left text-sm text-text hover:bg-surface/50 rounded px-2 py-1">
-                <div class="i-mdi-folder h-4 w-4 mr-1"></div>
-                my-app
-              </button>
-              
-              <!-- Files -->
-              <div class="ml-4 mt-1">
-                <div class="mb-1">
-                  <div class="text-xs text-muted uppercase font-medium px-2 py-1">src</div>
-                  <div class="ml-2">
-                    <div class="flex items-center text-sm text-text bg-surface/50 rounded px-2 py-1">
-                      <div class="i-mdi-language-typescript h-4 w-4 mr-1 text-blue-400"></div>
-                      main.tsx
-                    </div>
-                    <div class="flex items-center text-sm text-muted hover:bg-surface/50 rounded px-2 py-1">
-                      <div class="i-mdi-vuejs h-4 w-4 mr-1 text-green-400"></div>
-                      App.vue
-                    </div>
-                    <div class="flex items-center text-sm text-muted hover:bg-surface/50 rounded px-2 py-1">
-                      <div class="i-mdi-language-css3 h-4 w-4 mr-1 text-blue-400"></div>
-                      index.css
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="mt-2">
-                  <div class="flex items-center text-sm text-muted hover:bg-surface/50 rounded px-2 py-1">
-                    <div class="i-mdi-lightning-bolt h-4 w-4 mr-1 text-muted"></div>
-                    package.json
-                  </div>
-                  <div class="flex items-center text-sm text-muted hover:bg-surface/50 rounded px-2 py-1">
-                    <div class="i-mdi-file-document-outline h-4 w-4 mr-1 text-muted"></div>
-                    tsconfig.json
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
+    </nav>
 
-      <!-- Main Editor Area -->
-      <div class="flex-1 flex flex-col overflow-hidden">
-        <!-- Tabs -->
-        <div class="flex items-center bg-surface/50 border-b border-border">
-          <div class="flex items-center px-4 py-2 border-r border-border bg-surface text-white">
-            <div class="i-mdi-file-document-outline h-4 w-4 mr-2 text-white"></div>
-            main.tsx
-            <button class="ml-2 text-muted hover:text-text">
-              <div class="i-mdi-close h-4 w-4"></div>
-            </button>
-          </div>
-          <button class="px-4 py-2 text-muted hover:bg-surface/50">
-            <div class="i-mdi-plus h-4 w-4"></div>
+    <!-- Hero Section -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="text-center">
+        <h1 class="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+          ยินดีต้อนรับสู่ AI Wrikka
+        </h1>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+          แพลตฟอร์ม AI ช่วยสร้างสรรค์เนื้อหาที่ทันสมัยและมีประสิทธิภาพ
+          พร้อมให้บริการทุกความต้องการด้านการสร้างเนื้อหาของคุณ
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+          <NuxtLink 
+            to="/chat" 
+            class="bg-indigo-600 text-white px-8 py-3 rounded-md text-lg font-medium hover:bg-indigo-700 transition-colors"
+          >
+            เริ่มแชทตอนนี้
+          </NuxtLink>
+          <button class="bg-white text-indigo-600 px-8 py-3 rounded-md text-lg font-medium border border-indigo-200 hover:bg-indigo-50 transition-colors">
+            เรียนรู้เพิ่มเติม
           </button>
         </div>
+      </div>
 
-        <!-- Main Content -->
-        <div class="flex-1 flex flex-col overflow-hidden bg-muted">
-          <!-- Editor -->
-          <div class="flex-1 overflow-auto">
-            <Editor 
-              v-model="editorContent"
-              class="h-full"
-            />
-          </div>
-
-          <!-- Bottom Panel Tabs -->
-          <div class="h-1/2 flex flex-col border-t border-border">
-            <!-- Tabs -->
-            <div class="h-12 border-t border-border flex items-center px-4 bg-muted">
-              <button 
-                v-for="tab in bottomTabs" 
-                :key="tab.id"
-                @click="activeTab = tab.id"
-                class="px-4 py-2 text-sm font-medium border-b-2 transition-colors duration-200"
-                :class="{
-                  'border-brand text-brand': activeTab === tab.id,
-                  'border-transparent text-muted hover:text-text': activeTab !== tab.id
-                }"
-              >
-                {{ tab.label }}
-              </button>
+      <!-- Features Section -->
+      <div class="mt-24">
+        <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">คุณสมบัติเด่น</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div v-for="(feature, index) in features" :key="index" class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-transform hover:-translate-y-1">
+            <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
+              <div :class="`i-mdi-${feature.icon} text-2xl text-indigo-600`"></div>
             </div>
-
-            <!-- Tab Content -->
-            <div class="flex-1 overflow-hidden">
-              <!-- Terminal -->
-              <div v-if="activeTab === 'terminal'" class="h-full">
-                <Terminal 
-                  ref="terminal"
-                  @execute="handleTerminalCommand"
-                  class="h-full"
-                />
-              </div>
-
-              <!-- Browser -->
-              <div v-else-if="activeTab === 'browser'" class="h-full">
-                <Browser 
-                  :url="browserUrl"
-                  @update:url="(url: string) => browserUrl = url"
-                  @navigate="handleBrowserNavigate"
-                  class="h-full"
-                />
-              </div>
-
-              <!-- Dependencies -->
-              <Dependencies 
-                v-else
-                :dependencies="dependencies"
-                :installation-output="installationOutput"
-                @install-dependency="installDependency"
-                class="h-full"
-              />
-            </div>
+            <h3 class="text-xl font-semibold mb-2">{{ feature.title }}</h3>
+            <p class="text-gray-600 text-sm">{{ feature.description }}</p>
           </div>
         </div>
       </div>
-    </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <p class="text-center text-gray-500 text-sm">
+          &copy; 2025 AI Wrikka. สงวนลิขสิทธิ์ทุกประการ
+        </p>
+      </div>
+    </footer>
   </div>
 </template>
+
+<script setup lang="ts">
+const features = [
+  {
+    icon: 'lightning-bolt',
+    title: 'สร้างเนื้อหาได้รวดเร็ว',
+    description: 'สร้างเนื้อหาคุณภาพสูงในเวลาเพียงไม่กี่วินาที ด้วยเทคโนโลยี AI ล้ำสมัย'
+  },
+  {
+    icon: 'hand-okay',
+    title: 'ใช้งานง่าย',
+    description: 'อินเทอร์เฟซที่เรียบง่าย เข้าใจง่าย เหมาะสำหรับผู้ใช้งานทุกระดับ'
+  },
+  {
+    icon: 'earth',
+    title: 'รองรับหลายภาษา',
+    description: 'สามารถสร้างและตอบกลับได้หลายภาษา พร้อมรองรับการใช้งานที่หลากหลาย'
+  },
+  {
+    icon: 'shield-check',
+    title: 'ปลอดภัยสูง',
+    description: 'ระบบรักษาความปลอดภัยมาตรฐานสูง ข้อมูลของคุณจะถูกเก็บเป็นความลับ'
+  }
+]
+</script>
+
+<style scoped>
+/* เพิ่มสไตล์เพิ่มเติมได้ตามต้องการ */
+</style>

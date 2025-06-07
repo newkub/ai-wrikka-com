@@ -24,7 +24,7 @@ export default defineConfig({
 		presetWebFonts({
 			provider: "none",
 			fonts: {
-				sans: "Roboto",
+				sans: "Noto Sans Thai",
 				mono: "Fira Code",
 			},
 			processors: createLocalFontProcessor({
@@ -37,47 +37,25 @@ export default defineConfig({
 	transformers: [transformerVariantGroup(), transformerDirectives()],
 	theme: {
 		colors: {
-			background: "var(--background)",
-			block: "var(--block)",
-			primary: "var(--primary)",
-			border: "var(--border)",
-			secondary: "var(--secondary)",
+			background: "var(--background)", 
+			block: "var(--block)",           
 			text: "var(--text)",
-			alert: "var(--alert)",
-			error: "var(--error)",
-			success: "var(--success)",
-		},
-		spacing: {
-			sm: "var(--spacing-unit)",
-			DEFAULT: "calc(var(--spacing-unit) * 2)",
-			lg: "calc(var(--spacing-unit) * 4)",
-		},
-		borderRadius: {
-			sm: "var(--border-radius-sm)",
-			DEFAULT: "var(--border-radius-md)",
-			lg: "var(--border-radius-lg)",
-		},
-		boxShadow: {
-			sm: "var(--shadow-sm)",
-			DEFAULT: "var(--shadow-md)",
-			lg: "var(--shadow-lg)",
-		},
-		border: {
-			DEFAULT: "var(--border)",
-		},
-		breakpoints: {
-			mobile: "var(--breakpoints-mobile)",
-			tablet: "var(--breakpoints-tablet)",
-			desktop: "var(--breakpoints-desktop)",
-		},
-		transition: {
-			DEFAULT: "var(--transition)",
+			border: "var(--border)",
+			color: {
+				primary: "var(--primary)", 
+				secondary: "var(--secondary)",   
+				alert: "var(--alert)",
+				error: "var(--error)",
+				success: "var(--success)",
+			}
+			
+			
 		},
 	},
 	shortcuts: {
-		'block': '',
-		'text': '',
-		'grid': '',
-		'': '',
+		'block': 'bg-block p-4 rounded-md shadow-sm border border-base',
+		'text': 'text-text font-sans',
+		'grid': 'grid gap-4',
+		'btn': 'px-4 py-2 rounded-md bg-primary text-white hover:opacity-90 transition-opacity',
 	}
 });

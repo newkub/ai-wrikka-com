@@ -31,7 +31,6 @@ export default defineNuxtConfig({
 
 	typescript: {
 		strict: true,
-		// typeCheck : true
 	},
 	runtimeConfig: {
 		openaiApiKey: process.env.OPENAI_API_KEY,

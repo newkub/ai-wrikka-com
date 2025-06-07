@@ -1,73 +1,247 @@
-<script setup lang="ts">
-interface BlogPost {
-  id: number
-  title: string
-  excerpt: string
-  date: string
-  author: string
-  image: string
-}
-
-const posts: BlogPost[] = [
-  {
-    id: 1,
-    title: 'Getting Started with Vue 3',
-    excerpt: 'Learn the basics of Vue 3 composition API',
-    date: '2023-05-15',
-    author: 'John Doe',
-    image: 'https://picsum.photos/300/200?random=1'
-  },
-  {
-    id: 2,
-    title: 'Advanced TypeScript Patterns',
-    excerpt: 'Explore advanced TypeScript techniques',
-    date: '2023-06-20',
-    author: 'Jane Smith',
-    image: 'https://picsum.photos/300/200?random=2'
-  },
-  {
-    id: 3,
-    title: 'UnoCSS for Rapid Styling',
-    excerpt: 'How to use UnoCSS in your projects',
-    date: '2023-07-10',
-    author: 'Mike Johnson',
-    image: 'https://picsum.photos/300/200?random=3'
-  },
-  {
-    id: 4,
-    title: 'Nuxt 3 Best Practices',
-    excerpt: 'Tips and tricks for Nuxt 3 development',
-    date: '2023-08-05',
-    author: 'Sarah Williams',
-    image: 'https://picsum.photos/300/200?random=4'
-  }
-]
-</script>
-
 <template>
-  <div class="max-w-7xl mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold mb-8">Blog</h1>
-    
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      <div 
-        v-for="post in posts" 
-        :key="post.id"
-        class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
-      >
-        <img 
-          :src="post.image" 
-          :alt="post.title"
-          class="w-full h-48 object-cover"
-        />
-        <div class="p-4">
-          <h2 class="text-xl font-semibold mb-2">{{ post.title }}</h2>
-          <p class="text-gray-600 text-sm mb-3">{{ post.excerpt }}</p>
-          <div class="flex justify-between items-center text-sm text-gray-500">
-            <span>{{ post.author }}</span>
-            <span>{{ post.date }}</span>
+  <div class="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          <div class="flex items-center">
+            <span class="text-xl font-bold text-indigo-600">AI Wrikka</span>
+          </div>
+          <div class="hidden md:flex items-center space-x-8">
+            <NuxtLink to="/" class="text-gray-700 hover:text-indigo-600 font-medium">หน้าแรก</NuxtLink>
+            <NuxtLink to="/chat" class="text-gray-700 hover:text-indigo-600 font-medium">แชท</NuxtLink>
+            <NuxtLink to="/about" class="text-gray-700 hover:text-indigo-600 font-medium">เกี่ยวกับเรา</NuxtLink>
+          </div>
+          <div class="flex items-center">
+            <button class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors">
+              เริ่มต้นใช้งาน
+            </button>
           </div>
         </div>
       </div>
-    </div>
+    </nav>
+
+    <!-- Blog Header -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="text-center mb-16">
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          บทความล่าสุด
+        </h1>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+          อัปเดตบทความ เทคนิค และความรู้ใหม่ๆ เกี่ยวกับ AI และเทคโนโลยีล่าสุด
+        </p>
+      </div>
+
+      <!-- Blog Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <article v-for="post in posts" :key="post.id" class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
+          <div class="h-48 bg-gray-200 overflow-hidden">
+            <img :src="post.image" :alt="post.title" class="w-full h-full object-cover">
+          </div>
+          <div class="p-5">
+            <div class="flex items-center text-sm text-gray-500 mb-2">
+              <span class="i-mdi-calendar mr-1"></span>
+              <span>{{ formatDate(post.date) }}</span>
+              <span class="mx-2">•</span>
+              <span class="flex items-center">
+                <span class="i-mdi-eye mr-1"></span>
+                {{ post.views }}
+              </span>
+            </div>
+            <h2 class="text-xl font-bold text-gray-900 mb-2 line-clamp-2">
+              {{ post.title }}
+            </h2>
+            <p class="text-gray-600 text-sm mb-4 line-clamp-3">
+              {{ post.excerpt }}
+            </p>
+            <div class="flex items-center justify-between">
+              <span class="inline-block bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded">
+                {{ post.category }}
+              </span>
+              <NuxtLink 
+                :to="`/blog/${post.slug}`" 
+                class="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center"
+              >
+                อ่านต่อ
+                <span class="i-mdi-arrow-right ml-1"></span>
+              </NuxtLink>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Pagination -->
+      <div class="mt-12 flex justify-center">
+        <nav class="flex items-center space-x-2">
+          <button class="px-4 py-2 border rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            <span class="i-mdi-chevron-left"></span>
+            ก่อนหน้า
+          </button>
+          <button class="px-4 py-2 border rounded-md bg-indigo-600 text-white">
+            1
+          </button>
+          <button class="px-4 py-2 border rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            2
+          </button>
+          <button class="px-4 py-2 border rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            3
+          </button>
+          <button class="px-4 py-2 border rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            ถัดไป
+            <span class="i-mdi-chevron-right"></span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Popular Categories -->
+      <div class="mt-24">
+        <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">หมวดหมู่ยอดนิยม</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+          <a href="#" class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center">
+            <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <div class="i-mdi-book-open-page-variant text-2xl text-indigo-600"></div>
+            </div>
+            <span class="text-gray-700 font-medium">คู่มือ</span>
+          </a>
+          <a href="#" class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center">
+            <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <div class="i-mdi-lightbulb-on text-2xl text-indigo-600"></div>
+            </div>
+            <span class="text-gray-700 font-medium">เทคนิค</span>
+          </a>
+          <a href="#" class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center">
+            <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <div class="i-mdi-star text-2xl text-indigo-600"></div>
+            </div>
+            <span class="text-gray-700 font-medium">รีวิว</span>
+          </a>
+          <a href="#" class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center">
+            <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <div class="i-mdi-chart-line text-2xl text-indigo-600"></div>
+            </div>
+            <span class="text-gray-700 font-medium">ประสิทธิภาพ</span>
+          </a>
+          <a href="#" class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center">
+            <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <div class="i-mdi-magnify text-2xl text-indigo-600"></div>
+            </div>
+            <span class="text-gray-700 font-medium">SEO</span>
+          </a>
+          <a href="#" class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center">
+            <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <div class="i-mdi-trending-up text-2xl text-indigo-600"></div>
+            </div>
+            <span class="text-gray-700 font-medium">เทรนด์</span>
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <p class="text-center text-gray-500 text-sm">
+          &copy; 2025 AI Wrikka. สงวนลิขสิทธิ์ทุกประการ
+        </p>
+      </div>
+    </footer>
   </div>
 </template>
+
+<script setup lang="ts">
+const posts = [
+  {
+    id: 1,
+    title: 'เริ่มต้นใช้งาน AI Wrikka ฉบับมือใหม่',
+    excerpt: 'เรียนรู้วิธีใช้งาน AI Wrikka ตั้งแต่เริ่มต้นจนสร้างเนื้อหาได้อย่างมืออาชีพ',
+    date: '2025-06-01',
+    views: '1.2k',
+    category: 'คู่มือ',
+    slug: 'getting-started-with-ai-wrikka',
+    image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+  },
+  {
+    id: 2,
+    title: '10 เทคนิคสร้างคอนเทนต์ให้ปังด้วย AI',
+    excerpt: 'เคล็ดลับการใช้งาน AI ในการสร้างคอนเทนต์ที่น่าสนใจและมีประสิทธิภาพ',
+    date: '2025-05-28',
+    views: '2.4k',
+    category: 'เทคนิค',
+    slug: '10-ai-content-creation-tips',
+    image: 'https://images.unsplash.com/photo-1516321318423-f06a85f50859?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+  },
+  {
+    id: 3,
+    title: 'เปรียบเทียบ AI Tools สำหรับนักเขียน',
+    excerpt: 'มารู้จักกับเครื่องมือ AI สำหรับนักเขียนที่ควรมีติดเครื่อง',
+    date: '2025-05-20',
+    views: '1.8k',
+    category: 'รีวิว',
+    slug: 'ai-tools-for-writers',
+    image: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+  },
+  {
+    id: 4,
+    title: 'วิธีเพิ่มประสิทธิภาพการทำงานด้วย AI',
+    excerpt: 'เทคนิคการใช้ AI เพื่อเพิ่มประสิทธิภาพในการทำงานให้เร็วขึ้น',
+    date: '2025-05-15',
+    views: '3.1k',
+    category: 'ประสิทธิภาพ',
+    slug: 'boost-productivity-with-ai',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+  },
+  {
+    id: 5,
+    title: 'การเขียนบทความ SEO ด้วย AI',
+    excerpt: 'เรียนรู้เทคนิคการเขียนบทความ SEO ที่ติดอันดับด้วยความช่วยเหลือจาก AI',
+    date: '2025-05-10',
+    views: '2.7k',
+    category: 'SEO',
+    slug: 'ai-seo-article-writing',
+    image: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+  },
+  {
+    id: 6,
+    title: 'สร้างกราฟิกสำหรับโซเชียลมีเดียด้วย AI',
+    excerpt: 'วิธีสร้างกราฟิกสวยๆ สำหรับโพสต์โซเชียลมีเดียด้วย AI ง่ายๆ',
+    date: '2025-05-05',
+    views: '1.9k',
+    category: 'กราฟิก',
+    slug: 'ai-graphic-design',
+    image: 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+  },
+  {
+    id: 7,
+    title: 'เทรนด์ AI ที่น่าจับตามองในปี 2025',
+    excerpt: 'อัปเดตเทรนด์ AI และเทคโนโลยีใหม่ๆ ที่จะมาเปลี่ยนโลกการทำงาน',
+    date: '2025-04-28',
+    views: '3.5k',
+    category: 'เทรนด์',
+    slug: 'ai-trends-2025',
+    image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+  },
+  {
+    id: 8,
+    title: 'วิธีใช้ AI ช่วยในการตลาดออนไลน์',
+    excerpt: 'นำ AI มาใช้ในการวางกลยุทธ์ทางการตลาดออนไลน์ให้มีประสิทธิภาพมากขึ้น',
+    date: '2025-04-20',
+    views: '2.2k',
+    category: 'การตลาด',
+    slug: 'ai-in-digital-marketing',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+  }
+]
+
+const formatDate = (dateString: string): string => {
+  const options: Intl.DateTimeFormatOptions = { 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  }
+  return new Date(dateString).toLocaleDateString('th-TH', options)
+}
+</script>
+
+<style scoped>
+/* เพิ่มสไตล์เพิ่มเติมได้ตามต้องการ */
+</style>

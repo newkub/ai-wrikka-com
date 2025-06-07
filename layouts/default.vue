@@ -1,10 +1,5 @@
-<script setup lang="ts">
-</script>
-
 <template>
-  <div class="flex flex-col min-h-screen">
-    <main class="flex-1">
-      <slot />
-    </main>
+  <div class="min-h-screen flex flex-col">
+    <slot />
   </div>
 </template>
