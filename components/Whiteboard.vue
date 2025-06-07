@@ -267,9 +267,9 @@ const saveCanvas = () => {
 </script>
 
 <template>
-  <div class="flex flex-col h-full bg-block">
+  <div class="flex flex-col h-full w-full bg-block">
     <!-- Toolbar -->
-    <div class="flex items-center p-2 bg-background border-b border-border">
+    <div class="p-2 border-t border-border flex-shrink-0">
       <div class="flex space-x-1">
         <button 
           v-for="tool in tools" 
@@ -344,20 +344,18 @@ const saveCanvas = () => {
     </div>
     
     <!-- Canvas Container -->
-    <div class="flex-1 relative overflow-hidden">
+    <div class="flex-1 relative overflow-hidden h-full">
       <canvas
         ref="canvasRef"
-        class="bg-background"
+        class="absolute inset-0 w-full h-full block"
         :style="{
-          width: props.width || '100%',
-          height: props.height || '100%',
           cursor: currentTool === 'pen' ? 'crosshair' : 'default'
         }"
         @mousedown="startDrawing"
         @mousemove="draw"
         @mouseup="stopDrawing"
         @mouseleave="stopDrawing"
-      />
+      ></canvas>
       
       <!-- Text Input Modal -->
       <div 

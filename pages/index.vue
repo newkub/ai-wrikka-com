@@ -8,10 +8,10 @@
     <!-- Hero Section -->
     <div >
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-        <h1 class="text-4xl md:text-5xl font-bold text-black mb-6">
+        <h1 class="text-4xl md:text-5xl font-bold mb-6">
           สร้างสรรค์ผลงานด้วย AI
         </h1>
-        <p class="text-xl text-black max-w-3xl mx-auto mb-8">
+        <p class="text-xl max-w-3xl mx-auto mb-8">
           พบกับเครื่องมือ AI ที่ช่วยให้การทำงานของคุณง่ายขึ้น รวดเร็วยิ่งขึ้น และมีประสิทธิภาพมากขึ้น
         </p>
         <div class="flex flex-col sm:flex-row justify-center gap-4">
@@ -36,8 +36,8 @@
             <div class="i-mdi-robot-happy text-6xl text-white"></div>
           </div>
           <div class="p-6">
-            <h3 class="text-xl font-bold text-black mb-2">AI Chat</h3>
-            <p class="text-black text-sm mb-4">
+            <h3 class="text-xl font-bold mb-2">AI Chat</h3>
+            <p class="text-sm mb-4">
               สนทนากับ AI ที่สามารถตอบคำถามและช่วยแก้ปัญหาต่างๆ ได้อย่างชาญฉลาด
             </p>
             <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center">
@@ -52,8 +52,8 @@
             <div class="i-mdi-image-edit text-6xl text-white"></div>
           </div>
           <div class="p-6">
-            <h3 class="text-xl font-bold text-black mb-2">สร้างรูปภาพ</h3>
-            <p class="text-black text-sm mb-4">
+            <h3 class="text-xl font-bold mb-2">สร้างรูปภาพ</h3>
+            <p class="text-sm mb-4">
               สร้างภาพสวยๆ จากข้อความด้วย AI ตามที่คุณต้องการ
             </p>
             <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center">
@@ -68,8 +68,8 @@
             <div class="i-mdi-file-document-edit text-6xl text-white"></div>
           </div>
           <div class="p-6">
-            <h3 class="text-xl font-bold text-black mb-2">เขียนบทความ</h3>
-            <p class="text-black text-sm mb-4">
+            <h3 class="text-xl font-bold mb-2">เขียนบทความ</h3>
+            <p class="text-sm mb-4">
               สร้างเนื้อหาบทความคุณภาพสูงด้วยความช่วยเหลือจาก AI
             </p>
             <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center">
@@ -84,8 +84,8 @@
             <div class="i-mdi-code-tags text-6xl text-white"></div>
           </div>
           <div class="p-6">
-            <h3 class="text-xl font-bold text-black mb-2">เขียนโค้ด</h3>
-            <p class="text-black text-sm mb-4">
+            <h3 class="text-xl font-bold mb-2">เขียนโค้ด</h3>
+            <p class="text-sm mb-4">
               สร้างและแก้ไขโค้ดด้วย AI ช่วยเหลือการเขียนโปรแกรม
             </p>
             <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center">

@@ -47,32 +47,11 @@ const fileIcon = (file: FileItem) => {
   }
 };
 
-const fileColor = (file: FileItem) => {
-  if (file.type === 'directory') return 'text-color-secondary';
-  
-  const ext = file.name.split('.').pop()?.toLowerCase();
-  switch (ext) {
-    case 'js':
-      return 'text-color-secondary';
-    case 'ts':
-      return 'text-color-primary';
-    case 'vue':
-      return 'text-color-success';
-    case 'json':
-      return 'text-color-secondary';
-    case 'html':
-      return 'text-color-alert';
-    case 'css':
-      return 'text-color-primary';
-    default:
-      return 'text-text/60';
-  }
-};
 </script>
 
 <template>
   <div class="h-full overflow-y-auto p-2">
-    <div class="text-xs font-medium text-text/70 mb-2 px-2">EXPLORER</div>
+    <div class="text-xs font-medium mb-2 px-2">EXPLORER</div>
     <ul class="space-y-1">
       <li v-for="(file, index) in files" :key="index" class="text-sm">
         <div 
@@ -81,10 +60,10 @@ const fileColor = (file: FileItem) => {
           :class="{ 'bg-block': activeFile === file.name }"
         >
           <span class="w-4 h-4 mr-1 flex items-center justify-center">
-            <div :class="[fileIcon(file), fileColor(file)]"></div>
+            <div :class="[fileIcon(file)]"></div>
           </span>
           <span class="truncate">{{ file.name }}</span>
-          <span v-if="file.type === 'directory'" class="ml-auto text-xs text-text/50">
+          <span v-if="file.type === 'directory'" class="ml-auto text-xs">
             {{ file.isOpen ? '▼' : '▶' }}
           </span>
         </div>

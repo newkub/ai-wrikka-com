@@ -11,10 +11,10 @@ const props = defineProps<{
     <div v-if="icon" class="text-2xl mb-2">
       <i :class="icon" />
     </div>
-    <h3 class="text-lg font-semibold mb-2 text-text">
+    <h3 class="text-lg font-semibold mb-2">
       {{ title }}
     </h3>
-    <p class="text-text/80 text-sm flex-grow">
+    <p class="text-sm flex-grow">
       {{ description }}
     </p>
   </div>

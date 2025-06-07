@@ -108,7 +108,7 @@ const formatDate = (dateString?: string) => {
         <div v-if="showTaskDetails" class="mt-4 space-y-4">
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-text mb-1">Due Date</label>
+              <label class="block text-sm font-medium mb-1">Due Date</label>
               <input
                 v-model="newTask.dueDate"
                 type="date"
@@ -116,7 +116,7 @@ const formatDate = (dateString?: string) => {
               />
             </div>
             <div>
-              <label class="block text-sm font-medium text-text mb-1">Priority</label>
+              <label class="block text-sm font-medium mb-1">Priority</label>
               <select v-model="newTask.priority" class="w-full p-2 border rounded-lg">
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
@@ -125,7 +125,7 @@ const formatDate = (dateString?: string) => {
             </div>
           </div>
           <div>
-            <label class="block text-sm font-medium text-text mb-1">Description</label>
+            <label class="block text-sm font-medium mb-1">Description</label>
             <textarea
               v-model="newTask.description"
               class="w-full p-2 border rounded-lg"
@@ -134,7 +134,7 @@ const formatDate = (dateString?: string) => {
             ></textarea>
           </div>
           <div>
-            <label class="block text-sm font-medium text-text mb-1">Tags (comma separated)</label>
+            <label class="block text-sm font-medium mb-1">Tags (comma separated)</label>
             <input
               v-model="newTask.tags"
               type="text"
@@ -145,7 +145,7 @@ const formatDate = (dateString?: string) => {
         </div>
         <button
           @click="showTaskDetails = !showTaskDetails"
-          class="mt-2 text-sm text-primary hover:opacity-80 flex items-center gap-1"
+          class="mt-2 text-sm hover:opacity-80 flex items-center gap-1"
         >
           <span v-if="!showTaskDetails">+ Add details</span>
           <span v-else>- Hide details</span>
@@ -164,14 +164,13 @@ const formatDate = (dateString?: string) => {
               <input
                 type="checkbox"
                 v-model="task.completed"
-                class="mt-1 h-5 w-5 rounded border-border text-primary focus:ring-primary"
+                class="mt-1 h-5 w-5 rounded border-border focus:ring-primary"
               />
               <div>
                 <div class="flex items-center gap-2">
                   <span
                     :class="{
-                      'line-through text-text/50': task.completed,
-                      'text-text': !task.completed,
+                      'line-through': task.completed,
                       'font-medium': true
                     }"
                   >
@@ -181,18 +180,18 @@ const formatDate = (dateString?: string) => {
                     v-if="task.priority"
                     class="px-2 py-0.5 text-xs rounded-full"
                     :class="{
-                      'bg-error/20 text-error': task.priority === 'high',
-                      'bg-alert/20 text-alert': task.priority === 'medium',
-                      'bg-success/20 text-success': task.priority === 'low',
+                      'bg-error/20': task.priority === 'high',
+                      'bg-alert/20': task.priority === 'medium',
+                      'bg-success/20': task.priority === 'low',
                     }"
                   >
                     {{ task.priority }}
                   </span>
                 </div>
-                <p v-if="task.description" class="text-sm text-text/70 mt-1">
+                <p v-if="task.description" class="text-sm mt-1">
                   {{ task.description }}
                 </p>
-                <div v-if="task.dueDate" class="flex items-center gap-2 mt-2 text-xs text-text/60">
+                <div v-if="task.dueDate" class="flex items-center gap-2 mt-2 text-xs">
                   <i class="i-mdi-calendar"></i>
                   <span>{{ formatDate(task.dueDate) }}</span>
                 </div>
@@ -200,7 +199,7 @@ const formatDate = (dateString?: string) => {
                   <span
                     v-for="(tag, i) in task.tags.split(',')"
                     :key="i"
-                    class="px-2 py-0.5 bg-primary/20 text-primary text-xs rounded-full"
+                    class="px-2 py-0.5 bg-primary/20 text-xs rounded-full"
                   >
                     {{ tag.trim() }}
                   </span>
@@ -209,7 +208,7 @@ const formatDate = (dateString?: string) => {
             </div>
             <button
               @click="deleteTask(index)"
-              class="text-text/40 hover:text-error transition-colors"
+              class="hover:text-error transition-colors"
             >
               <i class="i-mdi-delete"></i>
             </button>
@@ -220,7 +219,7 @@ const formatDate = (dateString?: string) => {
       <!-- Empty State -->
       <div
         v-if="tasks.length === 0"
-        class="text-center py-12 text-text/60"
+        class="text-center py-12"
       >
         <i class="i-mdi-checkbox-marked-outline text-4xl mb-2"></i>
         <p>No tasks yet. Add one above!</p>

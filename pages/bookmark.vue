@@ -67,7 +67,7 @@
           <!-- Bookmark Image/Gradient -->
           <div 
             class="h-40 relative"
-            :class="bookmark.gradient ? `bg-gradient-to-r ${bookmark.gradient.from} ${bookmark.gradient.to}` : 'bg-gray-100 dark:bg-gray-700'"
+            :class="bookmark.gradient ? `bg-gradient-to-r ${bookmark.gradient.from} ${bookmark.gradient.to}` : 'bg-gray-100'"
           >
             <img 
               v-if="bookmark.image" 
@@ -98,7 +98,7 @@
               :href="bookmark.url" 
               target="_blank" 
               rel="noopener noreferrer"
-              class="font-semibold mb-2 line-clamp-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              class="font-semibold mb-2 line-clamp-2 hover:text-blue-600 transition-colors"
               :title="bookmark.title"
             >
               {{ bookmark.title }}
@@ -117,8 +117,8 @@
                 :key="tag.id"
                 class="px-2 py-0.5 text-xs rounded"
                 :class="[
-                  tag.bgColor || 'bg-gray-100 dark:bg-gray-700',
-                  tag.color || 'text-gray-800 dark:text-gray-200'
+                  tag.bgColor || 'bg-gray-100',
+                  tag.color || 'text-gray-800'
                 ]"
               >
                 {{ tag.name }}
@@ -130,7 +130,7 @@
         <!-- Empty State -->
         <div 
           v-if="filteredBookmarks.length === 0"
-          class="col-span-full py-12 text-gray-500 dark:text-gray-400"
+          class="col-span-full py-12 text-gray-500"
         >
           <i class="i-mdi-bookmark-outline text-4xl mx-auto mb-4"></i>
           <p class="text-lg font-medium">No bookmarks found</p>

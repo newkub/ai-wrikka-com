@@ -81,7 +81,7 @@ onMounted(() => {
       <div class="container mx-auto px-4 py-3">
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-2">
-            <Icon name="mdi:search-web" class="text-2xl text-primary" />
+            <Icon name="mdi:search-web" class="text-2xl" />
             <span class="text-xl font-semibold">AI Search</span>
           </div>
           <div class="flex items-center space-x-4">
@@ -105,12 +105,12 @@ onMounted(() => {
             v-model="query"
             type="text"
             placeholder="Ask me anything..."
-            class="w-full rounded-full border border-border py-4 pl-6 pr-16 text-lg shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
+            class="w-full rounded-full border border-border py-4 pl-6 pr-16 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
             @keyup.enter="search"
           />
           <button
             @click="search"
-            class="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-primary p-2 text-white hover:opacity-90"
+            class="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-primary p-2 hover:opacity-90"
             :disabled="isLoading"
           >
             <Icon v-if="isLoading" name="mdi:loading" class="h-5 w-5 animate-spin" />
@@ -125,9 +125,9 @@ onMounted(() => {
         <div class="rounded-xl bg-block p-6 shadow">
           <div class="mb-4 flex items-center">
             <div class="mr-3 h-8 w-8 rounded-full bg-primary/20 p-1.5">
-              <Icon name="mdi:robot" class="text-primary" />
+              <Icon name="mdi:robot" />
             </div>
-            <h2 class="text-lg font-semibold">Answer</h2>
+            <h2 class="font-semibold">Answer</h2>
           </div>
           <div class="prose max-w-none">
             <p>{{ result.answer }}</p>
@@ -136,7 +136,7 @@ onMounted(() => {
 
         <!-- Sources -->
         <div v-if="result.sources && result.sources.length > 0" class="rounded-xl bg-block p-6 shadow">
-          <h3 class="mb-4 text-lg font-semibold">Sources</h3>
+          <h3 class="mb-4 font-semibold">Sources</h3>
           <div class="space-y-3">
             <a
               v-for="(source, index) in result.sources"
@@ -145,7 +145,7 @@ onMounted(() => {
               target="_blank"
               class="block rounded-lg border border-border p-4 hover:bg-background/50"
             >
-              <div class="text-sm ">
+              <div class="text-sm">
                 {{ (() => {
                   try {
                     return new URL(source.url).hostname;
@@ -154,8 +154,8 @@ onMounted(() => {
                   }
                 })() }}
               </div>
-              <div class="font-medium ">{{ source.title }}</div>
-              <p class="mt-1 text-sm text-text/80 line-clamp-2">{{ source.snippet }}</p>
+              <div class="font-medium">{{ source.title }}</div>
+              <p class="mt-1 text-sm line-clamp-2">{{ source.snippet }}</p>
             </a>
           </div>
         </div>
@@ -163,7 +163,7 @@ onMounted(() => {
 
       <!-- Related Questions -->
       <div v-if="relatedQuestions.length > 0" class="mt-12">
-        <h3 class="mb-4 text-lg font-semibold">People also ask</h3>
+        <h3 class="mb-4 font-semibold">People also ask</h3>
         <div class="grid gap-3 md:grid-cols-2">
           <button
             v-for="(question, index) in relatedQuestions"
@@ -178,4 +178,3 @@ onMounted(() => {
     </main>
   </div>
 </template>
-

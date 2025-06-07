@@ -105,7 +105,7 @@ onMounted(() => {
   <div class="h-full flex flex-col">
     <div 
       v-if="fileName" 
-      class="px-4 py-2 text-sm font-mono bg-block text-text border-b border-border"
+      class="px-4 py-2 text-sm font-mono bg-block  border-b border-border"
     >
       {{ fileName }}
     </div>

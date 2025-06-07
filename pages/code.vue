@@ -7,8 +7,7 @@ import FileStructure from '~/components/FileStructure.vue';
 const code = ref('// Welcome to Code Editor\n// Start coding here...\n\nfunction helloWorld() {\n  console.log("Hello, World!");\n}\n\nhelloWorld();');
 const terminalOutput = ref('');
 const terminalRef = ref();
-const isDark = ref(false);
-const editorTheme = computed(() => isDark.value ? 'vs-dark' : 'vs');
+const editorTheme = 'vs';
 const activeFile = ref('index.js');
 
 interface FileItem {
@@ -110,11 +109,8 @@ const handleCodeUpdate = (newCode: string) => {
   code.value = newCode;
 };
 
-// Toggle dark/light theme
-const toggleTheme = () => {
-  isDark.value = !isDark.value;
-  document.documentElement.classList.toggle('dark', isDark.value);
-};
+// Theme is always light
+const isDark = ref(false);
 </script>
 
 
@@ -123,17 +119,15 @@ const toggleTheme = () => {
     <!-- Left Panel - File Explorer and Chat -->
     <div class="w-1/3 border-r border-border bg-block flex flex-col">
       <!-- File Explorer -->
-      <div class="flex-1 flex flex-col border-b border-gray-200 dark:border-gray-700">
+      <div class="flex-1 flex flex-col border-b border-border">
         <div class="p-2 border-b border-border flex justify-between items-center">
-          <h2 class="text-sm font-medium text-black dark:text-white">EXPLORER</h2>
+          <h2 class="text-sm font-medium text-black">EXPLORER</h2>
           <div class="flex space-x-2">
             <button 
-              @click="toggleTheme"
-              class="p-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 rounded transition-colors"
-              :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+              class="p-1 text-gray-500 hover:text-gray-700 rounded transition-colors"
+              title="Light mode only"
             >
-              <div v-if="isDark" class="i-heroicons-sun w-4 h-4 text-yellow-400"></div>
-              <div v-else class="i-heroicons-moon w-4 h-4 text-black dark:text-white"></div>
+              <div class="i-heroicons-sun w-4 h-4 text-yellow-400"></div>
             </button>
           </div>
         </div>
@@ -148,7 +142,7 @@ const toggleTheme = () => {
       <!-- Chat -->
       <div class="h-1/3 flex flex-col border-t border-border">
         <div class="p-2 border-b border-border">
-          <h2 class="text-sm font-medium text-black dark:text-white">CHAT</h2>
+          <h2 class="text-sm font-medium text-black">CHAT</h2>
         </div>
         <div class="flex-1 overflow-y-auto p-4 space-y-4">
           <div class="p-3 bg-primary/10 rounded-lg">
@@ -163,7 +157,7 @@ const toggleTheme = () => {
             <input
               type="text"
               placeholder="Type a message..."
-              class="flex-1 p-2 text-xs border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary bg-block text-black dark:text-white"
+              class="flex-1 p-2 text-xs border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary bg-block text-black"
             />
             <button class="px-3 py-1 text-xs bg-primary hover:opacity-90 text-white rounded-lg transition-opacity">
               Send
@@ -178,7 +172,7 @@ const toggleTheme = () => {
       <!-- Code Editor -->
       <div class="flex-1 flex flex-col border-b border-border">
         <div class="flex justify-between items-center p-2 border-b border-border">
-          <h2 class="text-sm font-medium text-black dark:text-white">{{ activeFile }}</h2>
+          <h2 class="text-sm font-medium text-black">{{ activeFile }}</h2>
           <div class="flex space-x-2">
             <button 
               @click="executeCode"
@@ -191,7 +185,7 @@ const toggleTheme = () => {
         </div>
         <CodeEditor 
           v-model="code"
-          :theme="isDark ? 'vs-dark' : 'vs'"
+          theme="vs"
           class="flex-1"
           @update:modelValue="handleCodeUpdate"
         />
@@ -200,7 +194,7 @@ const toggleTheme = () => {
       <!-- Terminal -->
       <div class="h-1/3 flex flex-col border-t border-border">
         <div class="p-2 border-b border-gray-200 flex justify-between items-center">
-          <h2 class="text-sm font-medium text-black dark:text-white">Terminal</h2>
+          <h2 class="text-sm font-medium text-black">Terminal</h2>
           <div class="flex space-x-2">
             <button 
               @click="terminalRef?.clear()"

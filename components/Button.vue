@@ -3,9 +3,9 @@
     :type="type"
     class="inline-flex items-center justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2"
     :class="[
-      variant === 'primary' && 'bg-color-primary text-background hover:opacity-90 focus:ring-color-primary',
-      variant === 'secondary' && 'bg-background text-text border border-border hover:bg-block focus:ring-color-primary',
-      variant === 'danger' && 'bg-color-error text-background hover:opacity-90 focus:ring-color-error',
+      variant === 'primary' && 'bg-color-primary hover:opacity-90 focus:ring-color-primary',
+      variant === 'secondary' && 'bg-background border border-border hover:bg-block focus:ring-color-primary',
+      variant === 'danger' && 'bg-color-error hover:opacity-90 focus:ring-color-error',
       size === 'sm' && 'px-3 py-1.5 text-xs',
       size === 'lg' && 'px-6 py-3 text-base',
       { 'opacity-50 cursor-not-allowed': disabled }

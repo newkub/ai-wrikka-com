@@ -17,9 +17,7 @@
             <button class="p-2 hover:bg-block/50 focus:outline-none">
               <i class="i-mdi-magnify text-xl"></i>
             </button>
-            <button class="p-2 text-gray-500 hover:text-gray-600 dark:hover:text-gray-300">
-              <i class="i-mdi-brightness-6 text-xl"></i>
-            </button>
+            <!-- Theme toggle removed -->
           </div>
         </div>
       </div>
@@ -46,7 +44,7 @@
                       @click.prevent="setActiveSection(item.id)"
                       class="block px-3 py-2 text-sm rounded-md transition-colors duration-200"
                       :class="{
-                        'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400': activeSection === item.id,
+                        'bg-blue-50 text-blue-700': activeSection === item.id,
                         'text hover:bg-block/50': activeSection !== item.id
                       }"
                     >
@@ -65,7 +63,7 @@
         <div class="max-w-3xl mx-auto">
           <h1 class="text-3xl font-bold mb-6">Getting Started</h1>
           
-          <div class="prose dark:prose-invert max-w-none">
+          <div class="prose max-w-none">
             <section id="introduction" class="mb-12">
               <h2>Introduction</h2>
               <p>Welcome to the documentation for our platform. This guide will help you get started with our tools and services.</p>
@@ -98,7 +96,7 @@
               <section id="installation" class="mt-6">
                 <h3>Installation</h3>
                 <p>Install the package using npm or yarn:</p>
-                <pre class="bg-gray-100 dark:bg-gray-800 p-4 rounded-md overflow-x-auto"><code>npm install your-package-name
+                <pre class="bg-gray-100 p-4 rounded-md overflow-x-auto"><code>npm install your-package-name
 # or
 yarn add your-package-name</code></pre>
               </section>
@@ -106,7 +104,7 @@ yarn add your-package-name</code></pre>
               <section id="usage" class="mt-6">
                 <h3>Basic Usage</h3>
                 <p>Import and use the package in your project:</p>
-                <pre class="bg-gray-100 dark:bg-gray-800 p-4 rounded-md overflow-x-auto"><code>import { createApp } from 'your-package-name';
+                <pre class="bg-gray-100 p-4 rounded-md overflow-x-auto"><code>import { createApp } from 'your-package-name';
 
 const app = createApp({
   // your configuration
@@ -119,7 +117,7 @@ app.mount('#app');</code></pre>
             <section id="configuration" class="mb-12">
               <h2>Configuration</h2>
               <p>Customize the behavior of the package using the following options:</p>
-              <pre class="bg-gray-100 dark:bg-gray-800 p-4 rounded-md overflow-x-auto"><code>{
+              <pre class="bg-gray-100 p-4 rounded-md overflow-x-auto"><code>{
   // Enable debug mode
   debug: false,
   
@@ -141,9 +139,9 @@ app.mount('#app');</code></pre>
       </main>
 
       <!-- Table of Contents -->
-      <aside class="hidden xl:block w-64 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 overflow-y-auto p-6">
+      <aside class="hidden xl:block w-64 bg-white border-l border-gray-200 overflow-y-auto p-6">
         <div class="sticky top-6">
-          <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">
+          <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4">
             On this page
           </h3>
           <nav>
@@ -152,7 +150,7 @@ app.mount('#app');</code></pre>
                   :class="{ 'ml-4': heading.level === 3 }">
                 <a 
                   :href="`#${heading.id}`"
-                  class="block py-1 text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors duration-200"
+                  class="block py-1 text-gray-600 hover:text-blue-600 transition-colors duration-200"
                   @click="setActiveSection(heading.id)"
                 >
                   {{ heading.text }}
@@ -234,11 +232,6 @@ const setActiveSection = (sectionId: string) => {
 
 ::-webkit-scrollbar-track {
   background-color: #f3f4f6; /* bg-gray-100 */
-  background-color: rgba(17, 24, 39, 0.8); /* dark:bg-gray-800 */
-}
-
-.dark ::-webkit-scrollbar-track {
-  background-color: #1f2937; /* dark:bg-gray-800 */
 }
 
 ::-webkit-scrollbar-thumb {
@@ -246,16 +239,8 @@ const setActiveSection = (sectionId: string) => {
   border-radius: 9999px; /* rounded-full */
 }
 
-.dark ::-webkit-scrollbar-thumb {
-  background-color: #4b5563; /* dark:bg-gray-600 */
-}
-
 ::-webkit-scrollbar-thumb:hover {
   background-color: #9ca3af; /* bg-gray-400 */
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background-color: #6b7280; /* dark:bg-gray-500 */
 }
 
 /* Smooth scrolling for anchor links */

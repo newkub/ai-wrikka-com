@@ -3,7 +3,7 @@
     <div class="md:hidden fixed top-4 left-4 z-30">
       <button 
         @click="toggleChatHistory" 
-        class="p-2 rounded-md bg-block text-text hover:bg-background/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+        class="p-2 rounded-md bg-block hover:bg-background/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
       >
         <div class="i-mdi-menu w-6 h-6"></div>
       </button>
@@ -19,10 +19,10 @@
     >
       <div class="p-3 border-b border-border bg-primary/5">
         <div class="flex justify-between items-center">
-          <h2 class="text-sm font-semibold text-text">ประวัติการสนทนา</h2>
+          <h2 class="text-sm font-semibold">ประวัติการสนทนา</h2>
           <button 
             @click="startNewChat"
-            class="p-1 rounded-md text-primary hover:bg-primary/10 transition-colors"
+            class="p-1 rounded-md hover:bg-primary/10 transition-colors"
             title="New Chat"
           >
             <div class="i-mdi-plus w-4 h-4"></div>
@@ -31,7 +31,7 @@
       </div>
       
       <div class="max-h-[60vh] overflow-y-auto">
-        <div v-if="chatSessions.length === 0" class="p-4 text-center text-sm text-text/60">
+        <div v-if="chatSessions.length === 0" class="p-4 text-center text-sm">
           ไม่มีประวัติการสนทนา
         </div>
         <div v-else>
@@ -41,8 +41,8 @@
             class="p-3 border-b border-border hover:bg-background/50 cursor-pointer"
             @click="loadSession(session.id)"
           >
-            <div class="font-medium text-sm text-text truncate">{{ session.title || 'การสนทนาใหม่' }}</div>
-            <div class="text-xs text-text/60 mt-1">
+            <div class="font-medium text-sm truncate">{{ session.title || 'การสนทนาใหม่' }}</div>
+            <div class="text-xs mt-1">
               {{ new Date(session.updatedAt).toLocaleString('th-TH') }}
             </div>
           </div>
@@ -68,8 +68,8 @@
               :class="[
                 'p-4 rounded-lg',
                 message.sender === 'user' 
-                  ? 'bg-primary text-white' 
-                  : 'bg-block border border-border text-text'
+                  ? 'bg-primary' 
+                  : 'bg-block border border-border'
               ]"
             >
               <div class="whitespace-pre-wrap">
@@ -85,10 +85,7 @@
                 </template>
               </div>
               <div 
-                :class="[
-                  'text-xs mt-1',
-                  message.sender === 'user' ? 'text-white/80' : 'text-text/60'
-                ]"
+                class="text-xs mt-1"
               >
                 {{ new Date(message.timestamp).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) }}
                 <button 
@@ -123,8 +120,8 @@
               :class="[
                 'absolute right-2 bottom-2 p-2 rounded-full transition-colors',
                 !userInput.trim() || isLoading
-                  ? 'text-text/40 cursor-not-allowed'
-                  : 'text-primary hover:bg-primary/10'
+                  ? 'cursor-not-allowed'
+                  : 'hover:bg-primary/10'
               ]"
             >
               <div v-if="isLoading" class="i-svg-spinners-180-ring w-5 h-5"></div>

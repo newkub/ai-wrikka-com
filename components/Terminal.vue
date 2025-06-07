@@ -21,15 +21,26 @@ const output = ref<{ text: string; type?: 'input' | 'output' | 'error' }[]>([]);
 const commandHistory = ref<string[]>([]);
 let historyIndex = -1;
 
-const terminalClasses = computed(() => ({
-  'bg-block text-text': true,
-  'border border-border': true,
-}));
+const terminalClasses = computed(() => [
+  'bg-block',
+  'border',
+  'border-border',
+  'rounded-b-lg',
+  'p-4',
+  'h-full',
+  'w-full',
+  'overflow-hidden',
+  { 'opacity-80 cursor-not-allowed': props.readOnly }
+]);
 
-const inputClasses = computed(() => ({
-  'bg-transparent border-none outline-none w-full text-inherit': true,
-  'caret-text': true,
-}));
+const inputClasses = computed(() => [
+  'bg-transparent',
+  'border-none',
+  'outline-none',
+  'w-full',
+  'text-inherit',
+  'caret-current'
+]);
 
 const focusInput = () => {
   if (inputRef.value) {
@@ -130,46 +141,15 @@ const useStackblitz = false;
 </script>
 
 <template>
-  <div class="terminal-wrapper">
-    <div v-if="useStackblitz" class="stackblitz-notice">
+  <div class="relative w-full h-full flex flex-col">
+    <div v-if="useStackblitz" class="bg-block text-success p-2 font-mono text-sm border-b border-border">
       <p>Running in StackBlitz environment</p>
     </div>
-    <div ref="terminalRef" class="terminal-container" :class="[theme, { 'read-only': readOnly }]" />
+    <div ref="terminalRef" class="flex-1 w-full p-4 box-border overflow-hidden" :class="[terminalClasses, theme]" />
   </div>
 </template>
 
-<style scoped>
-.terminal-wrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.stackblitz-notice {
-  background-color: var(--block);
-  color: var(--color-success);
-  padding: 0.5rem 1rem;
-  font-family: monospace;
-  font-size: 0.875rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.terminal-container {
-  flex: 1;
-  width: 100%;
-  padding: 1rem;
-  box-sizing: border-box;
-  overflow: hidden;
-  border-radius: 0 0 0.5rem 0.5rem;
-}
-
-.terminal-container.read-only {
-  opacity: 0.8;
-  cursor: not-allowed;
-}
-
+<style>
 :deep(.xterm) {
   height: 100%;
 }
@@ -186,18 +166,5 @@ const useStackblitz = false;
 
 :deep(.xterm-rows) {
   width: 100% !important;
-}
-
-/* StackBlitz specific styles */
-:global([data-theme="dark"]) {
-  --sb-foreground: #f8f8f8;
-  --sb-background: #1e1e1e;
-  --sb-primary: #4CAF50;
-}
-
-:global([data-theme="light"]) {
-  --sb-foreground: #1e1e1e;
-  --sb-background: #f8f8f8;
-  --sb-primary: #2e7d32;
 }
 </style>

@@ -16,7 +16,7 @@
               v-for="item in menuItems"
               :key="item.path"
               :to="item.path"
-              class="text-text/80 hover:text-color-primary px-3 py-2 text-sm font-medium transition-colors duration-200"
+              class="px-3 py-2 text-sm font-medium transition-colors duration-200 hover:text-color-primary"
               :class="{ 'text-color-primary': $route.path === item.path }"
             >
               {{ item.name }}
@@ -53,7 +53,7 @@
           <!-- Mobile menu button -->
           <div class="md:hidden flex items-center">
             <button 
-              class="text-text/80 hover:text-color-primary focus:outline-none"
+              class=" hover:text-color-primary focus:outline-none"
               @click="isMobileMenuOpen = !isMobileMenuOpen"
             >
               <div class="i-mdi-menu text-2xl" />
@@ -70,7 +70,7 @@
           v-for="item in menuItems"
           :key="`mobile-${item.path}`"
           :to="item.path"
-          class="block px-3 py-2 rounded-md text-base font-medium text-text/80 hover:bg-block"
+          class="block px-3 py-2 rounded-md text-base font-medium  hover:bg-block"
           :class="{ 'bg-block': $route.path === item.path }"
           @click="isMobileMenuOpen = false"
         >
