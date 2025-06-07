@@ -1,106 +1,29 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
-import CodeEditor from '~/components/CodeEditor.vue';
-import Terminal from '~/components/Terminal.vue';
-import FileStructure from '~/components/FileStructure.vue';
+definePageMeta({
+  layout: 'fullscreen'
+});
 
+import { ref } from 'vue';
+import CodeEditor from '~/components/code/CodeEditor.vue';
+import FileStructure from '~/components/code/FileStructure.vue';
+import BottomPanel from '~/components/code/bottom/index.vue';
+
+// File system logic
+const { 
+  activeFile, 
+  fileStructure, 
+  handleFileSelect: handleFileSelectOriginal 
+} = useFileSystem();
+
+// Code editor state
 const code = ref('// Welcome to Code Editor\n// Start coding here...\n\nfunction helloWorld() {\n  console.log("Hello, World!");\n}\n\nhelloWorld();');
-const terminalOutput = ref('');
-const terminalRef = ref();
 const editorTheme = 'vs';
-const activeFile = ref('index.js');
 
-interface FileItem {
-  name: string;
-  type: 'file' | 'directory';
-  isOpen?: boolean;
-  children?: FileItem[];
-}
-
-// Sample file structure data
-const fileStructure = ref<FileItem[]>([
-  {
-    name: 'project',
-    type: 'directory',
-    isOpen: true,
-    children: [
-      { 
-        name: 'src', 
-        type: 'directory', 
-        isOpen: true, 
-        children: [
-          { name: 'main.js', type: 'file' },
-          { name: 'App.vue', type: 'file' },
-          { 
-            name: 'assets', 
-            type: 'directory', 
-            children: [
-              { name: 'style.css', type: 'file' }
-            ]
-          }
-        ]
-      },
-      { 
-        name: 'public', 
-        type: 'directory', 
-        children: [
-          { name: 'index.html', type: 'file' }
-        ]
-      },
-      { name: 'package.json', type: 'file' },
-      { name: 'vite.config.js', type: 'file' }
-    ]
-  }
-]);
-
+// Handle file selection with code update
 const handleFileSelect = (fileName: string) => {
-  activeFile.value = fileName;
-  // Here you would typically load the file content
-  code.value = `// Content of ${fileName}\n// This is a sample file content.`;
-};
-
-// Handle terminal commands
-const handleCommand = (command: string) => {
-  const terminal = terminalRef.value;
-  if (!terminal) return;
-  
-  switch (command.toLowerCase()) {
-    case 'clear':
-      terminal.clear();
-      break;
-    case 'help':
-      terminal.write('Available commands:');
-      terminal.write('  clear - Clear the terminal');
-      terminal.write('  help - Show this help message');
-      terminal.write('  run - Execute the current code');
-      break;
-    case 'run':
-      executeCode();
-      break;
-    default:
-      terminal.write(`Command not found: ${command}`);
-      terminal.write('Type `help` to see available commands');
-  }
-};
-
-// Execute the current code
-const executeCode = () => {
-  const terminal = terminalRef.value;
-  if (!terminal) return;
-  
-  try {
-    // In a real app, you would send this to a server or use a sandbox
-    terminal.write('$ Executing code...');
-    // Simulate execution
-    setTimeout(() => {
-      terminal.write('Hello, World!');
-      terminal.write('Code executed successfully');
-      terminal.prompt();
-    }, 500);
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-    terminal.write(`Error: ${errorMessage}`);
-    terminal.prompt();
+  const fileContent = handleFileSelectOriginal(fileName);
+  if (fileContent) {
+    code.value = fileContent;
   }
 };
 
@@ -109,110 +32,93 @@ const handleCodeUpdate = (newCode: string) => {
   code.value = newCode;
 };
 
-// Theme is always light
+// Resize logic
+const { 
+  leftPanelWidth,
+  editorHeight,
+  startVerticalResize,
+  startHorizontalResize 
+} = useResize();
+
+// Theme
 const isDark = ref(false);
 </script>
 
-
 <template>
-  <div class="flex transition-colors duration-200">
-    <!-- Left Panel - File Explorer and Chat -->
-    <div class="w-1/3 border-r border-border bg-block flex flex-col">
-      <!-- File Explorer -->
-      <div class="flex-1 flex flex-col border-b border-border">
-        <div class="p-2 border-b border-border flex justify-between items-center">
-          <h2 class="text-sm font-medium text-black">EXPLORER</h2>
-          <div class="flex space-x-2">
-            <button 
-              class="p-1 text-gray-500 hover:text-gray-700 rounded transition-colors"
-              title="Light mode only"
-            >
-              <div class="i-heroicons-sun w-4 h-4 text-yellow-400"></div>
-            </button>
-          </div>
-        </div>
+  <div class="flex h-full w-full overflow-hidden bg-white dark:bg-gray-900">
+    <!-- Left Panel - File Explorer -->
+    <div 
+      class="h-full bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col"
+      :style="{ width: leftPanelWidth }"
+    >
+      <!-- File Explorer Header -->
+      <div class="p-2 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+        <h2 class="text-sm font-medium text-gray-700 dark:text-gray-300">EXPLORER</h2>
+      </div>
+      
+      <!-- File Structure -->
+      <div class="flex-1 overflow-y-auto">
         <FileStructure 
           :files="fileStructure" 
           :active-file="activeFile"
-          class="flex-1 overflow-y-auto"
-          @file-select="handleFileSelect"
+          @select-file="handleFileSelect"
         />
-      </div>
-      
-      <!-- Chat -->
-      <div class="h-1/3 flex flex-col border-t border-border">
-        <div class="p-2 border-b border-border">
-          <h2 class="text-sm font-medium text-black">CHAT</h2>
-        </div>
-        <div class="flex-1 overflow-y-auto p-4 space-y-4">
-          <div class="p-3 bg-primary/10 rounded-lg">
-            <h3 class="text-sm font-medium text-primary">Welcome to Code Chat</h3>
-            <p class="text-xs text-primary/80 mt-1">
-              Ask questions about your code or get help with programming concepts.
-            </p>
-          </div>
-        </div>
-        <div class="p-2 border-t border-border">
-          <div class="flex space-x-2">
-            <input
-              type="text"
-              placeholder="Type a message..."
-              class="flex-1 p-2 text-xs border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary bg-block text-black"
-            />
-            <button class="px-3 py-1 text-xs bg-primary hover:opacity-90 text-white rounded-lg transition-opacity">
-              Send
-            </button>
-          </div>
-        </div>
       </div>
     </div>
 
-    <!-- Right Panel - Editor and Terminal -->
-    <div class="flex-1 flex flex-col bg-block">
-      <!-- Code Editor -->
-      <div class="flex-1 flex flex-col border-b border-border">
-        <div class="flex justify-between items-center p-2 border-b border-border">
-          <h2 class="text-sm font-medium text-black">{{ activeFile }}</h2>
-          <div class="flex space-x-2">
-            <button 
-              @click="executeCode"
-              class="px-3 py-1 text-sm bg-success hover:opacity-90 text-white rounded-md flex items-center space-x-1 transition-opacity"
-            >
-              <div class="i-heroicons-play w-4 h-4"></div>
-              <span>Run</span>
-            </button>
-          </div>
-        </div>
+    <!-- Resize Handle -->
+    <div 
+      class="w-1 bg-gray-100 dark:bg-gray-700 hover:bg-blue-500 cursor-col-resize active:bg-blue-600 transition-colors"
+      @mousedown="startVerticalResize"
+    ></div>
+
+    <!-- Right Panel -->
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+      <!-- Editor -->
+      <div 
+        class="flex-1 overflow-hidden"
+        :style="{ height: editorHeight }"
+      >
         <CodeEditor 
           v-model="code"
-          theme="vs"
-          class="flex-1"
+          :theme="editorTheme"
+          :is-dark="isDark"
           @update:modelValue="handleCodeUpdate"
+          class="h-full w-full"
         />
       </div>
 
-      <!-- Terminal -->
-      <div class="h-1/3 flex flex-col border-t border-border">
-        <div class="p-2 border-b border-gray-200 flex justify-between items-center">
-          <h2 class="text-sm font-medium text-black">Terminal</h2>
-          <div class="flex space-x-2">
-            <button 
-              @click="terminalRef?.clear()"
-              class="p-1 text-gray-500 hover:text-gray-700 rounded transition-colors"
-              title="Clear terminal"
-            >
-              <div class="i-heroicons-trash w-4 h-4"></div>
-            </button>
-          </div>
-        </div>
-        <Terminal 
-          ref="terminalRef"
-          :theme="isDark ? 'dark' : 'light'"
-          welcome-message="Welcome to the terminal. Type 'help' to see available commands."
-          @command="handleCommand"
-          class="flex-1"
-        />
+      <!-- Resize Handle -->
+      <div 
+        class="h-1 bg-gray-100 dark:bg-gray-700 hover:bg-blue-500 cursor-row-resize active:bg-blue-600 transition-colors"
+        @mousedown="startHorizontalResize"
+      ></div>
+
+      <!-- Bottom Panel -->
+      <div class="h-1/3 min-h-[100px] max-h-[50%] overflow-hidden border-t border-gray-200 dark:border-gray-700">
+        <BottomPanel class="h-full" />
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+/* Custom scrollbar for file explorer */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #4b5563;
+}
+</style>

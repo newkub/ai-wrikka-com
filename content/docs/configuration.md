@@ -1,96 +1,78 @@
----
-title: Configuration
-description: Learn how to configure the AI platform SDK with your credentials and customize settings
----
-
 # Configuration Guide
 
-After installing the SDK, you'll need to configure it with your API credentials and customize the settings to match your requirements.
+This guide explains how to configure our platform to suit your needs.
 
 ## Basic Configuration
 
-### Environment Variables
-
-Set your API key as an environment variable:
-
-```bash
-export AI_API_KEY='your-api-key-here'
-```
-
-### In Your Application
-
-Initialize the SDK with your configuration:
+Here's a basic configuration example:
 
 ```javascript
-import { AIClient } from '@ai-platform/sdk';
-
-const client = new AIClient({
-  apiKey: process.env.AI_API_KEY, // or directly provide the key
-  environment: 'production', // 'sandbox' or 'production'
-  timeout: 30000, // request timeout in milliseconds
-  maxRetries: 3,  // number of retries for failed requests
-});
-```
-
-## Advanced Configuration
-
-### Custom HTTP Client
-
-You can provide a custom HTTP client:
-
-```javascript
-import axios from 'axios';
-
-const customClient = axios.create({
-  baseURL: 'https://api.yourdomain.com/v1',
-  headers: {
-    'X-Custom-Header': 'value'
-  }
-});
-
-const client = new AIClient({
-  httpClient: customClient
-});
-```
-
-### Error Handling
-
-Handle errors effectively:
-
-```javascript
-try {
-  const result = await client.predict({
-    // your prediction parameters
-  });
-} catch (error) {
-  if (error.code === 'AUTH_ERROR') {
-    console.error('Authentication failed. Please check your API key.');
-  } else if (error.code === 'RATE_LIMIT_EXCEEDED') {
-    console.error('Rate limit exceeded. Please try again later.');
-  } else {
-    console.error('An error occurred:', error.message);
+{
+  // Enable debug mode
+  "debug": false,
+  
+  // API configuration
+  "api": {
+    "baseURL": "https://api.example.com",
+    "timeout": 30000,
+    "retryAttempts": 3
+  },
+  
+  // Feature flags
+  "features": {
+    "analytics": true,
+    "notifications": true,
+    "darkMode": false
+  },
+  
+  // UI configuration
+  "ui": {
+    "theme": "light",
+    "fontSize": 16,
+    "density": "comfortable"
   }
 }
+```
+
+## Configuration Options
+
+### API Configuration
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| baseURL | string | '' | Base URL for all API requests |
+| timeout | number | 30000 | Request timeout in milliseconds |
+| retryAttempts | number | 3 | Number of retry attempts for failed requests |
+
+### Feature Flags
+
+| Feature | Type | Default | Description |
+|---------|------|---------|-------------|
+| analytics | boolean | true | Enable analytics tracking |
+| notifications | boolean | true | Enable system notifications |
+| darkMode | boolean | false | Enable dark mode |
+
+### UI Configuration
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| theme | string | 'light' | UI theme (light/dark/system) |
+| fontSize | number | 16 | Base font size in pixels |
+| density | string | 'comfortable' | UI density (compact/comfortable/relaxed) |
+
+## Environment Variables
+
+You can also configure the application using environment variables:
+
+```env
+VITE_API_URL=https://api.example.com
+VITE_DEBUG=true
+VITE_FEATURE_ANALYTICS=true
 ```
 
 ## Best Practices
 
-1. **Never commit API keys** to version control. Use environment variables or a secure secrets manager.
-2. **Use different API keys** for development and production environments.
-3. **Implement retry logic** for handling temporary failures.
-4. **Monitor your usage** to stay within rate limits.
-
-## Next Steps
-
-- [Explore API endpoints](/docs/endpoints)
-- [View code examples](/docs/examples)
-- [Learn about authentication](/docs/auth)
-
-Create `ai-platform.config.js` in your project root with basic settings: 
-
-```js
-export default {
-  apiKey: 'YOUR_API_KEY',
-  environment: 'production'
-}
-```
+1. **Sensitive Data**: Never commit sensitive data in your configuration files
+2. **Environment-specific**: Use different configuration files for different environments (development, staging, production)
+3. **Validation**: Always validate configuration values on application startup
+4. **Documentation**: Keep your configuration options well-documented

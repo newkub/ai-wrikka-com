@@ -1,17 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue';
+import { ref, onMounted, nextTick, computed } from 'vue'; // defineProps and defineEmits are compiler macros
 
-const props = withDefaults(defineProps<{
+const props = defineProps<{
   welcomeMessage?: string;
   prompt?: string;
-  theme?: 'light' | 'dark';
   readOnly?: boolean;
-}>(), {
-  welcomeMessage: 'Terminal initialized. Type `help` to see available commands.',
-  prompt: '$ ',
-  theme: 'dark',
-  readOnly: false,
-});
+}>();
 
 const emit = defineEmits(['command']);
 
@@ -20,18 +14,6 @@ const inputRef = ref<HTMLInputElement | null>(null);
 const output = ref<{ text: string; type?: 'input' | 'output' | 'error' }[]>([]);
 const commandHistory = ref<string[]>([]);
 let historyIndex = -1;
-
-const terminalClasses = computed(() => [
-  'bg-block',
-  'border',
-  'border-border',
-  'rounded-b-lg',
-  'p-4',
-  'h-full',
-  'w-full',
-  'overflow-hidden',
-  { 'opacity-80 cursor-not-allowed': props.readOnly }
-]);
 
 const inputClasses = computed(() => [
   'bg-transparent',
@@ -57,15 +39,12 @@ const handleKeyDown = (e: KeyboardEvent) => {
       commandHistory.value.unshift(command);
       historyIndex = -1;
       
-      // Emit command to parent
       emit('command', command);
       
-      // Clear input
       if (inputRef.value) {
         inputRef.value.value = '';
       }
       
-      // Auto-scroll to bottom
       nextTick(() => {
         if (terminalRef.value) {
           terminalRef.value.scrollTop = terminalRef.value.scrollHeight;
@@ -96,7 +75,6 @@ const handleKeyDown = (e: KeyboardEvent) => {
   }
 };
 
-// Public methods
 const write = (text: string) => {
   output.value.push({ text, type: 'output' });
   scrollToBottom();
@@ -109,6 +87,13 @@ const writeln = (text: string) => {
 
 const clear = () => {
   output.value = [];
+};
+
+const copyAll = () => {
+  const text = output.value.map(line => line.text).join('\n');
+  navigator.clipboard.writeText(text).catch(err => {
+    console.error('Failed to copy:', err);
+  });
 };
 
 const scrollToBottom = () => {
@@ -126,45 +111,43 @@ onMounted(() => {
   focusInput();
 });
 
-// Cleanup on unmount
-onUnmounted(() => {
-  // Removed StackBlitz-related code
-});
-
 defineExpose({
   write,
   writeln,
-  clear
+  clear,
+  copyAll
 });
-
-const useStackblitz = false;
 </script>
 
 <template>
-  <div class="relative w-full h-full flex flex-col">
-    <div v-if="useStackblitz" class="bg-block text-success p-2 font-mono text-sm border-b border-border">
-      <p>Running in StackBlitz environment</p>
+  <div class="h-full flex flex-col">
+    <!-- Terminal Output -->
+    <div 
+      ref="terminalRef"
+      class="flex-1 overflow-y-auto p-2 font-mono text-sm text-gray-200 whitespace-pre-wrap"
+    >
+      <div v-for="(line, index) in output" :key="index" 
+        :class="[
+          'py-0.5',
+          line.type === 'input' ? 'text-blue-300' : 
+          line.type === 'error' ? 'text-red-400' : 'text-gray-300'
+        ]"
+      >
+        {{ line.text }}
+      </div>
     </div>
-    <div ref="terminalRef" class="flex-1 w-full p-4 box-border overflow-hidden" :class="[terminalClasses, theme]" />
+
+    <!-- Input Area -->
+    <div class="border-t border-gray-700 p-2 flex items-center">
+      <span class="text-green-400 mr-2">{{ prompt }}</span>
+      <input
+        ref="inputRef"
+        type="text"
+        :class="inputClasses"
+        :readonly="readOnly"
+        @keydown="handleKeyDown"
+        @click="focusInput"
+      />
+    </div>
   </div>
 </template>
-
-<style>
-:deep(.xterm) {
-  height: 100%;
-}
-
-:deep(.xterm-viewport) {
-  width: 100% !important;
-  overflow-y: auto !important;
-  scrollbar-width: thin;
-}
-
-:deep(.xterm-screen) {
-  width: 100% !important;
-}
-
-:deep(.xterm-rows) {
-  width: 100% !important;
-}
-</style>

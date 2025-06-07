@@ -25,7 +25,7 @@ const selectTool = (toolName: string) => {
 </script>
 
 <template>
-  <div class="flex flex-col h-screen bg-gray-50">
+  <div class="flex flex-col h-full overflow-hidden">
     <!-- Header -->
     <header class="bg-white border-b border-gray-200">
       <div class="px-6 py-3 flex items-center justify-between">
@@ -65,7 +65,7 @@ const selectTool = (toolName: string) => {
     </header>
     
     <!-- Main Content -->
-    <main class="flex-1 overflow-hidden bg-white shadow-inner">
+    <main class="flex-1 overflow-hidden bg-white shadow-inner h-[calc(100vh-4rem)]">
       <div class="w-full h-full">
         <Whiteboard class="w-full h-full" />
       </div>

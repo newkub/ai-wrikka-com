@@ -1,60 +1,57 @@
----
-title: Installation
-description: Step-by-step guide to install and set up the AI platform SDK
----
-
 # Installation Guide
 
-Get started with our AI platform by installing the SDK in your project.
+This guide will walk you through the installation process for our platform.
 
 ## Prerequisites
 
-- Node.js 16.0 or later
-- npm or yarn package manager
-- An API key from the [developer portal](https://developer.example.com)
+- Node.js 16.x or later
+- npm 7.x or later or yarn
+- Modern web browser
 
-## Installation
+## Installation Steps
 
-### Using npm
+### 1. Install the Package
 
-```bash
-npm install @ai-platform/sdk
-```
-
-### Using yarn
+Using npm:
 
 ```bash
-yarn add @ai-platform/sdk
+npm install your-package-name
 ```
 
-## Verifying Installation
+Or using yarn:
 
-Create a test file `test.js`:
+```bash
+yarn add your-package-name
+```
+
+### 2. Import in Your Project
 
 ```javascript
-import { AIClient } from '@ai-platform/sdk';
-
-console.log('SDK version:', AIClient.version);
+import { createApp } from 'your-package-name';
 ```
 
-Run the test:
-```bash
-node test.js
+### 3. Initialize the Application
+
+```javascript
+const app = createApp({
+  // Configuration options
+});
+
+app.mount('#app');
 ```
 
-You should see the SDK version printed in the console.
+## Configuration Options
 
-## Next Steps
-
-- [Configure your API credentials](/docs/configuration)
-- [Explore the API reference](/docs/endpoints)
-- [Check out code examples](/docs/examples)
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| debug | boolean | false | Enable debug mode |
+| api.baseURL | string | '' | Base URL for API requests |
+| api.timeout | number | 30000 | Request timeout in milliseconds |
 
 ## Troubleshooting
 
-If you encounter any issues during installation, please refer to our [troubleshooting guide](/docs/troubleshooting) or contact support.
+If you encounter any issues during installation:
 
-Install with npm:
-```bash
-npm install @ai-platform/sdk
-```
+1. Make sure you have the required Node.js version
+2. Clear npm cache: `npm cache clean --force`
+3. Delete `node_modules` and `package-lock.json` then reinstall
