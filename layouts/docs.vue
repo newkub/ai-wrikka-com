@@ -43,46 +43,41 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import DocsList from "~/components/List.vue";
 import DocsToc from "~/components/Toc.vue";
-import type { NavigationItem } from "~/types/content";
+import type { NavigationItem, TocItem } from "~/types/docs";
 
 const route = useRoute();
 
 // Table of contents state
-const tableOfContents = ref<Array<{ id: string; text: string; level: number }>>([]);
+const tableOfContents = ref<TocItem[]>([]);
 
-// Fetch navigation from content directory
-const { data: navigation } = await useAsyncData<NavigationItem[]>(
-  "navigation",
-  async () => {
-    return Promise.resolve([
-      {
-        title: "Getting Started",
-        items: [
-          { name: "Introduction", href: "/docs/intro" },
-          { name: "Installation", href: "/docs/installation" },
-          { name: "Configuration", href: "/docs/configuration" },
-        ],
-      },
-      {
-        title: "Authentication",
-        items: [{ name: "Overview", href: "/docs/auth" }],
-      },
-      {
-        title: "Guides",
-        items: [
-          { name: "Best Practices", href: "/docs/best-practices" },
-          { name: "Endpoints", href: "/docs/endpoints" },
-          { name: "Examples", href: "/docs/examples" },
-          { name: "Troubleshooting", href: "/docs/troubleshooting" },
-        ],
-      },
-    ]);
-  }
-);
+// Static navigation data
+const navigation: NavigationItem[] = [
+  {
+    title: "Getting Started",
+    items: [
+      { name: "Introduction", href: "/docs/intro" },
+      { name: "Installation", href: "/docs/installation" },
+      { name: "Configuration", href: "/docs/configuration" },
+    ],
+  },
+  {
+    title: "Authentication",
+    items: [{ name: "Overview", href: "/docs/auth" }],
+  },
+  {
+    title: "Guides",
+    items: [
+      { name: "Best Practices", href: "/docs/best-practices" },
+      { name: "Endpoints", href: "/docs/endpoints" },
+      { name: "Examples", href: "/docs/examples" },
+      { name: "Troubleshooting", href: "/docs/troubleshooting" },
+    ],
+  },
+];
 
 // Generate table of contents from headings
 const generateTableOfContents = () => {

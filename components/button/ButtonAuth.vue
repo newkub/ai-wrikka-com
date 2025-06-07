@@ -21,8 +21,11 @@ const onModalClose = () => {
 </script>
 
 <template>
-  <div>
-    <Button @click="openAuthModal">
+  <div class="flex flex-col items-center justify-center">
+    <Button 
+      @click="openAuthModal"
+      class="text-white bg-primary hover:bg-primary-hover transition-colors duration-200 px-4 py-2 rounded-md"
+    >
       <slot>Sign In</slot>
     </Button>
 
