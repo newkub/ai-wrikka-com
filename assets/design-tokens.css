@@ -1,25 +1,25 @@
 :root {
-  /* Light Theme */
-  --background: hsl(0, 0%, 100%);
-  --block: hsl(204, 45%, 98%);
-  --primary: hsl(221, 83%, 53%);
-  --border: hsl(214, 32%, 91%);
-  --secondary: hsl(215, 16%, 47%);
-  --text: hsl(222, 47%, 11%);
-  --alert: hsl(32, 95%, 44%);
-  --error: hsl(0, 84%, 60%);
-  --success: hsl(162, 94%, 30%);
+	/* Light Theme */
+	--background: hsl(0, 0%, 100%);
+	--block: hsl(204, 45%, 98%);
+	--primary: hsl(221, 83%, 53%);
+	--border: hsl(214, 32%, 91%);
+	--secondary: hsl(215, 16%, 47%);
+	--text: hsl(222, 47%, 11%);
+	--alert: hsl(32, 95%, 44%);
+	--error: hsl(0, 84%, 60%);
+	--success: hsl(162, 94%, 30%);
 }
 
 /* Dark Theme */
 .dark {
-  --background: hsl(222, 47%, 11%);
-  --block: hsl(215, 28%, 17%);
-  --primary: hsl(217, 91%, 60%);
-  --border: hsl(215, 28%, 17%);
-  --secondary: hsl(215, 20%, 65%);
-  --text: hsl(210, 40%, 98%);
-  --alert: hsl(38, 92%, 50%);
-  --error: hsl(0, 91%, 71%);
-  --success: hsl(160, 84%, 39%);
+	--background: hsl(222, 47%, 11%);
+	--block: hsl(215, 28%, 17%);
+	--primary: hsl(217, 91%, 60%);
+	--border: hsl(215, 28%, 17%);
+	--secondary: hsl(215, 20%, 65%);
+	--text: hsl(210, 40%, 98%);
+	--alert: hsl(38, 92%, 50%);
+	--error: hsl(0, 91%, 71%);
+	--success: hsl(160, 84%, 39%);
 }

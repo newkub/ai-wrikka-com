@@ -1,28 +1,28 @@
 <script setup lang="ts">
-import CardText from '~/components/CardText.vue'
+import CardText from "~/components/CardText.vue";
 
 const learningCards = [
-  {
-    title: "Getting Started",
-    description: "Learn the basics and get started with our platform.",
-    icon: "i-mdi-book-open-page-variant"
-  },
-  {
-    title: "Tutorials",
-    description: "Step-by-step guides to master our tools.",
-    icon: "i-mdi-school"
-  },
-  {
-    title: "API Documentation",
-    description: "Complete reference for our API endpoints.",
-    icon: "i-mdi-api"
-  },
-  {
-    title: "Best Practices",
-    description: "Learn the recommended ways to use our platform.",
-    icon: "i-mdi-lightbulb"
-  }
-]
+	{
+		title: "Getting Started",
+		description: "Learn the basics and get started with our platform.",
+		icon: "i-mdi-book-open-page-variant",
+	},
+	{
+		title: "Tutorials",
+		description: "Step-by-step guides to master our tools.",
+		icon: "i-mdi-school",
+	},
+	{
+		title: "API Documentation",
+		description: "Complete reference for our API endpoints.",
+		icon: "i-mdi-api",
+	},
+	{
+		title: "Best Practices",
+		description: "Learn the recommended ways to use our platform.",
+		icon: "i-mdi-lightbulb",
+	},
+];
 </script>
 
 <template>

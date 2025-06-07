@@ -1,59 +1,81 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted } from "vue";
 
 interface Dependency {
-  name: string;
-  version: string;
-  latestVersion?: string;
-  type: 'dependency' | 'devDependency' | 'peerDependency';
-  outdated?: boolean;
-  homepage?: string;
-  description?: string;
+	name: string;
+	version: string;
+	latestVersion?: string;
+	type: "dependency" | "devDependency" | "peerDependency";
+	outdated?: boolean;
+	homepage?: string;
+	description?: string;
 }
 
 const dependencies = ref<Dependency[]>([]);
-const searchQuery = ref('');
+const searchQuery = ref("");
 const isLoading = ref(false);
 
 const filteredDependencies = computed(() => {
-  if (!searchQuery.value) return dependencies.value;
-  const query = searchQuery.value.toLowerCase();
-  return dependencies.value.filter(dep => 
-    dep.name.toLowerCase().includes(query) ||
-    dep.description?.toLowerCase().includes(query)
-  );
+	if (!searchQuery.value) return dependencies.value;
+	const query = searchQuery.value.toLowerCase();
+	return dependencies.value.filter(
+		(dep) =>
+			dep.name.toLowerCase().includes(query) ||
+			dep.description?.toLowerCase().includes(query),
+	);
 });
 
 const loadDependencies = async () => {
-  try {
-    isLoading.value = true;
-    // In a real app, you would fetch this from your backend or package.json
-    // This is a mock implementation
-    dependencies.value = [
-      { name: 'vue', version: '^3.3.0', latestVersion: '3.4.0', type: 'dependency', description: 'The Progressive JavaScript Framework', homepage: 'https://vuejs.org/' },
-      { name: 'vite', version: '^4.0.0', latestVersion: '4.5.0', type: 'devDependency', description: 'Next Generation Frontend Tooling', homepage: 'https://vitejs.dev/' },
-      { name: 'pinia', version: '^2.1.0', latestVersion: '2.1.0', type: 'dependency', description: 'Intuitive, type safe, light and flexible Store for Vue', homepage: 'https://pinia.vuejs.org/' },
-    ];
-  } catch (error) {
-    console.error('Failed to load dependencies:', error);
-  } finally {
-    isLoading.value = false;
-  }
+	try {
+		isLoading.value = true;
+		// In a real app, you would fetch this from your backend or package.json
+		// This is a mock implementation
+		dependencies.value = [
+			{
+				name: "vue",
+				version: "^3.3.0",
+				latestVersion: "3.4.0",
+				type: "dependency",
+				description: "The Progressive JavaScript Framework",
+				homepage: "https://vuejs.org/",
+			},
+			{
+				name: "vite",
+				version: "^4.0.0",
+				latestVersion: "4.5.0",
+				type: "devDependency",
+				description: "Next Generation Frontend Tooling",
+				homepage: "https://vitejs.dev/",
+			},
+			{
+				name: "pinia",
+				version: "^2.1.0",
+				latestVersion: "2.1.0",
+				type: "dependency",
+				description: "Intuitive, type safe, light and flexible Store for Vue",
+				homepage: "https://pinia.vuejs.org/",
+			},
+		];
+	} catch (error) {
+		console.error("Failed to load dependencies:", error);
+	} finally {
+		isLoading.value = false;
+	}
 };
 
 const updateDependency = async (depName: string, version: string) => {
-  // In a real app, this would update the package.json and run npm/yarn/pnpm install
-  console.log(`Updating ${depName} to ${version}`);
-  // Simulate update
-  const dep = dependencies.value.find(d => d.name === depName);
-  if (dep) {
-    dep.version = version;
-    dep.outdated = false;
-  }
+	// In a real app, this would update the package.json and run npm/yarn/pnpm install
+	console.log(`Updating ${depName} to ${version}`);
+	// Simulate update
+	const dep = dependencies.value.find((d) => d.name === depName);
+	if (dep) {
+		dep.version = version;
+		dep.outdated = false;
+	}
 };
 
 onMounted(() => {
-  loadDependencies();
+	loadDependencies();
 });
 </script>
 

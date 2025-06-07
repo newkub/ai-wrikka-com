@@ -1,12 +1,12 @@
 <script setup lang="ts">
 const props = defineProps<{
-  modelValue: boolean;
+	modelValue: boolean;
 }>();
 
-const emit = defineEmits<(e: 'update:modelValue', value: boolean) => void>();
+const emit = defineEmits<(e: "update:modelValue", value: boolean) => void>();
 
 const toggleTheme = () => {
-  emit('update:modelValue', !props.modelValue);
+	emit("update:modelValue", !props.modelValue);
 };
 </script>
 

@@ -60,21 +60,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, nextTick, onMounted } from 'vue';
-import FileUpload from '~/components/common/FileUpload.vue';
+import { ref, watch, nextTick, onMounted } from "vue";
+import FileUpload from "~/components/common/FileUpload.vue";
 
 type FileWithPreview = File & { preview?: string }; // For future use if we want to show image previews
 
 const props = defineProps<{
-  modelValue: string;
-  isLoading?: boolean;
-  placeholder?: string;
+	modelValue: string;
+	isLoading?: boolean;
+	placeholder?: string;
 }>();
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: string): void;
-  (e: 'send'): void;
-  (e: 'files', files: File[]): void;
+	(e: "update:modelValue", value: string): void;
+	(e: "send"): void;
+	(e: "files", files: File[]): void;
 }>();
 
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
@@ -83,87 +83,94 @@ const showFileUpload = ref(false);
 const selectedFiles = ref<File[]>([]);
 
 // Update local value when prop changes
-watch(() => props.modelValue, (newValue) => {
-  inputValue.value = newValue;
-});
+watch(
+	() => props.modelValue,
+	(newValue) => {
+		inputValue.value = newValue;
+	},
+);
 
 // Emit update when input changes
 watch(inputValue, (newValue) => {
-  emit('update:modelValue', newValue);
-  adjustTextareaHeight();
+	emit("update:modelValue", newValue);
+	adjustTextareaHeight();
 });
 
 // Auto-resize textarea
 const adjustTextareaHeight = () => {
-  if (textareaRef.value) {
-    textareaRef.value.style.height = 'auto';
-    textareaRef.value.style.height = `${Math.min(textareaRef.value.scrollHeight, 200)}px`;
-  }
+	if (textareaRef.value) {
+		textareaRef.value.style.height = "auto";
+		textareaRef.value.style.height = `${Math.min(textareaRef.value.scrollHeight, 200)}px`;
+	}
 };
 
 // Handle send message
 const handleSend = () => {
-  if ((!inputValue.value.trim() && selectedFiles.value.length === 0) || props.isLoading) return;
-  
-  // Emit send event with files if any
-  if (selectedFiles.value.length > 0) {
-    emit('files', [...selectedFiles.value]);
-    selectedFiles.value = [];
-  }
-  
-  if (inputValue.value.trim()) {
-    emit('send');
-  }
+	if (
+		(!inputValue.value.trim() && selectedFiles.value.length === 0) ||
+		props.isLoading
+	)
+		return;
+
+	// Emit send event with files if any
+	if (selectedFiles.value.length > 0) {
+		emit("files", [...selectedFiles.value]);
+		selectedFiles.value = [];
+	}
+
+	if (inputValue.value.trim()) {
+		emit("send");
+	}
 };
 
 // Handle files uploaded from the modal
 const handleFilesUploaded = (files: File[]) => {
-  selectedFiles.value = [...selectedFiles.value, ...files];
-  showFileUpload.value = false;
+	selectedFiles.value = [...selectedFiles.value, ...files];
+	showFileUpload.value = false;
 };
 
 // Remove a file from the selected files
 const removeFile = (index: number) => {
-  selectedFiles.value.splice(index, 1);
+	selectedFiles.value.splice(index, 1);
 };
 
 // Get icon for file type
 const getFileIcon = (file: File) => {
-  const extension = file.name.split('.').pop()?.toLowerCase();
-  const fileTypes: Record<string, string> = {
-    'pdf': 'i-mdi-file-pdf',
-    'doc': 'i-mdi-file-word',
-    'docx': 'i-mdi-file-word',
-    'xls': 'i-mdi-file-excel',
-    'xlsx': 'i-mdi-file-excel',
-    'ppt': 'i-mdi-file-powerpoint',
-    'pptx': 'i-mdi-file-powerpoint',
-    'jpg': 'i-mdi-file-image',
-    'jpeg': 'i-mdi-file-image',
-    'png': 'i-mdi-file-image',
-    'gif': 'i-mdi-file-image',
-    'zip': 'i-mdi-folder-zip',
-    'rar': 'i-mdi-folder-zip',
-    'txt': 'i-mdi-file-document',
-    'js': 'i-mdi-language-javascript',
-    'ts': 'i-mdi-language-typescript',
-    'vue': 'i-mdi-vuejs',
-    'html': 'i-mdi-language-html5',
-    'css': 'i-mdi-language-css3',
-  };
-  return fileTypes[extension || ''] || 'i-mdi-file';
+	const extension = file.name.split(".").pop()?.toLowerCase();
+	const fileTypes: Record<string, string> = {
+		pdf: "i-mdi-file-pdf",
+		doc: "i-mdi-file-word",
+		docx: "i-mdi-file-word",
+		xls: "i-mdi-file-excel",
+		xlsx: "i-mdi-file-excel",
+		ppt: "i-mdi-file-powerpoint",
+		pptx: "i-mdi-file-powerpoint",
+		jpg: "i-mdi-file-image",
+		jpeg: "i-mdi-file-image",
+		png: "i-mdi-file-image",
+		gif: "i-mdi-file-image",
+		zip: "i-mdi-folder-zip",
+		rar: "i-mdi-folder-zip",
+		txt: "i-mdi-file-document",
+		js: "i-mdi-language-javascript",
+		ts: "i-mdi-language-typescript",
+		vue: "i-mdi-vuejs",
+		html: "i-mdi-language-html5",
+		css: "i-mdi-language-css3",
+	};
+	return fileTypes[extension || ""] || "i-mdi-file";
 };
 
 // Handle Shift+Enter for new line
 const handleShiftEnter = () => {
-  inputValue.value += '\n';
-  nextTick(adjustTextareaHeight);
+	inputValue.value += "\n";
+	nextTick(adjustTextareaHeight);
 };
 
 // Focus the input when component is mounted
 onMounted(() => {
-  if (textareaRef.value) {
-    textareaRef.value.focus();
-  }
+	if (textareaRef.value) {
+		textareaRef.value.focus();
+	}
 });
 </script>

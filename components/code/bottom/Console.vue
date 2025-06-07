@@ -1,171 +1,183 @@
 <script setup lang="ts">
-import { ref, onMounted, nextTick, computed } from 'vue';
+import { ref, onMounted, nextTick, computed } from "vue";
 
 interface ConsoleMessage {
-  type: 'log' | 'info' | 'warn' | 'error' | 'debug' | 'clear';
-  timestamp: number;
-  messages: unknown[];
-  stack?: string;
+	type: "log" | "info" | "warn" | "error" | "debug" | "clear";
+	timestamp: number;
+	messages: unknown[];
+	stack?: string;
 }
 
 const props = defineProps<{
-  theme?: 'light' | 'dark';
-  maxLines?: number;
+	theme?: "light" | "dark";
+	maxLines?: number;
 }>();
 
-const emit = defineEmits(['command']);
+const emit = defineEmits(["command"]);
 
 const consoleRef = ref<HTMLDivElement | null>(null);
 const inputRef = ref<HTMLInputElement | null>(null);
 const commandHistory = ref<string[]>([]);
 const historyIndex = ref(-1);
 const messages = ref<ConsoleMessage[]>([]);
-const inputValue = ref('');
+const inputValue = ref("");
 const showTimestamps = ref(true);
-const filter = ref<'all' | 'error' | 'warn' | 'log'>('all');
+const filter = ref<"all" | "error" | "warn" | "log">("all");
 
 const filteredMessages = computed(() => {
-  if (filter.value === 'all') return messages.value;
-  return messages.value.filter(msg => msg.type === filter.value);
+	if (filter.value === "all") return messages.value;
+	return messages.value.filter((msg) => msg.type === filter.value);
 });
 
 const focusInput = () => {
-  if (inputRef.value) {
-    inputRef.value.focus();
-  }
+	if (inputRef.value) {
+		inputRef.value.focus();
+	}
 };
 
 const handleKeyDown = (e: KeyboardEvent) => {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    const command = inputValue.value.trim();
-    if (command) {
-      // Add to history
-      commandHistory.value.unshift(command);
-      historyIndex.value = -1;
-      
-      // Process command
-      processCommand(command);
-      
-      // Clear input
-      inputValue.value = '';
-    }
-  } else if (e.key === 'ArrowUp') {
-    e.preventDefault();
-    if (commandHistory.value.length > 0 && historyIndex.value < commandHistory.value.length - 1) {
-      historyIndex.value++;
-      inputValue.value = commandHistory.value[historyIndex.value];
-    }
-  } else if (e.key === 'ArrowDown') {
-    e.preventDefault();
-    if (historyIndex.value > 0) {
-      historyIndex.value--;
-      inputValue.value = commandHistory.value[historyIndex.value];
-    } else if (historyIndex.value === 0) {
-      historyIndex.value = -1;
-      inputValue.value = '';
-    }
-  } else if (e.key === 'l' && e.ctrlKey) {
-    e.preventDefault();
-    clear();
-  }
+	if (e.key === "Enter") {
+		e.preventDefault();
+		const command = inputValue.value.trim();
+		if (command) {
+			// Add to history
+			commandHistory.value.unshift(command);
+			historyIndex.value = -1;
+
+			// Process command
+			processCommand(command);
+
+			// Clear input
+			inputValue.value = "";
+		}
+	} else if (e.key === "ArrowUp") {
+		e.preventDefault();
+		if (
+			commandHistory.value.length > 0 &&
+			historyIndex.value < commandHistory.value.length - 1
+		) {
+			historyIndex.value++;
+			inputValue.value = commandHistory.value[historyIndex.value];
+		}
+	} else if (e.key === "ArrowDown") {
+		e.preventDefault();
+		if (historyIndex.value > 0) {
+			historyIndex.value--;
+			inputValue.value = commandHistory.value[historyIndex.value];
+		} else if (historyIndex.value === 0) {
+			historyIndex.value = -1;
+			inputValue.value = "";
+		}
+	} else if (e.key === "l" && e.ctrlKey) {
+		e.preventDefault();
+		clear();
+	}
 };
 
 const processCommand = (command: string) => {
-  // Add command to console
-  log(`> ${command}`, 'info');
-  
-  try {
-    // In a real implementation, you would evaluate the command in a sandbox
-    // For demo purposes, we'll just echo the command
-    log(`Command executed: ${command}`, 'log');
-    
-    // Emit the command to the parent component
-    emit('command', command);
-  } catch (error) {
-    log(error instanceof Error ? error.message : String(error), 'error');
-  }
+	// Add command to console
+	log(`> ${command}`, "info");
+
+	try {
+		// In a real implementation, you would evaluate the command in a sandbox
+		// For demo purposes, we'll just echo the command
+		log(`Command executed: ${command}`, "log");
+
+		// Emit the command to the parent component
+		emit("command", command);
+	} catch (error) {
+		log(error instanceof Error ? error.message : String(error), "error");
+	}
 };
 
 // Public methods
 const log = (...args: unknown[]) => {
-  addMessage('log', args);
+	addMessage("log", args);
 };
 
 const info = (...args: unknown[]) => {
-  addMessage('info', args);
+	addMessage("info", args);
 };
 
 const warn = (...args: unknown[]) => {
-  addMessage('warn', args);
+	addMessage("warn", args);
 };
 
 const error = (...args: unknown[]) => {
-  const errorObj = args.find(arg => arg instanceof Error);
-  addMessage('error', args, errorObj?.stack);
+	const errorObj = args.find((arg) => arg instanceof Error);
+	addMessage("error", args, errorObj?.stack);
 };
 
 const debug = (...args: unknown[]) => {
-  addMessage('debug', args);
+	addMessage("debug", args);
 };
 
 const clear = () => {
-  messages.value = [];
+	messages.value = [];
 };
 
-const addMessage = (type: ConsoleMessage['type'], messageArgs: unknown[], stack?: string) => {
-  messages.value.push({
-    type,
-    timestamp: Date.now(),
-    messages: messageArgs,
-    stack
-  });
-  
-  // Limit the number of messages to prevent memory issues
-  if (props.maxLines && messages.value.length > props.maxLines) {
-    messages.value = messages.value.slice(-props.maxLines);
-  }
-  
-  scrollToBottom();
+const addMessage = (
+	type: ConsoleMessage["type"],
+	messageArgs: unknown[],
+	stack?: string,
+) => {
+	messages.value.push({
+		type,
+		timestamp: Date.now(),
+		messages: messageArgs,
+		stack,
+	});
+
+	// Limit the number of messages to prevent memory issues
+	if (props.maxLines && messages.value.length > props.maxLines) {
+		messages.value = messages.value.slice(-props.maxLines);
+	}
+
+	scrollToBottom();
 };
 
 const scrollToBottom = () => {
-  nextTick(() => {
-    if (consoleRef.value) {
-      consoleRef.value.scrollTop = consoleRef.value.scrollHeight;
-    }
-  });
+	nextTick(() => {
+		if (consoleRef.value) {
+			consoleRef.value.scrollTop = consoleRef.value.scrollHeight;
+		}
+	});
 };
 
 const getMessageTypeIcon = (type: string) => {
-  switch (type) {
-    case 'error': return 'i-mdi-close-circle text-red-500';
-    case 'warn': return 'i-mdi-alert-circle text-yellow-500';
-    case 'info': return 'i-mdi-information text-blue-500';
-    case 'debug': return 'i-mdi-bug-outline text-purple-500';
-    default: return 'i-mdi-console-line';
-  }
+	switch (type) {
+		case "error":
+			return "i-mdi-close-circle text-red-500";
+		case "warn":
+			return "i-mdi-alert-circle text-yellow-500";
+		case "info":
+			return "i-mdi-information text-blue-500";
+		case "debug":
+			return "i-mdi-bug-outline text-purple-500";
+		default:
+			return "i-mdi-console-line";
+	}
 };
 
 const formatTimestamp = (timestamp: number) => {
-  const date = new Date(timestamp);
-  return date.toLocaleTimeString();
+	const date = new Date(timestamp);
+	return date.toLocaleTimeString();
 };
 
 // Expose methods to parent component
 defineExpose({
-  log,
-  info,
-  warn,
-  error,
-  debug,
-  clear
+	log,
+	info,
+	warn,
+	error,
+	debug,
+	clear,
 });
 
 onMounted(() => {
-  // Add welcome message
-  info('Console initialized. Type commands below.');
-  focusInput();
+	// Add welcome message
+	info("Console initialized. Type commands below.");
+	focusInput();
 });
 </script>
 

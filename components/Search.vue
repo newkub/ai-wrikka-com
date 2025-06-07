@@ -19,9 +19,9 @@
 
 <script setup lang="ts">
 const props = defineProps<{
-  modelValue: string
-  placeholder?: string
-}>()
+	modelValue: string;
+	placeholder?: string;
+}>();
 
-const emit = defineEmits<(e: 'update:modelValue', value: string) => void>()
+const emit = defineEmits<(e: "update:modelValue", value: string) => void>();
 </script>

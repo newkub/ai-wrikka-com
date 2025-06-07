@@ -90,71 +90,71 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { Tag } from '~/components/primitive'
-import type { Bookmark } from '~/types/bookmark'
+import { ref, onMounted } from "vue";
+import { Tag } from "~/components/primitive";
+import type { Bookmark } from "~/types/bookmark";
 
 interface Props {
-  bookmark: Bookmark
+	bookmark: Bookmark;
 }
 
 interface Emits {
-  (e: 'click', event: MouseEvent): void
-  (e: 'menu-click', event: MouseEvent): void
+	(e: "click", event: MouseEvent): void;
+	(e: "menu-click", event: MouseEvent): void;
 }
 
-const props = defineProps<Props>()
-const emit = defineEmits<Emits>()
+const props = defineProps<Props>();
+const emit = defineEmits<Emits>();
 
-const ogImage = ref<string | null>(null)
-const imageError = ref(false)
+const ogImage = ref<string | null>(null);
+const imageError = ref(false);
 
 // ฟังก์ชันสำหรับดึงรูปภาพจาก OpenGraph/Twitter Card
 const fetchOgImage = async (url: string) => {
-  try {
-    // ใช้ CORS proxy เพื่อหลีกเลี่ยงปัญหา CORS
-    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
-    const response = await fetch(proxyUrl)
-    const html = await response.text()
-    
-    // สร้าง DOM parser เพื่ออ่าน HTML
-    const parser = new DOMParser()
-    const doc = parser.parseFromString(html, 'text/html')
-    
-    // ค้นหา OpenGraph image
-    const ogImageEl = doc.querySelector('meta[property="og:image"]') || 
-                     doc.querySelector('meta[name="twitter:image"]')
-    
-    if (ogImageEl) {
-      const imageUrl = ogImageEl.getAttribute('content')
-      if (imageUrl) {
-        // แปลงเป็น absolute URL ถ้าจำเป็น
-        try {
-          const baseUrl = new URL(url)
-          const absoluteUrl = new URL(imageUrl, baseUrl.origin)
-          ogImage.value = absoluteUrl.toString()
-        } catch (e) {
-          console.error('Error creating image URL:', e)
-          ogImage.value = imageUrl
-        }
-      }
-    }
-  } catch (error) {
-    console.error('Error fetching OG image:', error)
-  }
-}
+	try {
+		// ใช้ CORS proxy เพื่อหลีกเลี่ยงปัญหา CORS
+		const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+		const response = await fetch(proxyUrl);
+		const html = await response.text();
+
+		// สร้าง DOM parser เพื่ออ่าน HTML
+		const parser = new DOMParser();
+		const doc = parser.parseFromString(html, "text/html");
+
+		// ค้นหา OpenGraph image
+		const ogImageEl =
+			doc.querySelector('meta[property="og:image"]') ||
+			doc.querySelector('meta[name="twitter:image"]');
+
+		if (ogImageEl) {
+			const imageUrl = ogImageEl.getAttribute("content");
+			if (imageUrl) {
+				// แปลงเป็น absolute URL ถ้าจำเป็น
+				try {
+					const baseUrl = new URL(url);
+					const absoluteUrl = new URL(imageUrl, baseUrl.origin);
+					ogImage.value = absoluteUrl.toString();
+				} catch (e) {
+					console.error("Error creating image URL:", e);
+					ogImage.value = imageUrl;
+				}
+			}
+		}
+	} catch (error) {
+		console.error("Error fetching OG image:", error);
+	}
+};
 
 // ฟังก์ชันจัดการเมื่อโหลดรูปภาพไม่สำเร็จ
 const handleImageError = () => {
-  imageError.value = true
-  ogImage.value = null
-}
+	imageError.value = true;
+	ogImage.value = null;
+};
 
 // ดึงรูปภาพเมื่อ component ถูก mount
 onMounted(() => {
-  if (!props.bookmark.image && props.bookmark.url) {
-    fetchOgImage(props.bookmark.url)
-  }
-})
-
+	if (!props.bookmark.image && props.bookmark.url) {
+		fetchOgImage(props.bookmark.url);
+	}
+});
 </script>

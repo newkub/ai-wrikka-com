@@ -1,31 +1,36 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed } from "vue";
 
-const props = withDefaults(defineProps<{
-  modelValue?: boolean;
-  id?: string;
-  label?: string;
-  name?: string;
-  disabled?: boolean;
-  required?: boolean;
-  error?: string;
-}>(), {
-  modelValue: false,
-  id: '',
-  label: '',
-  name: '',
-  disabled: false,
-  required: false,
-  error: '',
-});
+const props = withDefaults(
+	defineProps<{
+		modelValue?: boolean;
+		id?: string;
+		label?: string;
+		name?: string;
+		disabled?: boolean;
+		required?: boolean;
+		error?: string;
+	}>(),
+	{
+		modelValue: false,
+		id: "",
+		label: "",
+		name: "",
+		disabled: false,
+		required: false,
+		error: "",
+	},
+);
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(["update:modelValue"]);
 
-const checkboxId = computed(() => props.id || `checkbox-${Math.random().toString(36).substr(2, 9)}`);
+const checkboxId = computed(
+	() => props.id || `checkbox-${Math.random().toString(36).substr(2, 9)}`,
+);
 
 const handleChange = (e: Event) => {
-  const target = e.target as HTMLInputElement;
-  emit('update:modelValue', target.checked);
+	const target = e.target as HTMLInputElement;
+	emit("update:modelValue", target.checked);
 };
 </script>
 

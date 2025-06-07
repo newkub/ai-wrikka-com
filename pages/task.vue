@@ -1,80 +1,80 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted } from "vue";
 
 interface Task {
-  id: string;
-  title: string;
-  description: string;
-  completed: boolean;
-  dueDate?: string;
-  priority?: 'low' | 'medium' | 'high';
-  tags?: string;
+	id: string;
+	title: string;
+	description: string;
+	completed: boolean;
+	dueDate?: string;
+	priority?: "low" | "medium" | "high";
+	tags?: string;
 }
 
 const tasks = ref<Task[]>([]);
 const newTask = ref<Partial<Task>>({
-  title: '',
-  description: '',
-  completed: false,
+	title: "",
+	description: "",
+	completed: false,
 });
 const showTaskDetails = ref(false);
 
 // Load tasks from localStorage
 onMounted(() => {
-  const savedTasks = localStorage.getItem('tasks');
-  if (savedTasks) {
-    tasks.value = JSON.parse(savedTasks);
-  }
+	const savedTasks = localStorage.getItem("tasks");
+	if (savedTasks) {
+		tasks.value = JSON.parse(savedTasks);
+	}
 });
 
 // Save tasks to localStorage
 const saveTasks = () => {
-  localStorage.setItem('tasks', JSON.stringify(tasks.value));
+	localStorage.setItem("tasks", JSON.stringify(tasks.value));
 };
 
 // Add new task
 const addTask = () => {
-  if (!newTask.value.title?.trim()) return;
-  
-  const task: Task = {
-    id: Date.now().toString(),
-    title: newTask.value.title,
-    description: newTask.value.description || '',
-    completed: false,
-    dueDate: newTask.value.dueDate,
-    priority: newTask.value.priority || 'medium',
-    tags: newTask.value.tags,
-  };
+	if (!newTask.value.title?.trim()) return;
 
-  tasks.value.unshift(task);
-  saveTasks();
-  
-  // Reset form
-  newTask.value = {
-    title: '',
-    description: '',
-    completed: false,
-  };
-  showTaskDetails.value = false;
+	const task: Task = {
+		id: Date.now().toString(),
+		title: newTask.value.title,
+		description: newTask.value.description || "",
+		completed: false,
+		dueDate: newTask.value.dueDate,
+		priority: newTask.value.priority || "medium",
+		tags: newTask.value.tags,
+	};
+
+	tasks.value.unshift(task);
+	saveTasks();
+
+	// Reset form
+	newTask.value = {
+		title: "",
+		description: "",
+		completed: false,
+	};
+	showTaskDetails.value = false;
 };
 
 // Delete task
 const deleteTask = (index: number) => {
-  if (confirm('Are you sure you want to delete this task?')) {
-    tasks.value.splice(index, 1);
-    saveTasks();
-  }
+	if (confirm("Are you sure you want to delete this task?")) {
+		tasks.value.splice(index, 1);
+		saveTasks();
+	}
 };
 
 // Format date for display
 const formatDate = (dateString?: string) => {
-  if (!dateString) return '';
-  const options: Intl.DateTimeFormatOptions = { 
-    year: 'numeric', 
-    month: 'short', 
-    day: 'numeric' 
-  };
-  return new Date(dateString).toLocaleDateString(undefined, options);
+	if (!dateString) return "";
+	const options: Intl.DateTimeFormatOptions = {
+		year: "numeric",
+		month: "short",
+		day: "numeric",
+	};
+	return new Date(dateString).toLocaleDateString(undefined, options);
 };
 </script>
 

@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from "vue";
 
 defineProps<{
-  imageUrl?: string;
-  name?: string;
-  size?: 'sm' | 'md' | 'lg';
+	imageUrl?: string;
+	name?: string;
+	size?: "sm" | "md" | "lg";
 }>();
 
 const sizeClasses = {
-  sm: 'h-8 w-8 text-sm',
-  md: 'h-10 w-10 text-base',
-  lg: 'h-12 w-12 text-lg',
+	sm: "h-8 w-8 text-sm",
+	md: "h-10 w-10 text-base",
+	lg: "h-12 w-12 text-lg",
 };
 </script>
 

@@ -1,121 +1,124 @@
 <script setup lang="ts">
-import { ref, onMounted, nextTick, computed } from 'vue'; // defineProps and defineEmits are compiler macros
+import { ref, onMounted, nextTick, computed } from "vue"; // defineProps and defineEmits are compiler macros
 
 const props = defineProps<{
-  welcomeMessage?: string;
-  prompt?: string;
-  readOnly?: boolean;
+	welcomeMessage?: string;
+	prompt?: string;
+	readOnly?: boolean;
 }>();
 
-const emit = defineEmits(['command']);
+const emit = defineEmits(["command"]);
 
 const terminalRef = ref<HTMLDivElement | null>(null);
 const inputRef = ref<HTMLInputElement | null>(null);
-const output = ref<{ text: string; type?: 'input' | 'output' | 'error' }[]>([]);
+const output = ref<{ text: string; type?: "input" | "output" | "error" }[]>([]);
 const commandHistory = ref<string[]>([]);
 let historyIndex = -1;
 
 const inputClasses = computed(() => [
-  'bg-transparent',
-  'border-none',
-  'outline-none',
-  'w-full',
-  'text-inherit',
-  'caret-current'
+	"bg-transparent",
+	"border-none",
+	"outline-none",
+	"w-full",
+	"text-inherit",
+	"caret-current",
 ]);
 
 const focusInput = () => {
-  if (inputRef.value) {
-    inputRef.value.focus();
-  }
+	if (inputRef.value) {
+		inputRef.value.focus();
+	}
 };
 
 const handleKeyDown = (e: KeyboardEvent) => {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    const command = inputRef.value?.value.trim() || '';
-    if (command) {
-      output.value.push({ text: `${props.prompt}${command}`, type: 'input' });
-      commandHistory.value.unshift(command);
-      historyIndex = -1;
-      
-      emit('command', command);
-      
-      if (inputRef.value) {
-        inputRef.value.value = '';
-      }
-      
-      nextTick(() => {
-        if (terminalRef.value) {
-          terminalRef.value.scrollTop = terminalRef.value.scrollHeight;
-        }
-      });
-    }
-  } else if (e.key === 'ArrowUp') {
-    e.preventDefault();
-    if (commandHistory.value.length > 0 && historyIndex < commandHistory.value.length - 1) {
-      historyIndex++;
-      if (inputRef.value) {
-        inputRef.value.value = commandHistory.value[historyIndex];
-      }
-    }
-  } else if (e.key === 'ArrowDown') {
-    e.preventDefault();
-    if (historyIndex > 0) {
-      historyIndex--;
-      if (inputRef.value) {
-        inputRef.value.value = commandHistory.value[historyIndex];
-      }
-    } else if (historyIndex === 0) {
-      historyIndex--;
-      if (inputRef.value) {
-        inputRef.value.value = '';
-      }
-    }
-  }
+	if (e.key === "Enter") {
+		e.preventDefault();
+		const command = inputRef.value?.value.trim() || "";
+		if (command) {
+			output.value.push({ text: `${props.prompt}${command}`, type: "input" });
+			commandHistory.value.unshift(command);
+			historyIndex = -1;
+
+			emit("command", command);
+
+			if (inputRef.value) {
+				inputRef.value.value = "";
+			}
+
+			nextTick(() => {
+				if (terminalRef.value) {
+					terminalRef.value.scrollTop = terminalRef.value.scrollHeight;
+				}
+			});
+		}
+	} else if (e.key === "ArrowUp") {
+		e.preventDefault();
+		if (
+			commandHistory.value.length > 0 &&
+			historyIndex < commandHistory.value.length - 1
+		) {
+			historyIndex++;
+			if (inputRef.value) {
+				inputRef.value.value = commandHistory.value[historyIndex];
+			}
+		}
+	} else if (e.key === "ArrowDown") {
+		e.preventDefault();
+		if (historyIndex > 0) {
+			historyIndex--;
+			if (inputRef.value) {
+				inputRef.value.value = commandHistory.value[historyIndex];
+			}
+		} else if (historyIndex === 0) {
+			historyIndex--;
+			if (inputRef.value) {
+				inputRef.value.value = "";
+			}
+		}
+	}
 };
 
 const write = (text: string) => {
-  output.value.push({ text, type: 'output' });
-  scrollToBottom();
+	output.value.push({ text, type: "output" });
+	scrollToBottom();
 };
 
 const writeln = (text: string) => {
-  output.value.push({ text, type: 'output' });
-  scrollToBottom();
+	output.value.push({ text, type: "output" });
+	scrollToBottom();
 };
 
 const clear = () => {
-  output.value = [];
+	output.value = [];
 };
 
 const copyAll = () => {
-  const text = output.value.map(line => line.text).join('\n');
-  navigator.clipboard.writeText(text).catch(err => {
-    console.error('Failed to copy:', err);
-  });
+	const text = output.value.map((line) => line.text).join("\n");
+	navigator.clipboard.writeText(text).catch((err) => {
+		console.error("Failed to copy:", err);
+	});
 };
 
 const scrollToBottom = () => {
-  nextTick(() => {
-    if (terminalRef.value) {
-      terminalRef.value.scrollTop = terminalRef.value.scrollHeight;
-    }
-  });
+	nextTick(() => {
+		if (terminalRef.value) {
+			terminalRef.value.scrollTop = terminalRef.value.scrollHeight;
+		}
+	});
 };
 
 onMounted(() => {
-  if (props.welcomeMessage) {
-    output.value.push({ text: props.welcomeMessage, type: 'output' });
-  }
-  focusInput();
+	if (props.welcomeMessage) {
+		output.value.push({ text: props.welcomeMessage, type: "output" });
+	}
+	focusInput();
 });
 
 defineExpose({
-  write,
-  writeln,
-  clear,
-  copyAll
+	write,
+	writeln,
+	clear,
+	copyAll,
 });
 </script>
 

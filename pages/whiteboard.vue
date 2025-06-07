@@ -1,29 +1,27 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import Whiteboard from '~/components/Whiteboard.vue'
-import { useFullscreen } from '@vueuse/core'
+import { ref } from "vue";
+import Whiteboard from "~/components/Whiteboard.vue";
+import { useFullscreen } from "@vueuse/core";
 
 definePageMeta({
-  layout: 'fullscreen'
+	layout: "fullscreen",
 });
 
-
-const { isFullscreen, toggle } = useFullscreen()
-
+const { isFullscreen, toggle } = useFullscreen();
 
 const tools = [
-  { name: 'pen', icon: '✏️', active: false },
-  { name: 'eraser', icon: '🧽', active: false },
-  { name: 'text', icon: '🔤', active: false },
-  { name: 'shape', icon: '⬜', active: false },
-]
+	{ name: "pen", icon: "✏️", active: false },
+	{ name: "eraser", icon: "🧽", active: false },
+	{ name: "text", icon: "🔤", active: false },
+	{ name: "shape", icon: "⬜", active: false },
+];
 
-const activeTool = ref('pen')
+const activeTool = ref("pen");
 
 const selectTool = (toolName: string) => {
-  activeTool.value = toolName
-  // Add tool selection logic here
-}
+	activeTool.value = toolName;
+	// Add tool selection logic here
+};
 </script>
 
 <template>

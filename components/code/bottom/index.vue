@@ -1,27 +1,27 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import Console from './Console.vue';
-import Dependencies from './Dependencies.vue';
-import Git from './Git.vue';
-import Problems from './Problems.vue';
-import Search from './Search.vue';
-import Tasks from './Tasks.vue';
-import Terminal from './Terminal.vue';
+import { ref } from "vue";
+import Console from "./Console.vue";
+import Dependencies from "./Dependencies.vue";
+import Git from "./Git.vue";
+import Problems from "./Problems.vue";
+import Search from "./Search.vue";
+import Tasks from "./Tasks.vue";
+import Terminal from "./Terminal.vue";
 
-const activeTab = ref('terminal');
+const activeTab = ref("terminal");
 const tabs = [
-  { id: 'terminal', label: 'Terminal', component: Terminal },
-  { id: 'problems', label: 'Problems', component: Problems },
-  { id: 'output', label: 'Output', component: Console },
-  { id: 'debug-console', label: 'Debug Console', component: Console },
-  { id: 'git', label: 'Git', component: Git },
-  { id: 'dependencies', label: 'Dependencies', component: Dependencies },
-  { id: 'search', label: 'Search', component: Search },
-  { id: 'tasks', label: 'Tasks', component: Tasks }
+	{ id: "terminal", label: "Terminal", component: Terminal },
+	{ id: "problems", label: "Problems", component: Problems },
+	{ id: "output", label: "Output", component: Console },
+	{ id: "debug-console", label: "Debug Console", component: Console },
+	{ id: "git", label: "Git", component: Git },
+	{ id: "dependencies", label: "Dependencies", component: Dependencies },
+	{ id: "search", label: "Search", component: Search },
+	{ id: "tasks", label: "Tasks", component: Tasks },
 ];
 
 const setActiveTab = (tabId: string) => {
-  activeTab.value = tabId;
+	activeTab.value = tabId;
 };
 </script>
 

@@ -1,46 +1,46 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from "vue";
 
 defineProps<{
-  align?: 'left' | 'right';
-  width?: '48' | '56' | '64' | 'auto';
+	align?: "left" | "right";
+	width?: "48" | "56" | "64" | "auto";
 }>();
 
 const open = ref(false);
 const dropdown = ref<HTMLElement | null>(null);
 
 const widthClass = {
-  '48': 'w-48',
-  '56': 'w-56',
-  '64': 'w-64',
-  'auto': 'w-auto',
+	"48": "w-48",
+	"56": "w-56",
+	"64": "w-64",
+	auto: "w-auto",
 };
 
 const alignClasses = {
-  left: 'left-0',
-  right: 'right-0',
+	left: "left-0",
+	right: "right-0",
 };
 
 const closeOnEscape = (e: KeyboardEvent) => {
-  if (open.value && e.key === 'Escape') {
-    open.value = false;
-  }
+	if (open.value && e.key === "Escape") {
+		open.value = false;
+	}
 };
 
 const closeOnClickOutside = (event: MouseEvent) => {
-  if (dropdown.value && !dropdown.value.contains(event.target as Node)) {
-    open.value = false;
-  }
+	if (dropdown.value && !dropdown.value.contains(event.target as Node)) {
+		open.value = false;
+	}
 };
 
 onMounted(() => {
-  document.addEventListener('keydown', closeOnEscape);
-  document.addEventListener('click', closeOnClickOutside);
+	document.addEventListener("keydown", closeOnEscape);
+	document.addEventListener("click", closeOnClickOutside);
 });
 
 onBeforeUnmount(() => {
-  document.removeEventListener('keydown', closeOnEscape);
-  document.removeEventListener('click', closeOnClickOutside);
+	document.removeEventListener("keydown", closeOnEscape);
+	document.removeEventListener("click", closeOnClickOutside);
 });
 </script>
 

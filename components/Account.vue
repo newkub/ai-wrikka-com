@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from "vue";
 
-const emit = defineEmits<(e: 'signout') => void>()
+const emit = defineEmits<(e: "signout") => void>();
 
 const user = ref({
-  name: 'John Doe',
-  email: 'john@example.com',
-  avatar: null,
+	name: "John Doe",
+	email: "john@example.com",
+	avatar: null,
 });
 
 const signOut = () => {
-  // Handle sign out logic here
-  console.log('Sign out');
-  // Emit event to parent
-  emit('signout');
+	// Handle sign out logic here
+	console.log("Sign out");
+	// Emit event to parent
+	emit("signout");
 };
 </script>
 

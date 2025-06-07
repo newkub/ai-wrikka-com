@@ -85,29 +85,29 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue';
+import { ref, onMounted, nextTick } from "vue";
 
 defineProps<{
-  messages: Array<{
-    id: string;
-    content: string;
-    sender: 'user' | 'ai';
-    timestamp: Date;
-    isTyping?: boolean;
-  }>;
-  formatTimeAgo: (date: Date) => string;
+	messages: Array<{
+		id: string;
+		content: string;
+		sender: "user" | "ai";
+		timestamp: Date;
+		isTyping?: boolean;
+	}>;
+	formatTimeAgo: (date: Date) => string;
 }>();
 
-defineEmits(['reply', 'copy', 'save']);
+defineEmits(["reply", "copy", "save"]);
 
 const chatContainer = ref<HTMLElement | null>(null);
 
 // Scroll to bottom when messages change
 onMounted(() => {
-  nextTick(() => {
-    if (chatContainer.value) {
-      chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
-    }
-  });
+	nextTick(() => {
+		if (chatContainer.value) {
+			chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
+		}
+	});
 });
 </script>

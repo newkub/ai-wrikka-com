@@ -1,22 +1,25 @@
 
 
 <script setup lang="ts">
-withDefaults(defineProps<{
-  variant?: 'primary' | 'secondary' | 'danger';
-  size?: 'sm' | 'md' | 'lg';
-  type?: 'button' | 'submit' | 'reset';
-  disabled?: boolean;
-  icon?: string;
-  iconPosition?: 'left' | 'right';
-}>(), {
-  variant: 'primary',
-  size: 'md',
-  type: 'button',
-  disabled: false,
-  iconPosition: 'left'
-});
+withDefaults(
+	defineProps<{
+		variant?: "primary" | "secondary" | "danger";
+		size?: "sm" | "md" | "lg";
+		type?: "button" | "submit" | "reset";
+		disabled?: boolean;
+		icon?: string;
+		iconPosition?: "left" | "right";
+	}>(),
+	{
+		variant: "primary",
+		size: "md",
+		type: "button",
+		disabled: false,
+		iconPosition: "left",
+	},
+);
 
-defineEmits<(e: 'click', event: MouseEvent) => void>();
+defineEmits<(e: "click", event: MouseEvent) => void>();
 </script>
 
 

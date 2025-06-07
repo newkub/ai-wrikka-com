@@ -1,10 +1,10 @@
 
 <script setup lang="ts">
 defineProps<{
-  modelValue: boolean;
+	modelValue: boolean;
 }>();
 
-defineEmits<(e: 'update:modelValue', value: boolean) => void>();
+defineEmits<(e: "update:modelValue", value: boolean) => void>();
 </script>
 
 

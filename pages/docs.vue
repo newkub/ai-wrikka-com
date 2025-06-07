@@ -165,61 +165,61 @@ app.mount('#app');</code></pre>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed } from "vue";
 
 // สถานะเมนูสำหรับ mobile
 const isMenuOpen = ref(false);
-const activeSection = ref('getting-started');
+const activeSection = ref("getting-started");
 
 // ข้อมูลเมนู
 const menuItems = [
-  {
-    title: 'Getting Started',
-    id: 'getting-started',
-    icon: 'i-mdi-rocket-launch-outline',
-    children: [
-      { title: 'Introduction', id: 'introduction' },
-      { title: 'Installation', id: 'installation' },
-      { title: 'Configuration', id: 'configuration' },
-    ],
-  },
-  {
-    title: 'Guides',
-    id: 'guides',
-    icon: 'i-mdi-book-open-page-variant-outline',
-    children: [
-      { title: 'Basic Concepts', id: 'basic-concepts' },
-      { title: 'Advanced Usage', id: 'advanced-usage' },
-      { title: 'Best Practices', id: 'best-practices' },
-    ],
-  },
-  {
-    title: 'API Reference',
-    id: 'api',
-    icon: 'i-mdi-api',
-    children: [
-      { title: 'Core API', id: 'core-api' },
-      { title: 'Plugins', id: 'plugins' },
-      { title: 'Utilities', id: 'utilities' },
-    ],
-  },
+	{
+		title: "Getting Started",
+		id: "getting-started",
+		icon: "i-mdi-rocket-launch-outline",
+		children: [
+			{ title: "Introduction", id: "introduction" },
+			{ title: "Installation", id: "installation" },
+			{ title: "Configuration", id: "configuration" },
+		],
+	},
+	{
+		title: "Guides",
+		id: "guides",
+		icon: "i-mdi-book-open-page-variant-outline",
+		children: [
+			{ title: "Basic Concepts", id: "basic-concepts" },
+			{ title: "Advanced Usage", id: "advanced-usage" },
+			{ title: "Best Practices", id: "best-practices" },
+		],
+	},
+	{
+		title: "API Reference",
+		id: "api",
+		icon: "i-mdi-api",
+		children: [
+			{ title: "Core API", id: "core-api" },
+			{ title: "Plugins", id: "plugins" },
+			{ title: "Utilities", id: "utilities" },
+		],
+	},
 ];
 
 // ข้อมูลหัวข้อในหน้า (สำหรับ TOC)
 const headings = [
-  { id: 'introduction', text: 'Introduction', level: 2 },
-  { id: 'features', text: 'Key Features', level: 2 },
-  { id: 'quick-start', text: 'Quick Start', level: 2 },
-  { id: 'prerequisites', text: 'Prerequisites', level: 3 },
-  { id: 'installation', text: 'Installation', level: 3 },
-  { id: 'usage', text: 'Basic Usage', level: 3 },
-  { id: 'configuration', text: 'Configuration', level: 2 },
+	{ id: "introduction", text: "Introduction", level: 2 },
+	{ id: "features", text: "Key Features", level: 2 },
+	{ id: "quick-start", text: "Quick Start", level: 2 },
+	{ id: "prerequisites", text: "Prerequisites", level: 3 },
+	{ id: "installation", text: "Installation", level: 3 },
+	{ id: "usage", text: "Basic Usage", level: 3 },
+	{ id: "configuration", text: "Configuration", level: 2 },
 ];
 
 // ฟังก์ชันสำหรับเปลี่ยน section
 const setActiveSection = (sectionId: string) => {
-  activeSection.value = sectionId;
-  isMenuOpen.value = false; // ปิดเมนูบนมือถือเมื่อเลือกหัวข้อ
+	activeSection.value = sectionId;
+	isMenuOpen.value = false; // ปิดเมนูบนมือถือเมื่อเลือกหัวข้อ
 };
 </script>
 

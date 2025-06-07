@@ -32,36 +32,36 @@
 
 <script setup lang="ts">
 interface Props {
-  /** Text to display in the tag */
-  name: string
-  /** Active state of the tag */
-  active?: boolean
-  /** Make tag clickable */
-  clickable?: boolean
-  /** Custom background color when active */
-  activeBgColor?: string
-  /** Custom text color when active */
-  activeTextColor?: string
-  /** Custom background color when inactive */
-  inactiveBgColor?: string
-  /** Custom text color when inactive */
-  inactiveTextColor?: string
+	/** Text to display in the tag */
+	name: string;
+	/** Active state of the tag */
+	active?: boolean;
+	/** Make tag clickable */
+	clickable?: boolean;
+	/** Custom background color when active */
+	activeBgColor?: string;
+	/** Custom text color when active */
+	activeTextColor?: string;
+	/** Custom background color when inactive */
+	inactiveBgColor?: string;
+	/** Custom text color when inactive */
+	inactiveTextColor?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  active: false,
-  clickable: false,
-  activeBgColor: 'bg-color-primary',
-  activeTextColor: 'text-white',
-  inactiveBgColor: 'bg-block/80',
-  inactiveTextColor: 'text-text/80'
-})
+	active: false,
+	clickable: false,
+	activeBgColor: "bg-color-primary",
+	activeTextColor: "text-white",
+	inactiveBgColor: "bg-block/80",
+	inactiveTextColor: "text-text/80",
+});
 
-const emit = defineEmits<(e: 'click', event: MouseEvent) => void>()
+const emit = defineEmits<(e: "click", event: MouseEvent) => void>();
 
 const handleClick = (event: MouseEvent) => {
-  if (props.clickable) {
-    emit('click', event)
-  }
-}
+	if (props.clickable) {
+		emit("click", event);
+	}
+};
 </script>

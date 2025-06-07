@@ -1,58 +1,62 @@
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Button, Avatar, Dropdown } from './primitive';
-import AuthUI from './AuthUI.vue';
-import Account from './Account.vue';
+import { ref } from "vue";
+import { Button, Avatar, Dropdown } from "./primitive";
+import AuthUI from "./AuthUI.vue";
+import Account from "./Account.vue";
 
 const isAuthModalOpen = ref(false);
 const isAuthenticated = ref(false);
-let authMode: 'signin' | 'signup' = 'signin';
+let authMode: "signin" | "signup" = "signin";
 
 interface User {
-  name: string;
-  email: string;
-  avatar?: string;
+	name: string;
+	email: string;
+	avatar?: string;
 }
 
 const user = ref<User>({
-  name: '',
-  email: '',
-  avatar: undefined,
+	name: "",
+	email: "",
+	avatar: undefined,
 });
 
 // No longer using localStorage
 
-const openAuthModal = (mode: 'signin' | 'signup') => {
-  authMode = mode;
-  isAuthModalOpen.value = true;
+const openAuthModal = (mode: "signin" | "signup") => {
+	authMode = mode;
+	isAuthModalOpen.value = true;
 };
 
-const handleAuthSuccess = (data: { user: { name: string; email: string; avatar?: string } }) => {
-  console.log('handleAuthSuccess called with data:', data);
-  const userData = {
-    ...data.user,
-    name: data.user.name || data.user.email.split('@')[0],
-    avatar: data.user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.user.name || data.user.email.split('@')[0])}&background=random`
-  };
-  
-  user.value = userData;
-  isAuthenticated.value = true;
-  isAuthModalOpen.value = false;
-  
-  console.log('Auth success, user data:', userData);
-}
+const handleAuthSuccess = (data: {
+	user: { name: string; email: string; avatar?: string };
+}) => {
+	console.log("handleAuthSuccess called with data:", data);
+	const userData = {
+		...data.user,
+		name: data.user.name || data.user.email.split("@")[0],
+		avatar:
+			data.user.avatar ||
+			`https://ui-avatars.com/api/?name=${encodeURIComponent(data.user.name || data.user.email.split("@")[0])}&background=random`,
+	};
+
+	user.value = userData;
+	isAuthenticated.value = true;
+	isAuthModalOpen.value = false;
+
+	console.log("Auth success, user data:", userData);
+};
 
 const handleSignOut = () => {
-  isAuthenticated.value = false;
-  user.value = { name: '', email: '', avatar: undefined };
-  console.log('User signed out');
+	isAuthenticated.value = false;
+	user.value = { name: "", email: "", avatar: undefined };
+	console.log("User signed out");
 };
 
 defineExpose({
-  isAuthenticated,
-  user,
-  handleAuthSuccess
+	isAuthenticated,
+	user,
+	handleAuthSuccess,
 });
 </script>
 

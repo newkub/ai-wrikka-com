@@ -1,165 +1,179 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed } from "vue";
 
 interface Task {
-  id: string;
-  title: string;
-  description: string;
-  completed: boolean;
-  priority: 'low' | 'medium' | 'high';
-  dueDate?: string;
-  tags: string[];
-  createdAt: string;
-  updatedAt: string;
+	id: string;
+	title: string;
+	description: string;
+	completed: boolean;
+	priority: "low" | "medium" | "high";
+	dueDate?: string;
+	tags: string[];
+	createdAt: string;
+	updatedAt: string;
 }
 
-const props = withDefaults(defineProps<{
-  initialTasks?: Task[];
-}>(), {
-  initialTasks: () => []
-});
+const props = withDefaults(
+	defineProps<{
+		initialTasks?: Task[];
+	}>(),
+	{
+		initialTasks: () => [],
+	},
+);
 
-const emit = defineEmits(['taskUpdate']);
+const emit = defineEmits(["taskUpdate"]);
 
 const tasks = ref<Task[]>([
-  {
-    id: '1',
-    title: 'Fix login page layout issue',
-    description: 'The login form is not centered on mobile devices',
-    completed: false,
-    priority: 'high',
-    dueDate: '2023-06-15',
-    tags: ['bug', 'ui'],
-    createdAt: '2023-06-10T09:30:00Z',
-    updatedAt: '2023-06-10T09:30:00Z'
-  },
-  {
-    id: '2',
-    title: 'Add input validation to contact form',
-    description: 'Ensure all required fields are validated on the client side',
-    completed: true,
-    priority: 'medium',
-    dueDate: '2023-06-12',
-    tags: ['feature', 'form'],
-    createdAt: '2023-06-08T14:20:00Z',
-    updatedAt: '2023-06-09T11:15:00Z'
-  },
-  {
-    id: '3',
-    title: 'Optimize image loading',
-    description: 'Implement lazy loading for images below the fold',
-    completed: false,
-    priority: 'medium',
-    tags: ['performance'],
-    createdAt: '2023-06-05T16:45:00Z',
-    updatedAt: '2023-06-05T16:45:00Z'
-  },
-  ...props.initialTasks
+	{
+		id: "1",
+		title: "Fix login page layout issue",
+		description: "The login form is not centered on mobile devices",
+		completed: false,
+		priority: "high",
+		dueDate: "2023-06-15",
+		tags: ["bug", "ui"],
+		createdAt: "2023-06-10T09:30:00Z",
+		updatedAt: "2023-06-10T09:30:00Z",
+	},
+	{
+		id: "2",
+		title: "Add input validation to contact form",
+		description: "Ensure all required fields are validated on the client side",
+		completed: true,
+		priority: "medium",
+		dueDate: "2023-06-12",
+		tags: ["feature", "form"],
+		createdAt: "2023-06-08T14:20:00Z",
+		updatedAt: "2023-06-09T11:15:00Z",
+	},
+	{
+		id: "3",
+		title: "Optimize image loading",
+		description: "Implement lazy loading for images below the fold",
+		completed: false,
+		priority: "medium",
+		tags: ["performance"],
+		createdAt: "2023-06-05T16:45:00Z",
+		updatedAt: "2023-06-05T16:45:00Z",
+	},
+	...props.initialTasks,
 ]);
 
 const newTask = ref<Partial<Task>>({
-  title: '',
-  description: '',
-  priority: 'medium',
-  tags: []
+	title: "",
+	description: "",
+	priority: "medium",
+	tags: [],
 });
 
-const newTag = ref('');
-const filter = ref<'all' | 'active' | 'completed'>('all');
-const searchQuery = ref('');
+const newTag = ref("");
+const filter = ref<"all" | "active" | "completed">("all");
+const searchQuery = ref("");
 const isAddingTask = ref(false);
 
 const filteredTasks = computed(() => {
-  return tasks.value.filter(task => {
-    // Apply status filter
-    if (filter.value === 'active' && task.completed) return false;
-    if (filter.value === 'completed' && !task.completed) return false;
-    
-    // Apply search query
-    if (searchQuery.value) {
-      const query = searchQuery.value.toLowerCase();
-      return (
-        task.title.toLowerCase().includes(query) ||
-        task.description.toLowerCase().includes(query) ||
-        task.tags.some(tag => tag.toLowerCase().includes(query))
-      );
-    }
-    
-    return true;
-  });
+	return tasks.value.filter((task) => {
+		// Apply status filter
+		if (filter.value === "active" && task.completed) return false;
+		if (filter.value === "completed" && !task.completed) return false;
+
+		// Apply search query
+		if (searchQuery.value) {
+			const query = searchQuery.value.toLowerCase();
+			return (
+				task.title.toLowerCase().includes(query) ||
+				task.description.toLowerCase().includes(query) ||
+				task.tags.some((tag) => tag.toLowerCase().includes(query))
+			);
+		}
+
+		return true;
+	});
 });
 
 const toggleTask = (taskId: string) => {
-  const task = tasks.value.find(t => t.id === taskId);
-  if (task) {
-    task.completed = !task.completed;
-    task.updatedAt = new Date().toISOString();
-    emit('taskUpdate', task);
-  }
+	const task = tasks.value.find((t) => t.id === taskId);
+	if (task) {
+		task.completed = !task.completed;
+		task.updatedAt = new Date().toISOString();
+		emit("taskUpdate", task);
+	}
 };
 
 const addTask = () => {
-  if (!newTask.value.title?.trim()) return;
-  
-  const task: Task = {
-    id: Date.now().toString(),
-    title: newTask.value.title,
-    description: newTask.value.description || '',
-    completed: false,
-    priority: newTask.value.priority || 'medium',
-    dueDate: newTask.value.dueDate,
-    tags: [...(newTask.value.tags || [])],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
-  
-  tasks.value.unshift(task);
-  emit('taskUpdate', task);
-  
-  // Reset form
-  newTask.value = { title: '', description: '', priority: 'medium', tags: [] };
-  isAddingTask.value = false;
+	if (!newTask.value.title?.trim()) return;
+
+	const task: Task = {
+		id: Date.now().toString(),
+		title: newTask.value.title,
+		description: newTask.value.description || "",
+		completed: false,
+		priority: newTask.value.priority || "medium",
+		dueDate: newTask.value.dueDate,
+		tags: [...(newTask.value.tags || [])],
+		createdAt: new Date().toISOString(),
+		updatedAt: new Date().toISOString(),
+	};
+
+	tasks.value.unshift(task);
+	emit("taskUpdate", task);
+
+	// Reset form
+	newTask.value = { title: "", description: "", priority: "medium", tags: [] };
+	isAddingTask.value = false;
 };
 
 const deleteTask = (taskId: string) => {
-  const index = tasks.value.findIndex(t => t.id === taskId);
-  if (index !== -1) {
-    tasks.value.splice(index, 1);
-  }
+	const index = tasks.value.findIndex((t) => t.id === taskId);
+	if (index !== -1) {
+		tasks.value.splice(index, 1);
+	}
 };
 
 const addTag = () => {
-  if (newTag.value.trim() && !newTask.value.tags?.includes(newTag.value.trim())) {
-    if (!newTask.value.tags) {
-      newTask.value.tags = [];
-    }
-    newTask.value.tags.push(newTag.value.trim());
-    newTag.value = '';
-  }
+	if (
+		newTag.value.trim() &&
+		!newTask.value.tags?.includes(newTag.value.trim())
+	) {
+		if (!newTask.value.tags) {
+			newTask.value.tags = [];
+		}
+		newTask.value.tags.push(newTag.value.trim());
+		newTag.value = "";
+	}
 };
 
 const removeTag = (tag: string) => {
-  if (newTask.value.tags) {
-    newTask.value.tags = newTask.value.tags.filter(t => t !== tag);
-  }
+	if (newTask.value.tags) {
+		newTask.value.tags = newTask.value.tags.filter((t) => t !== tag);
+	}
 };
 
 const getPriorityColor = (priority: string) => {
-  switch (priority) {
-    case 'high': return 'bg-red-500/20 text-red-400';
-    case 'medium': return 'bg-yellow-500/20 text-yellow-400';
-    case 'low': return 'bg-blue-500/20 text-blue-400';
-    default: return 'bg-gray-500/20 text-gray-400';
-  }
+	switch (priority) {
+		case "high":
+			return "bg-red-500/20 text-red-400";
+		case "medium":
+			return "bg-yellow-500/20 text-yellow-400";
+		case "low":
+			return "bg-blue-500/20 text-blue-400";
+		default:
+			return "bg-gray-500/20 text-gray-400";
+	}
 };
 
 const getPriorityIcon = (priority: string) => {
-  switch (priority) {
-    case 'high': return 'i-mdi-arrow-up-thick';
-    case 'medium': return 'i-mdi-arrow-right-thick';
-    case 'low': return 'i-mdi-arrow-down-thick';
-    default: return 'i-mdi-minus';
-  }
+	switch (priority) {
+		case "high":
+			return "i-mdi-arrow-up-thick";
+		case "medium":
+			return "i-mdi-arrow-right-thick";
+		case "low":
+			return "i-mdi-arrow-down-thick";
+		default:
+			return "i-mdi-minus";
+	}
 };
 </script>
 

@@ -171,111 +171,114 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
-import { useEditor } from '~/composables/useEditor';
+import { ref, watch, onMounted } from "vue";
+import { useEditor } from "~/composables/useEditor";
 
 const props = defineProps({
-  modelValue: {
-    type: String,
-    default: '',
-  },
-  placeholder: {
-    type: String,
-    default: 'พิมพ์ข้อความที่นี่...',
-  },
-  editable: {
-    type: Boolean,
-    default: true,
-  },
+	modelValue: {
+		type: String,
+		default: "",
+	},
+	placeholder: {
+		type: String,
+		default: "พิมพ์ข้อความที่นี่...",
+	},
+	editable: {
+		type: Boolean,
+		default: true,
+	},
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(["update:modelValue"]);
 
 // Editor state
 const editorRef = ref<HTMLElement | null>(null);
 const showLinkInput = ref(false);
 const showImageInput = ref(false);
-const linkUrl = ref('');
-const imageUrl = ref('');
-const imageAlt = ref('');
-const selectedHeading = ref('');
+const linkUrl = ref("");
+const imageUrl = ref("");
+const imageAlt = ref("");
+const selectedHeading = ref("");
 
 // Initialize editor
 const {
-  content,
-  formatText,
-  insertLink,
-  insertImage,
-  clearFormatting,
-  setContent,
-  clearContent,
-  isFormatActive,
+	content,
+	formatText,
+	insertLink,
+	insertImage,
+	clearFormatting,
+	setContent,
+	clearContent,
+	isFormatActive,
 } = useEditor({
-  initialContent: props.modelValue,
-  onUpdate: (newContent) => {
-    emit('update:modelValue', newContent);
-  },
+	initialContent: props.modelValue,
+	onUpdate: (newContent) => {
+		emit("update:modelValue", newContent);
+	},
 });
 
 // Watch for external modelValue changes
-watch(() => props.modelValue, (newValue) => {
-  if (newValue !== content.value) {
-    setContent(newValue);
-  }
-});
+watch(
+	() => props.modelValue,
+	(newValue) => {
+		if (newValue !== content.value) {
+			setContent(newValue);
+		}
+	},
+);
 
 // Apply heading
 const applyHeading = () => {
-  if (selectedHeading.value) {
-    formatText(selectedHeading.value);
-  } else {
-    // If normal text, wrap in a div to clear heading
-    formatText('div');
-  }
-  selectedHeading.value = '';
+	if (selectedHeading.value) {
+		formatText(selectedHeading.value);
+	} else {
+		// If normal text, wrap in a div to clear heading
+		formatText("div");
+	}
+	selectedHeading.value = "";
 };
 
 // Insert link from input
 const insertLinkFromInput = () => {
-  if (linkUrl.value) {
-    insertLink(linkUrl.value);
-    linkUrl.value = '';
-    showLinkInput.value = false;
-  }
+	if (linkUrl.value) {
+		insertLink(linkUrl.value);
+		linkUrl.value = "";
+		showLinkInput.value = false;
+	}
 };
 
 // Insert image from input
 const insertImageFromInput = () => {
-  if (imageUrl.value) {
-    insertImage(imageUrl.value, imageAlt.value);
-    imageUrl.value = '';
-    imageAlt.value = '';
-    showImageInput.value = false;
-  }
+	if (imageUrl.value) {
+		insertImage(imageUrl.value, imageAlt.value);
+		imageUrl.value = "";
+		imageAlt.value = "";
+		showImageInput.value = false;
+	}
 };
 
 // Handle paste event to clean up content
 const handlePaste = (e: ClipboardEvent) => {
-  e.preventDefault();
-  
-  // Get pasted text
-  const text = e.clipboardData?.getData('text/plain') || '';
-  
-  // Clean up HTML if needed
-  const cleanText = text
-    .replace(/<[^>]*>/g, '') // Remove HTML tags
-    .replace(/\s+/g, ' ') // Replace multiple spaces with single space
-    .trim();
-  
-  // Insert text at cursor position
-  document.execCommand('insertText', false, cleanText);
+	e.preventDefault();
+
+	// Get pasted text
+	const text = e.clipboardData?.getData("text/plain") || "";
+
+	// Clean up HTML if needed
+	const cleanText = text
+		.replace(/<[^>]*>/g, "") // Remove HTML tags
+		.replace(/\s+/g, " ") // Replace multiple spaces with single space
+		.trim();
+
+	// Insert text at cursor position
+	document.execCommand("insertText", false, cleanText);
 };
 
 // Expose methods
 defineExpose({
-  clearContent,
-  getContent: () => content.value,
-  setContent,
+	clearContent,
+	getContent: () => content.value,
+	setContent,
 });
 </script>
 

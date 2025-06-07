@@ -1,68 +1,71 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue';
-import { Input, Button, Checkbox, Tab } from './primitive';
+import { ref, watch, computed } from "vue";
+import { Input, Button, Checkbox, Tab } from "./primitive";
 
 const props = defineProps<{
-  isOpen: boolean;
-  mode?: 'signin' | 'signup';
+	isOpen: boolean;
+	mode?: "signin" | "signup";
 }>();
 
-const emit = defineEmits(['close', 'success', 'update:mode']);
+const emit = defineEmits(["close", "success", "update:mode"]);
 
-const localMode = ref<'signin' | 'signup'>(props.mode || 'signin');
-const email = ref('');
-const password = ref('');
+const localMode = ref<"signin" | "signup">(props.mode || "signin");
+const email = ref("");
+const password = ref("");
 const rememberMe = ref(false);
 const loading = ref(false);
-const error = ref('');
+const error = ref("");
 
 // Watch for mode changes from parent
-watch(() => props.mode, (newMode) => {
-  if (newMode) {
-    localMode.value = newMode;
-  }
-});
+watch(
+	() => props.mode,
+	(newMode) => {
+		if (newMode) {
+			localMode.value = newMode;
+		}
+	},
+);
 
-const setMode = (mode: 'signin' | 'signup') => {
-  localMode.value = mode;
-  emit('update:mode', mode);
-  error.value = ''; // Clear error when switching modes
+const setMode = (mode: "signin" | "signup") => {
+	localMode.value = mode;
+	emit("update:mode", mode);
+	error.value = ""; // Clear error when switching modes
 };
 
 const handleSubmit = async () => {
-  if (!email.value || !password.value) {
-    error.value = 'Please fill in all fields';
-    return;
-  }
+	if (!email.value || !password.value) {
+		error.value = "Please fill in all fields";
+		return;
+	}
 
-  loading.value = true;
-  error.value = '';
+	loading.value = true;
+	error.value = "";
 
-  try {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // For demo purposes, consider it a success
-    emit('success', {
-      user: {
-        email: email.value,
-        name: email.value.split('@')[0],
-        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(email.value.split('@')[0])}&background=random`
-      }
-    });
-  } catch (err) {
-    error.value = 'An error occurred. Please try again.';
-    console.error('Auth error:', err);
-  } finally {
-    loading.value = false;
-  }
+	try {
+		// Simulate API call
+		await new Promise((resolve) => setTimeout(resolve, 1000));
+
+		// For demo purposes, consider it a success
+		emit("success", {
+			user: {
+				email: email.value,
+				name: email.value.split("@")[0],
+				avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(email.value.split("@")[0])}&background=random`,
+			},
+		});
+	} catch (err) {
+		error.value = "An error occurred. Please try again.";
+		console.error("Auth error:", err);
+	} finally {
+		loading.value = false;
+	}
 };
 
 const closeModal = () => {
-  email.value = '';
-  password.value = '';
-  error.value = '';
-  emit('close');
+	email.value = "";
+	password.value = "";
+	error.value = "";
+	emit("close");
 };
 </script>
 

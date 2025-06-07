@@ -1,33 +1,35 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import Card from '~/components/primitive/Card.vue';
-import TextEditor from '@/components/common/TextEditor.vue';
+import { ref } from "vue";
+import Card from "~/components/primitive/Card.vue";
+import TextEditor from "@/components/common/TextEditor.vue";
 
 const isModalOpen = ref(false);
 interface Note {
-  id: number;
-  title: string;
-  content: string;
+	id: number;
+	title: string;
+	content: string;
 }
 
 const currentNote = ref<Note | null>(null);
 
 // Sample data - replace with your actual notes data
-const notes = Array(12).fill(0).map((_, i) => ({
-  id: i + 1,
-  title: `Note ${i + 1}`,
-  content: 'This is a sample note content. Click to edit or view details.'
-}));
+const notes = Array(12)
+	.fill(0)
+	.map((_, i) => ({
+		id: i + 1,
+		title: `Note ${i + 1}`,
+		content: "This is a sample note content. Click to edit or view details.",
+	}));
 
 const openNoteEditor = (note: Note) => {
-  currentNote.value = note;
-  isModalOpen.value = true;
+	currentNote.value = note;
+	isModalOpen.value = true;
 };
 
 const handleSave = (content: string) => {
-  // Handle save logic here
-  console.log('Note saved:', content);
-  isModalOpen.value = false;
+	// Handle save logic here
+	console.log("Note saved:", content);
+	isModalOpen.value = false;
 };
 </script>
 

@@ -1,21 +1,21 @@
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-import { Logo, ToggleTheme } from './primitive';
-import type ButtonWorkOS from './ButtonWorkOS.vue';
+import { ref, watch, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { Logo, ToggleTheme } from "./primitive";
+import type ButtonWorkOS from "./ButtonWorkOS.vue";
 
 const menuItems = [
-  { name: 'Chat', path: '/chat' },
-  { name: 'Blog', path: '/blog' },
-  { name: 'Bookmark', path: '/bookmark' },
-  { name: 'Code', path: '/code' },
-  { name: 'Docs', path: '/docs' },
-  { name: 'Learn', path: '/learn' },
-  { name: 'Notes', path: '/notes' },
-  { name: 'Search', path: '/search' },
-  { name: 'Task', path: '/task' },
-  { name: 'Whiteboard', path: '/whiteboard' }
+	{ name: "Chat", path: "/chat" },
+	{ name: "Blog", path: "/blog" },
+	{ name: "Bookmark", path: "/bookmark" },
+	{ name: "Code", path: "/code" },
+	{ name: "Docs", path: "/docs" },
+	{ name: "Learn", path: "/learn" },
+	{ name: "Notes", path: "/notes" },
+	{ name: "Search", path: "/search" },
+	{ name: "Task", path: "/task" },
+	{ name: "Whiteboard", path: "/whiteboard" },
 ];
 
 const route = useRoute();
@@ -23,44 +23,47 @@ const isDark = ref(false);
 const isMobileMenuOpen = ref(false);
 const buttonWorkOSRef = ref<typeof ButtonWorkOS | null>(null);
 
-
-
 // Watch for theme changes
 watch(isDark, (newVal) => {
-  if (newVal) {
-    document.documentElement.classList.add('dark');
-    localStorage.theme = 'dark';
-  } else {
-    document.documentElement.classList.remove('dark');
-    localStorage.theme = 'light';
-  }
+	if (newVal) {
+		document.documentElement.classList.add("dark");
+		localStorage.theme = "dark";
+	} else {
+		document.documentElement.classList.remove("dark");
+		localStorage.theme = "light";
+	}
 });
 
 // Close mobile menu when route changes
-watch(() => route.path, () => {
-  isMobileMenuOpen.value = false;
-});
+watch(
+	() => route.path,
+	() => {
+		isMobileMenuOpen.value = false;
+	},
+);
 
 // Check for saved theme preference
 onMounted(() => {
-  if (typeof window !== 'undefined') {
-    isDark.value = localStorage.theme === 'dark' || 
-      (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  }
+	if (typeof window !== "undefined") {
+		isDark.value =
+			localStorage.theme === "dark" ||
+			(!("theme" in localStorage) &&
+				window.matchMedia("(prefers-color-scheme: dark)").matches);
+	}
 });
 
 const signIn = () => {
-  // Handle sign in
-  console.log('Sign in clicked');
-  // Example: navigate to sign in page
-  // navigateTo('/signin');
+	// Handle sign in
+	console.log("Sign in clicked");
+	// Example: navigate to sign in page
+	// navigateTo('/signin');
 };
 
 const getStarted = () => {
-  // Handle get started
-  console.log('Get started clicked');
-  // Example: navigate to sign up page
-  // navigateTo('/signup');
+	// Handle get started
+	console.log("Get started clicked");
+	// Example: navigate to sign up page
+	// navigateTo('/signup');
 };
 </script>
 

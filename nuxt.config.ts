@@ -12,18 +12,16 @@ export default defineNuxtConfig({
 	css: ["@unocss/reset/tailwind.css", "~/assets/design-tokens.css"],
 	app: {
 		head: {
-			title: 'AI Wrikka',
+			title: "AI Wrikka",
 			htmlAttrs: {
-				lang: 'en',
+				lang: "en",
 			},
 			meta: [
-				{ charset: 'utf-8' },
-				{ name: 'viewport', content: 'width=device-width, initial-scale=1' },
-				{ name: 'description', content: 'AI Wrikka Application' },
+				{ charset: "utf-8" },
+				{ name: "viewport", content: "width=device-width, initial-scale=1" },
+				{ name: "description", content: "AI Wrikka Application" },
 			],
-			link: [
-				{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-			],
+			link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
 		},
 	},
 

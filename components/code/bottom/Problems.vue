@@ -1,25 +1,27 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from "vue";
 
 interface Problem {
-  severity: 'error' | 'warning' | 'info';
-  message: string;
-  source?: string;
-  line?: number;
-  column?: number;
+	severity: "error" | "warning" | "info";
+	message: string;
+	source?: string;
+	line?: number;
+	column?: number;
 }
 
 const problems = ref<Problem[]>([]);
 
 const addProblem = (problem: Problem) => {
-  problems.value.push(problem);};
+	problems.value.push(problem);
+};
 
 const clearProblems = () => {
-  problems.value = [];};
+	problems.value = [];
+};
 
 defineExpose({
-  addProblem,
-  clearProblems
+	addProblem,
+	clearProblems,
 });
 </script>
 

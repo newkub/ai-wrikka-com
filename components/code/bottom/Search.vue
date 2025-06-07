@@ -1,94 +1,104 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed } from "vue";
 
 interface SearchResult {
-  file: string;
-  line: number;
-  content: string;
-  matches: {
-    line: number;
-    content: string;
-    lineNumber: number;
-  }[];
+	file: string;
+	line: number;
+	content: string;
+	matches: {
+		line: number;
+		content: string;
+		lineNumber: number;
+	}[];
 }
 
-const searchQuery = ref('');
+const searchQuery = ref("");
 const isSearching = ref(false);
 const searchResults = ref<SearchResult[]>([]);
 const selectedFile = ref<string | null>(null);
 
 const filteredResults = computed(() => {
-  if (!selectedFile.value) return searchResults.value;
-  return searchResults.value.filter(result => result.file === selectedFile.value);
+	if (!selectedFile.value) return searchResults.value;
+	return searchResults.value.filter(
+		(result) => result.file === selectedFile.value,
+	);
 });
 
 const files = computed(() => {
-  const files = new Set<string>();
-  for (const result of searchResults.value) {
-    files.add(result.file);
-  }
-  return Array.from(files);
+	const files = new Set<string>();
+	for (const result of searchResults.value) {
+		files.add(result.file);
+	}
+	return Array.from(files);
 });
 
 const search = async () => {
-  if (!searchQuery.value.trim()) {
-    searchResults.value = [];
-    return;
-  }
+	if (!searchQuery.value.trim()) {
+		searchResults.value = [];
+		return;
+	}
 
-  isSearching.value = true;
-  
-  try {
-    // In a real app, this would call your backend search API
-    // This is a mock implementation
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    // Mock search results
-    searchResults.value = [
-      {
-        file: 'src/components/HelloWorld.vue',
-        line: 12,
-        content: '  <h1>{{ msg }}</h1>',
-        matches: [
-          { line: 12, content: '  <h1>{{ msg }}</h1>', lineNumber: 12 },
-          { line: 24, content: '    console.log(msg);', lineNumber: 24 }
-        ]
-      },
-      {
-        file: 'src/App.vue',
-        line: 5,
-        content: '  <HelloWorld :msg="message" />',
-        matches: [
-          { line: 5, content: '  <HelloWorld :msg="message" />', lineNumber: 5 },
-          { line: 15, content: '      message: "Hello Vue 3 + Vite"', lineNumber: 15 }
-        ]
-      }
-    ];
-  } catch (error) {
-    console.error('Search failed:', error);
-  } finally {
-    isSearching.value = false;
-  }
+	isSearching.value = true;
+
+	try {
+		// In a real app, this would call your backend search API
+		// This is a mock implementation
+		await new Promise((resolve) => setTimeout(resolve, 500));
+
+		// Mock search results
+		searchResults.value = [
+			{
+				file: "src/components/HelloWorld.vue",
+				line: 12,
+				content: "  <h1>{{ msg }}</h1>",
+				matches: [
+					{ line: 12, content: "  <h1>{{ msg }}</h1>", lineNumber: 12 },
+					{ line: 24, content: "    console.log(msg);", lineNumber: 24 },
+				],
+			},
+			{
+				file: "src/App.vue",
+				line: 5,
+				content: '  <HelloWorld :msg="message" />',
+				matches: [
+					{
+						line: 5,
+						content: '  <HelloWorld :msg="message" />',
+						lineNumber: 5,
+					},
+					{
+						line: 15,
+						content: '      message: "Hello Vue 3 + Vite"',
+						lineNumber: 15,
+					},
+				],
+			},
+		];
+	} catch (error) {
+		console.error("Search failed:", error);
+	} finally {
+		isSearching.value = false;
+	}
 };
 
 const clearSearch = () => {
-  searchQuery.value = '';
-  searchResults.value = [];
-  selectedFile.value = null;
+	searchQuery.value = "";
+	searchResults.value = [];
+	selectedFile.value = null;
 };
 
 const selectFile = (file: string) => {
-  selectedFile.value = selectedFile.value === file ? null : file;
+	selectedFile.value = selectedFile.value === file ? null : file;
 };
 
 // Keyboard shortcut for search
 const handleKeyDown = (e: KeyboardEvent) => {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    search();
-  } else if (e.key === 'Escape') {
-    clearSearch();
-  }
+	if (e.key === "Enter" && !e.shiftKey) {
+		e.preventDefault();
+		search();
+	} else if (e.key === "Escape") {
+		clearSearch();
+	}
 };
 </script>
 

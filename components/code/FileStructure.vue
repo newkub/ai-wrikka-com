@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import type { FileItem, ContextMenuPosition } from './types';
-import ContextMenu from './ContextMenu.vue';
+import { ref, onMounted } from "vue";
+import type { FileItem, ContextMenuPosition } from "./types";
+import ContextMenu from "./ContextMenu.vue";
 
 const props = defineProps<{
-  files: FileItem[];
-  activeFile?: string;
+	files: FileItem[];
+	activeFile?: string;
 }>();
 
 const emit = defineEmits<{
-  (e: 'fileSelect', fileName: string): void;
-  (e: 'fileRename', payload: { file: FileItem, newName: string }): void;
-  (e: 'fileDelete', file: FileItem): void;
-  (e: 'fileNewFile', parent: FileItem): void;
-  (e: 'fileNewFolder', parent: FileItem): void;
+	(e: "fileSelect", fileName: string): void;
+	(e: "fileRename", payload: { file: FileItem; newName: string }): void;
+	(e: "fileDelete", file: FileItem): void;
+	(e: "fileNewFile", parent: FileItem): void;
+	(e: "fileNewFolder", parent: FileItem): void;
 }>();
 
 // Context Menu
@@ -21,129 +21,130 @@ const contextMenu = ref<ContextMenuPosition | null>(null);
 const renamingItem = ref<FileItem | null>(null);
 
 const showContextMenu = (event: MouseEvent, file: FileItem) => {
-  event.preventDefault();
-  contextMenu.value = {
-    x: event.clientX,
-    y: event.clientY,
-    target: file
-  };
+	event.preventDefault();
+	contextMenu.value = {
+		x: event.clientX,
+		y: event.clientY,
+		target: file,
+	};
 };
 
 const closeContextMenu = () => {
-  contextMenu.value = null;
+	contextMenu.value = null;
 };
 
 const handleContextMenuAction = (action: string, file: FileItem) => {
-  closeContextMenu();
-  
-  switch (action) {
-    case 'rename':
-      startRenaming(file);
-      break;
-    case 'newFile':
-      emit('fileNewFile', file);
-      break;
-    case 'newFolder':
-      emit('fileNewFolder', file);
-      break;
-    case 'delete':
-      if (confirm(`Are you sure you want to delete ${file.name}?`)) {
-        emit('fileDelete', file);
-      }
-      break;
-  }
+	closeContextMenu();
+
+	switch (action) {
+		case "rename":
+			startRenaming(file);
+			break;
+		case "newFile":
+			emit("fileNewFile", file);
+			break;
+		case "newFolder":
+			emit("fileNewFolder", file);
+			break;
+		case "delete":
+			if (confirm(`Are you sure you want to delete ${file.name}?`)) {
+				emit("fileDelete", file);
+			}
+			break;
+	}
 };
 
 const startRenaming = (file: FileItem) => {
-  renamingItem.value = file;
-  initRenameInput();
+	renamingItem.value = file;
+	initRenameInput();
 };
 
 const handleRename = (newName: string) => {
-  if (renamingItem.value) {
-    emit('fileRename', { file: renamingItem.value, newName });
-    renamingItem.value = null;
-  }
+	if (renamingItem.value) {
+		emit("fileRename", { file: renamingItem.value, newName });
+		renamingItem.value = null;
+	}
 };
 
 const cancelRename = () => {
-  renamingItem.value = null;
+	renamingItem.value = null;
 };
 
 // Rename Input Component
 const renameInputRef = ref<HTMLInputElement | null>(null);
-const newName = ref('');
+const newName = ref("");
 
 const initRenameInput = () => {
-  if (!renamingItem.value) return;
-  
-  // Set initial value without extension for files
-  newName.value = renamingItem.value.type === 'file' && renamingItem.value.name.includes('.')
-    ? renamingItem.value.name.split('.').slice(0, -1).join('.')
-    : renamingItem.value.name;
-  
-  // Focus and select text
-  nextTick(() => {
-    if (renameInputRef.value) {
-      renameInputRef.value.focus();
-      renameInputRef.value.select();
-    }
-  });
+	if (!renamingItem.value) return;
+
+	// Set initial value without extension for files
+	newName.value =
+		renamingItem.value.type === "file" && renamingItem.value.name.includes(".")
+			? renamingItem.value.name.split(".").slice(0, -1).join(".")
+			: renamingItem.value.name;
+
+	// Focus and select text
+	nextTick(() => {
+		if (renameInputRef.value) {
+			renameInputRef.value.focus();
+			renameInputRef.value.select();
+		}
+	});
 };
 
 const handleRenameInputBlur = () => {
-  cancelRename();
+	cancelRename();
 };
 
 const handleRenameInputKeydown = (e: KeyboardEvent) => {
-  if (e.key === 'Enter') {
-    handleRename(newName.value);
-  } else if (e.key === 'Escape') {
-    cancelRename();
-  }
+	if (e.key === "Enter") {
+		handleRename(newName.value);
+	} else if (e.key === "Escape") {
+		cancelRename();
+	}
 };
 
 const toggleDirectory = (file: FileItem) => {
-  if (file.type === 'directory') {
-    file.isOpen = !file.isOpen;
-  } else {
-    emit('fileSelect', file.name);
-  }
+	if (file.type === "directory") {
+		file.isOpen = !file.isOpen;
+	} else {
+		emit("fileSelect", file.name);
+	}
 };
 
 const handleFileSelect = (file: FileItem) => {
-  toggleDirectory(file);
+	toggleDirectory(file);
 };
 
 const getFileIcon = (file: FileItem) => {
-  if (file.type === 'directory') {
-    return file.isOpen ? 'i-mdi-folder-open' : 'i-mdi-folder';
-  }
-  
-  const ext = file.name.split('.').pop()?.toLowerCase();
-  switch (ext) {
-    case 'js':
-      return 'i-mdi-language-javascript text-yellow-400';
-    case 'ts':
-      return 'i-mdi-language-typescript text-blue-500';
-    case 'vue':
-      return 'i-mdi-vuejs text-green-500';
-    case 'json':
-      return 'i-mdi-code-json text-yellow-600';
-    case 'html':
-      return 'i-mdi-language-html5 text-orange-500';
-    case 'css':
-      return 'i-mdi-language-css3 text-blue-400';
-    case 'md':
-      return 'i-mdi-language-markdown text-blue-600';
-    case 'png':
-    case 'jpg':
-    case 'jpeg':
-    case 'gif':
-      return 'i-mdi-image text-purple-500';
-    default:
-      return 'i-mdi-file-document-outline text-gray-500';
-  }
+	if (file.type === "directory") {
+		return file.isOpen ? "i-mdi-folder-open" : "i-mdi-folder";
+	}
+
+	const ext = file.name.split(".").pop()?.toLowerCase();
+	switch (ext) {
+		case "js":
+			return "i-mdi-language-javascript text-yellow-400";
+		case "ts":
+			return "i-mdi-language-typescript text-blue-500";
+		case "vue":
+			return "i-mdi-vuejs text-green-500";
+		case "json":
+			return "i-mdi-code-json text-yellow-600";
+		case "html":
+			return "i-mdi-language-html5 text-orange-500";
+		case "css":
+			return "i-mdi-language-css3 text-blue-400";
+		case "md":
+			return "i-mdi-language-markdown text-blue-600";
+		case "png":
+		case "jpg":
+		case "jpeg":
+		case "gif":
+			return "i-mdi-image text-purple-500";
+		default:
+			return "i-mdi-file-document-outline text-gray-500";
+	}
 };
 </script>
 

@@ -68,80 +68,101 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import Search from '~/components/Search.vue'
-import CardBookmark from '~/components/CardBookmark.vue'
-import { Tag } from '~/components/primitive'
-import type { Bookmark, Tag as TagType } from '~/types/bookmark'
+import { ref, computed } from "vue";
+import Search from "~/components/Search.vue";
+import CardBookmark from "~/components/CardBookmark.vue";
+import { Tag } from "~/components/primitive";
+import type { Bookmark, Tag as TagType } from "~/types/bookmark";
 
 // Mock data - ควรดึงจาก API จริงในอนาคต
-const bookmarks = ref<Bookmark[]>([])
-const searchQuery = ref('')
-const activeTag = ref<string | null>(null)
+const bookmarks = ref<Bookmark[]>([]);
+const searchQuery = ref("");
+const activeTag = ref<string | null>(null);
 
 // ฟังก์ชันสำหรับดึงแท็กทั้งหมดที่มีอยู่ในรายการบุ๊กมาร์ก
 const getAllTags = (): TagType[] => {
-  const tagMap = new Map<string, TagType>()
-  
-  for (const bookmark of bookmarks.value) {
-    for (const tag of bookmark.tags) {
-      if (!tagMap.has(tag.id)) {
-        tagMap.set(tag.id, { ...tag })
-      }
-    }
-  }
-  
-  return Array.from(tagMap.values())
-}
+	const tagMap = new Map<string, TagType>();
+
+	for (const bookmark of bookmarks.value) {
+		for (const tag of bookmark.tags) {
+			if (!tagMap.has(tag.id)) {
+				tagMap.set(tag.id, { ...tag });
+			}
+		}
+	}
+
+	return Array.from(tagMap.values());
+};
 
 // ฟังก์ชันสำหรับตั้งค่าแท็กที่กำลังใช้งาน
 const setActiveTag = (tagId: string | null) => {
-  activeTag.value = tagId
-}
+	activeTag.value = tagId;
+};
 
 // คำนวณรายการบุ๊กมาร์กที่ผ่านการกรอง
 const filteredBookmarks = computed(() => {
-  return bookmarks.value.filter(bookmark => {
-    // กรองด้วยคำค้นหา
-    const matchesSearch = searchQuery.value === '' || 
-      bookmark.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      bookmark.description?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      bookmark.tags.some(tag => tag.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
-    
-    // กรองด้วยแท็ก
-    const matchesTag = !activeTag.value || 
-      bookmark.tags.some(tag => tag.id === activeTag.value)
-    
-    return matchesSearch && matchesTag
-  })
-})
+	return bookmarks.value.filter((bookmark) => {
+		// กรองด้วยคำค้นหา
+		const matchesSearch =
+			searchQuery.value === "" ||
+			bookmark.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+			bookmark.description
+				?.toLowerCase()
+				.includes(searchQuery.value.toLowerCase()) ||
+			bookmark.tags.some((tag) =>
+				tag.name.toLowerCase().includes(searchQuery.value.toLowerCase()),
+			);
+
+		// กรองด้วยแท็ก
+		const matchesTag =
+			!activeTag.value ||
+			bookmark.tags.some((tag) => tag.id === activeTag.value);
+
+		return matchesSearch && matchesTag;
+	});
+});
 
 // TODO: ควรดึงข้อมูลจาก API จริง
 // ตัวอย่างข้อมูลจำลอง
 bookmarks.value = [
-  {
-    id: '1',
-    title: 'Vue.js',
-    url: 'https://vuejs.org/',
-    domain: 'vuejs.org',
-    description: 'The Progressive JavaScript Framework',
-    favicon: 'https://vuejs.org/logo.svg',
-    tags: [
-      { id: 'frontend', name: 'Frontend', color: '#42b883', bgColor: '#42b8831a' },
-      { id: 'framework', name: 'Framework', color: '#34495e', bgColor: '#34495e1a' }
-    ]
-  },
-  {
-    id: '2',
-    title: 'Nuxt',
-    url: 'https://nuxt.com/',
-    domain: 'nuxt.com',
-    description: 'The Intuitive Vue Framework',
-    favicon: 'https://nuxt.com/icon.png',
-    tags: [
-      { id: 'frontend', name: 'Frontend', color: '#42b883', bgColor: '#42b8831a' },
-      { id: 'ssr', name: 'SSR', color: '#2c3e50', bgColor: '#2c3e501a' }
-    ]
-  }
-]
+	{
+		id: "1",
+		title: "Vue.js",
+		url: "https://vuejs.org/",
+		domain: "vuejs.org",
+		description: "The Progressive JavaScript Framework",
+		favicon: "https://vuejs.org/logo.svg",
+		tags: [
+			{
+				id: "frontend",
+				name: "Frontend",
+				color: "#42b883",
+				bgColor: "#42b8831a",
+			},
+			{
+				id: "framework",
+				name: "Framework",
+				color: "#34495e",
+				bgColor: "#34495e1a",
+			},
+		],
+	},
+	{
+		id: "2",
+		title: "Nuxt",
+		url: "https://nuxt.com/",
+		domain: "nuxt.com",
+		description: "The Intuitive Vue Framework",
+		favicon: "https://nuxt.com/icon.png",
+		tags: [
+			{
+				id: "frontend",
+				name: "Frontend",
+				color: "#42b883",
+				bgColor: "#42b8831a",
+			},
+			{ id: "ssr", name: "SSR", color: "#2c3e50", bgColor: "#2c3e501a" },
+		],
+	},
+];
 </script>

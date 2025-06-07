@@ -63,78 +63,78 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from "vue";
 
 const emit = defineEmits<{
-  (e: 'upload', files: File[]): void;
-  (e: 'close'): void;
+	(e: "upload", files: File[]): void;
+	(e: "close"): void;
 }>();
 
 const fileInput = ref<HTMLInputElement | null>(null);
 const files = ref<File[]>([]);
 
 const openFilePicker = () => {
-  if (fileInput.value) {
-    fileInput.value.click();
-  }
+	if (fileInput.value) {
+		fileInput.value.click();
+	}
 };
 
 const handleFileSelect = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  if (target.files && target.files.length > 0) {
-    files.value = Array.from(target.files);
-  }
+	const target = event.target as HTMLInputElement;
+	if (target.files && target.files.length > 0) {
+		files.value = Array.from(target.files);
+	}
 };
 
 const removeFile = (index: number) => {
-  files.value.splice(index, 1);
+	files.value.splice(index, 1);
 };
 
 const connectService = (service: string) => {
-  // TODO: Implement service connection
-  console.log(`Connect to ${service}`);
+	// TODO: Implement service connection
+	console.log(`Connect to ${service}`);
 };
 
 const submitFiles = () => {
-  if (files.value.length > 0) {
-    emit('upload', files.value);
-    files.value = [];
-    emit('close');
-  }
+	if (files.value.length > 0) {
+		emit("upload", files.value);
+		files.value = [];
+		emit("close");
+	}
 };
 
 const getFileIcon = (file: File) => {
-  const extension = file.name.split('.').pop()?.toLowerCase();
-  const fileTypes: Record<string, string> = {
-    'pdf': 'i-mdi-file-pdf',
-    'doc': 'i-mdi-file-word',
-    'docx': 'i-mdi-file-word',
-    'xls': 'i-mdi-file-excel',
-    'xlsx': 'i-mdi-file-excel',
-    'ppt': 'i-mdi-file-powerpoint',
-    'pptx': 'i-mdi-file-powerpoint',
-    'jpg': 'i-mdi-file-image',
-    'jpeg': 'i-mdi-file-image',
-    'png': 'i-mdi-file-image',
-    'gif': 'i-mdi-file-image',
-    'zip': 'i-mdi-folder-zip',
-    'rar': 'i-mdi-folder-zip',
-    'txt': 'i-mdi-file-document',
-    'js': 'i-mdi-language-javascript',
-    'ts': 'i-mdi-language-typescript',
-    'vue': 'i-mdi-vuejs',
-    'html': 'i-mdi-language-html5',
-    'css': 'i-mdi-language-css3',
-  };
-  return fileTypes[extension || ''] || 'i-mdi-file';
+	const extension = file.name.split(".").pop()?.toLowerCase();
+	const fileTypes: Record<string, string> = {
+		pdf: "i-mdi-file-pdf",
+		doc: "i-mdi-file-word",
+		docx: "i-mdi-file-word",
+		xls: "i-mdi-file-excel",
+		xlsx: "i-mdi-file-excel",
+		ppt: "i-mdi-file-powerpoint",
+		pptx: "i-mdi-file-powerpoint",
+		jpg: "i-mdi-file-image",
+		jpeg: "i-mdi-file-image",
+		png: "i-mdi-file-image",
+		gif: "i-mdi-file-image",
+		zip: "i-mdi-folder-zip",
+		rar: "i-mdi-folder-zip",
+		txt: "i-mdi-file-document",
+		js: "i-mdi-language-javascript",
+		ts: "i-mdi-language-typescript",
+		vue: "i-mdi-vuejs",
+		html: "i-mdi-language-html5",
+		css: "i-mdi-language-css3",
+	};
+	return fileTypes[extension || ""] || "i-mdi-file";
 };
 
 const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return '0 Bytes';
-  const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${Number.parseFloat((bytes / (k ** i)).toFixed(2))} ${sizes[i]}`;
+	if (bytes === 0) return "0 Bytes";
+	const k = 1024;
+	const sizes = ["Bytes", "KB", "MB", "GB"];
+	const i = Math.floor(Math.log(bytes) / Math.log(k));
+	return `${Number.parseFloat((bytes / k ** i).toFixed(2))} ${sizes[i]}`;
 };
 </script>
 

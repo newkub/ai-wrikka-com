@@ -1,187 +1,181 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
-
+import { ref, onMounted, computed } from "vue";
 
 interface GitStatus {
-  staged: string[];
-  unstaged: string[];
-  untracked: string[];
-  branch: string;
-  ahead: number;
-  behind: number;
-  hasUnpushedCommits: boolean;
+	staged: string[];
+	unstaged: string[];
+	untracked: string[];
+	branch: string;
+	ahead: number;
+	behind: number;
+	hasUnpushedCommits: boolean;
 }
 
 interface Commit {
-  hash: string;
-  message: string;
-  author: string;
-  date: string;
-  isHead: boolean;
+	hash: string;
+	message: string;
+	author: string;
+	date: string;
+	isHead: boolean;
 }
 
-const activeTab = ref<'changes' | 'history' | 'branches'>('changes');
-const commitMessage = ref('');
+const activeTab = ref<"changes" | "history" | "branches">("changes");
+const commitMessage = ref("");
 const gitStatus = ref<GitStatus>({
-  staged: [],
-  unstaged: [],
-  untracked: [],
-  branch: 'main',
-  ahead: 0,
-  behind: 0,
-  hasUnpushedCommits: false
+	staged: [],
+	unstaged: [],
+	untracked: [],
+	branch: "main",
+	ahead: 0,
+	behind: 0,
+	hasUnpushedCommits: false,
 });
 
 const commitHistory = ref<Commit[]>([]);
-const branches = ref<{name: string; isCurrent: boolean}[]>([]);
+const branches = ref<{ name: string; isCurrent: boolean }[]>([]);
 const selectedFiles = ref<Set<string>>(new Set());
 
 const hasChanges = computed(() => {
-  return gitStatus.value.staged.length > 0 || 
-         gitStatus.value.unstaged.length > 0 || 
-         gitStatus.value.untracked.length > 0;
+	return (
+		gitStatus.value.staged.length > 0 ||
+		gitStatus.value.unstaged.length > 0 ||
+		gitStatus.value.untracked.length > 0
+	);
 });
 
 const loadGitStatus = async () => {
-  try {
-    // In a real app, this would call your backend to get git status
-    // This is a mock implementation
-    await new Promise(resolve => setTimeout(resolve, 300));
-    
-    gitStatus.value = {
-      staged: [
-        'src/components/HelloWorld.vue',
-        'src/App.vue'
-      ],
-      unstaged: [
-        'src/main.ts',
-        'vite.config.ts'
-      ],
-      untracked: [
-        'src/new-component.vue'
-      ],
-      branch: 'feature/git-integration',
-      ahead: 2,
-      behind: 0,
-      hasUnpushedCommits: true
-    };
-    
-    commitHistory.value = [
-      {
-        hash: 'a1b2c3d',
-        message: 'Add git integration',
-        author: 'John Doe',
-        date: '2023-05-15T14:30:00Z',
-        isHead: true
-      },
-      {
-        hash: 'b2c3d4e',
-        message: 'Update README',
-        author: 'Jane Smith',
-        date: '2023-05-14T10:15:00Z',
-        isHead: false
-      }
-    ];
-    
-    branches.value = [
-      { name: 'main', isCurrent: false },
-      { name: 'develop', isCurrent: false },
-      { name: 'feature/git-integration', isCurrent: true }
-    ];
-  } catch (error) {
-    console.error('Failed to load git status:', error);
-  }
+	try {
+		// In a real app, this would call your backend to get git status
+		// This is a mock implementation
+		await new Promise((resolve) => setTimeout(resolve, 300));
+
+		gitStatus.value = {
+			staged: ["src/components/HelloWorld.vue", "src/App.vue"],
+			unstaged: ["src/main.ts", "vite.config.ts"],
+			untracked: ["src/new-component.vue"],
+			branch: "feature/git-integration",
+			ahead: 2,
+			behind: 0,
+			hasUnpushedCommits: true,
+		};
+
+		commitHistory.value = [
+			{
+				hash: "a1b2c3d",
+				message: "Add git integration",
+				author: "John Doe",
+				date: "2023-05-15T14:30:00Z",
+				isHead: true,
+			},
+			{
+				hash: "b2c3d4e",
+				message: "Update README",
+				author: "Jane Smith",
+				date: "2023-05-14T10:15:00Z",
+				isHead: false,
+			},
+		];
+
+		branches.value = [
+			{ name: "main", isCurrent: false },
+			{ name: "develop", isCurrent: false },
+			{ name: "feature/git-integration", isCurrent: true },
+		];
+	} catch (error) {
+		console.error("Failed to load git status:", error);
+	}
 };
 
 const stageFile = (file: string) => {
-  // In a real app, this would call git add
-  gitStatus.value = {
-    ...gitStatus.value,
-    unstaged: gitStatus.value.unstaged.filter((f: string) => f !== file),
-    staged: [...gitStatus.value.staged, file]
-  };
+	// In a real app, this would call git add
+	gitStatus.value = {
+		...gitStatus.value,
+		unstaged: gitStatus.value.unstaged.filter((f: string) => f !== file),
+		staged: [...gitStatus.value.staged, file],
+	};
 };
 
 const unstageFile = (file: string) => {
-  // In a real app, this would call git reset HEAD
-  gitStatus.value = {
-    ...gitStatus.value,
-    staged: gitStatus.value.staged.filter((f: string) => f !== file),
-    unstaged: [...gitStatus.value.unstaged, file]
-  };
+	// In a real app, this would call git reset HEAD
+	gitStatus.value = {
+		...gitStatus.value,
+		staged: gitStatus.value.staged.filter((f: string) => f !== file),
+		unstaged: [...gitStatus.value.unstaged, file],
+	};
 };
 
 const stageAll = () => {
-  // In a real app, this would call git add .
-  gitStatus.value = {
-    ...gitStatus.value,
-    staged: [...gitStatus.value.staged, ...gitStatus.value.unstaged],
-    unstaged: []
-  };
+	// In a real app, this would call git add .
+	gitStatus.value = {
+		...gitStatus.value,
+		staged: [...gitStatus.value.staged, ...gitStatus.value.unstaged],
+		unstaged: [],
+	};
 };
 
 const commitChanges = () => {
-  if (!commitMessage.value.trim() || gitStatus.value.staged.length === 0) return;
-  
-  // In a real app, this would call git commit -m "..."
-  const newCommit: Commit = {
-    hash: Math.random().toString(16).substring(2, 9),
-    message: commitMessage.value,
-    author: 'Current User',
-    date: new Date().toISOString(),
-    isHead: true
-  };
-  
-  commitHistory.value = [newCommit, ...commitHistory.value];
-  gitStatus.value = {
-    ...gitStatus.value,
-    staged: [],
-    ahead: gitStatus.value.ahead + 1,
-    hasUnpushedCommits: true
-  };
-  
-  commitMessage.value = '';
+	if (!commitMessage.value.trim() || gitStatus.value.staged.length === 0)
+		return;
+
+	// In a real app, this would call git commit -m "..."
+	const newCommit: Commit = {
+		hash: Math.random().toString(16).substring(2, 9),
+		message: commitMessage.value,
+		author: "Current User",
+		date: new Date().toISOString(),
+		isHead: true,
+	};
+
+	commitHistory.value = [newCommit, ...commitHistory.value];
+	gitStatus.value = {
+		...gitStatus.value,
+		staged: [],
+		ahead: gitStatus.value.ahead + 1,
+		hasUnpushedCommits: true,
+	};
+
+	commitMessage.value = "";
 };
 
 const pushChanges = async () => {
-  try {
-    // In a real app, this would call git push
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    gitStatus.value.hasUnpushedCommits = false;
-    gitStatus.value.ahead = 0;
-  } catch (error) {
-    console.error('Push failed:', error);
-  }
+	try {
+		// In a real app, this would call git push
+		await new Promise((resolve) => setTimeout(resolve, 1000));
+		gitStatus.value.hasUnpushedCommits = false;
+		gitStatus.value.ahead = 0;
+	} catch (error) {
+		console.error("Push failed:", error);
+	}
 };
 
 const pullChanges = async () => {
-  try {
-    // In a real app, this would call git pull
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    gitStatus.value.behind = 0;
-  } catch (error) {
-    console.error('Pull failed:', error);
-  }
+	try {
+		// In a real app, this would call git pull
+		await new Promise((resolve) => setTimeout(resolve, 1000));
+		gitStatus.value.behind = 0;
+	} catch (error) {
+		console.error("Pull failed:", error);
+	}
 };
 
 const checkoutBranch = async (branch: string) => {
-  try {
-    // In a real app, this would call git checkout <branch>
-    await new Promise(resolve => setTimeout(resolve, 500));
-    gitStatus.value.branch = branch;
-    branches.value = branches.value.map(b => ({
-      ...b,
-      isCurrent: b.name === branch
-    }));
-    // Reload status after checkout
-    loadGitStatus();
-  } catch (error) {
-    console.error(`Failed to checkout branch ${branch}:`, error);
-  }
+	try {
+		// In a real app, this would call git checkout <branch>
+		await new Promise((resolve) => setTimeout(resolve, 500));
+		gitStatus.value.branch = branch;
+		branches.value = branches.value.map((b) => ({
+			...b,
+			isCurrent: b.name === branch,
+		}));
+		// Reload status after checkout
+		loadGitStatus();
+	} catch (error) {
+		console.error(`Failed to checkout branch ${branch}:`, error);
+	}
 };
 
 onMounted(() => {
-  loadGitStatus();
+	loadGitStatus();
 });
 </script>
 

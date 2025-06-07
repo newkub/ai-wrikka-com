@@ -1,40 +1,40 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
-import type { FileItem, ContextMenuPosition } from './types';
+import { ref, onMounted, onUnmounted } from "vue";
+import type { FileItem, ContextMenuPosition } from "./types";
 
 const props = defineProps<{
-  position: ContextMenuPosition | null;
-  isDirectory: boolean;
+	position: ContextMenuPosition | null;
+	isDirectory: boolean;
 }>();
 
 const emit = defineEmits<{
-  (e: 'action', action: string, file: FileItem): void;
-  (e: 'close'): void;
+	(e: "action", action: string, file: FileItem): void;
+	(e: "close"): void;
 }>();
 
 const menuRef = ref<HTMLElement | null>(null);
 
 const handleClickOutside = (event: MouseEvent) => {
-  if (menuRef.value && !menuRef.value.contains(event.target as Node)) {
-    emit('close');
-  }
+	if (menuRef.value && !menuRef.value.contains(event.target as Node)) {
+		emit("close");
+	}
 };
 
 const handleAction = (action: string) => {
-  if (props.position) {
-    emit('action', action, props.position.target);
-  }
-  emit('close');
+	if (props.position) {
+		emit("action", action, props.position.target);
+	}
+	emit("close");
 };
 
 onMounted(() => {
-  document.addEventListener('click', handleClickOutside);
-  document.addEventListener('contextmenu', handleClickOutside);
+	document.addEventListener("click", handleClickOutside);
+	document.addEventListener("contextmenu", handleClickOutside);
 });
 
 onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside);
-  document.removeEventListener('contextmenu', handleClickOutside);
+	document.removeEventListener("click", handleClickOutside);
+	document.removeEventListener("contextmenu", handleClickOutside);
 });
 </script>
 

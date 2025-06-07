@@ -1,56 +1,58 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed } from "vue";
 
 const props = defineProps({
-  modelValue: {
-    type: [String, Number],
-    default: '',
-  },
-  id: {
-    type: String,
-    required: true,
-  },
-  label: {
-    type: String,
-    default: '',
-  },
-  type: {
-    type: String,
-    default: 'text',
-    validator: (value: string) => 
-      ['text', 'email', 'password', 'number', 'tel', 'url', 'search'].includes(value),
-  },
-  placeholder: {
-    type: String,
-    default: '',
-  },
-  disabled: {
-    type: Boolean,
-    default: false,
-  },
-  required: {
-    type: Boolean,
-    default: false,
-  },
-  autocomplete: {
-    type: String,
-    default: 'off',
-  },
-  error: {
-    type: String,
-    default: '',
-  },
-  icon: {
-    type: String,
-    default: '',
-  },
+	modelValue: {
+		type: [String, Number],
+		default: "",
+	},
+	id: {
+		type: String,
+		required: true,
+	},
+	label: {
+		type: String,
+		default: "",
+	},
+	type: {
+		type: String,
+		default: "text",
+		validator: (value: string) =>
+			["text", "email", "password", "number", "tel", "url", "search"].includes(
+				value,
+			),
+	},
+	placeholder: {
+		type: String,
+		default: "",
+	},
+	disabled: {
+		type: Boolean,
+		default: false,
+	},
+	required: {
+		type: Boolean,
+		default: false,
+	},
+	autocomplete: {
+		type: String,
+		default: "off",
+	},
+	error: {
+		type: String,
+		default: "",
+	},
+	icon: {
+		type: String,
+		default: "",
+	},
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(["update:modelValue"]);
 
 const inputValue = computed({
-  get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value),
+	get: () => props.modelValue,
+	set: (value) => emit("update:modelValue", value),
 });
 </script>
 
