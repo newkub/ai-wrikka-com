@@ -1,7 +1,7 @@
 <template>
-  <nav class="bg-white dark:bg-gray-900 shadow-sm">
+  <nav class="bg-background shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between h-16">
+      <div class="flex justify-between py-4">
         <!-- Left section - Logo -->
         <div class="flex-shrink-0 flex items-center">
           <NuxtLink to="/" class="flex items-center">
@@ -13,32 +13,13 @@
         <div class="hidden md:flex items-center justify-center flex-1">
           <div class="flex space-x-8">
             <NuxtLink 
-              to="/" 
-              class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium transition-colors duration-200"
-              :class="{ 'text-indigo-600 dark:text-indigo-400': $route.path === '/' }"
+              v-for="item in menuItems"
+              :key="item.path"
+              :to="item.path"
+              class="text-text/80 hover:text-color-primary px-3 py-2 text-sm font-medium transition-colors duration-200"
+              :class="{ 'text-color-primary': $route.path === item.path }"
             >
-              หน้าแรก
-            </NuxtLink>
-            <NuxtLink 
-              to="/chat" 
-              class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium transition-colors duration-200"
-              :class="{ 'text-indigo-600 dark:text-indigo-400': $route.path === '/chat' }"
-            >
-              แชท
-            </NuxtLink>
-            <NuxtLink 
-              to="/blog" 
-              class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium transition-colors duration-200"
-              :class="{ 'text-indigo-600 dark:text-indigo-400': $route.path === '/blog' }"
-            >
-              บทความ
-            </NuxtLink>
-            <NuxtLink 
-              to="/code" 
-              class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium transition-colors duration-200"
-              :class="{ 'text-indigo-600 dark:text-indigo-400': $route.path === '/code' }"
-            >
-              เขียนโค้ด
+              {{ item.name }}
             </NuxtLink>
           </div>
         </div>
@@ -57,7 +38,7 @@
             class="hidden md:inline-flex"
             @click="signIn"
           >
-            เข้าสู่ระบบ
+            Sign In
           </Button>
           
           <!-- Get Started Button -->
@@ -66,13 +47,13 @@
             class="hidden md:inline-flex"
             @click="getStarted"
           >
-            เริ่มต้นใช้งาน
+            Get Started
           </Button>
           
           <!-- Mobile menu button -->
           <div class="md:hidden flex items-center">
             <button 
-              class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 focus:outline-none" 
+              class="text-text/80 hover:text-color-primary focus:outline-none"
               @click="isMobileMenuOpen = !isMobileMenuOpen"
             >
               <div class="i-mdi-menu text-2xl" />
@@ -83,53 +64,32 @@
     </div>
 
     <!-- Mobile menu -->
-    <div v-if="isMobileMenuOpen" class="md:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+    <div v-if="isMobileMenuOpen" class="md:hidden bg-background border-t border-border">
       <div class="px-2 pt-2 pb-3 space-y-1">
         <NuxtLink 
-          to="/" 
-          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-          :class="{ 'bg-gray-100 dark:bg-gray-800': $route.path === '/' }"
+          v-for="item in menuItems"
+          :key="`mobile-${item.path}`"
+          :to="item.path"
+          class="block px-3 py-2 rounded-md text-base font-medium text-text/80 hover:bg-block"
+          :class="{ 'bg-block': $route.path === item.path }"
           @click="isMobileMenuOpen = false"
         >
-          หน้าแรก
+          {{ item.name }}
         </NuxtLink>
-        <NuxtLink 
-          to="/chat" 
-          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-          :class="{ 'bg-gray-100 dark:bg-gray-800': $route.path === '/chat' }"
-          @click="isMobileMenuOpen = false"
-        >
-          แชท
-        </NuxtLink>
-        <NuxtLink 
-          to="/blog" 
-          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-          :class="{ 'bg-gray-100 dark:bg-gray-800': $route.path === '/blog' }"
-          @click="isMobileMenuOpen = false"
-        >
-          บทความ
-        </NuxtLink>
-        <NuxtLink 
-          to="/code" 
-          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-          :class="{ 'bg-gray-100 dark:bg-gray-800': $route.path === '/code' }"
-          @click="isMobileMenuOpen = false"
-        >
-          เขียนโค้ด
-        </NuxtLink>
-        <div class="pt-4 pb-2 border-t border-gray-200 dark:border-gray-700">
+        
+        <div class="pt-4 pb-2 border-t border-border">
           <Button 
             variant="secondary" 
             class="w-full mb-2"
             @click="signIn"
           >
-            เข้าสู่ระบบ
+            Sign In
           </Button>
           <Button
             class="w-full"
             @click="getStarted"
           >
-            เริ่มต้นใช้งาน
+            Get Started
           </Button>
         </div>
       </div>
@@ -144,9 +104,25 @@ import Logo from './Logo.vue';
 import Toggle from './Toggle.vue';
 import Button from './Button.vue';
 
+const menuItems = [
+  { name: 'Home', path: '/' },
+  { name: 'Chat', path: '/chat' },
+  { name: 'Blog', path: '/blog' },
+  { name: 'Bookmark', path: '/bookmark' },
+  { name: 'Code', path: '/code' },
+  { name: 'Docs', path: '/docs' },
+  { name: 'Learn', path: '/learn' },
+  { name: 'Notes', path: '/notes' },
+  { name: 'Search', path: '/search' },
+  { name: 'Task', path: '/task' },
+  { name: 'Whiteboard', path: '/whiteboard' }
+];
+
 const route = useRoute();
 const isDark = ref(false);
 const isMobileMenuOpen = ref(false);
+
+
 
 // Watch for theme changes
 watch(isDark, (newVal) => {

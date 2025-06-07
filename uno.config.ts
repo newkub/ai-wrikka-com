@@ -53,7 +53,7 @@ export default defineConfig({
 		},
 	},
 	shortcuts: {
-		'block': 'bg-block p-4 rounded-md shadow-sm border border-base',
+		'block': 'bg-block p-4 rounded-md shadow-sm border border',
 		'text': 'text-text font-sans',
 		'grid': 'grid gap-4',
 		'btn': 'px-4 py-2 rounded-md bg-primary text-white hover:opacity-90 transition-opacity',

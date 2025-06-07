@@ -1,153 +1,3 @@
-<template>
-  <div class="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
-    <!-- Navigation -->
-    <nav class="bg-white shadow-sm">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-          <div class="flex items-center">
-            <span class="text-xl font-bold text-indigo-600">AI Wrikka</span>
-          </div>
-          <div class="hidden md:flex items-center space-x-8">
-            <NuxtLink to="/" class="text-gray-700 hover:text-indigo-600 font-medium">หน้าแรก</NuxtLink>
-            <NuxtLink to="/chat" class="text-gray-700 hover:text-indigo-600 font-medium">แชท</NuxtLink>
-            <NuxtLink to="/about" class="text-gray-700 hover:text-indigo-600 font-medium">เกี่ยวกับเรา</NuxtLink>
-          </div>
-          <div class="flex items-center">
-            <button class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors">
-              เริ่มต้นใช้งาน
-            </button>
-          </div>
-        </div>
-      </div>
-    </nav>
-
-    <!-- Blog Header -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <div class="text-center mb-16">
-        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-          บทความล่าสุด
-        </h1>
-        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-          อัปเดตบทความ เทคนิค และความรู้ใหม่ๆ เกี่ยวกับ AI และเทคโนโลยีล่าสุด
-        </p>
-      </div>
-
-      <!-- Blog Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <article v-for="post in posts" :key="post.id" class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
-          <div class="h-48 bg-gray-200 overflow-hidden">
-            <img :src="post.image" :alt="post.title" class="w-full h-full object-cover">
-          </div>
-          <div class="p-5">
-            <div class="flex items-center text-sm text-gray-500 mb-2">
-              <span class="i-mdi-calendar mr-1"></span>
-              <span>{{ formatDate(post.date) }}</span>
-              <span class="mx-2">•</span>
-              <span class="flex items-center">
-                <span class="i-mdi-eye mr-1"></span>
-                {{ post.views }}
-              </span>
-            </div>
-            <h2 class="text-xl font-bold text-gray-900 mb-2 line-clamp-2">
-              {{ post.title }}
-            </h2>
-            <p class="text-gray-600 text-sm mb-4 line-clamp-3">
-              {{ post.excerpt }}
-            </p>
-            <div class="flex items-center justify-between">
-              <span class="inline-block bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded">
-                {{ post.category }}
-              </span>
-              <NuxtLink 
-                :to="`/blog/${post.slug}`" 
-                class="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center"
-              >
-                อ่านต่อ
-                <span class="i-mdi-arrow-right ml-1"></span>
-              </NuxtLink>
-            </div>
-          </div>
-        </article>
-      </div>
-
-      <!-- Pagination -->
-      <div class="mt-12 flex justify-center">
-        <nav class="flex items-center space-x-2">
-          <button class="px-4 py-2 border rounded-md text-gray-700 bg-white hover:bg-gray-50">
-            <span class="i-mdi-chevron-left"></span>
-            ก่อนหน้า
-          </button>
-          <button class="px-4 py-2 border rounded-md bg-indigo-600 text-white">
-            1
-          </button>
-          <button class="px-4 py-2 border rounded-md text-gray-700 bg-white hover:bg-gray-50">
-            2
-          </button>
-          <button class="px-4 py-2 border rounded-md text-gray-700 bg-white hover:bg-gray-50">
-            3
-          </button>
-          <button class="px-4 py-2 border rounded-md text-gray-700 bg-white hover:bg-gray-50">
-            ถัดไป
-            <span class="i-mdi-chevron-right"></span>
-          </button>
-        </nav>
-      </div>
-
-      <!-- Popular Categories -->
-      <div class="mt-24">
-        <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">หมวดหมู่ยอดนิยม</h2>
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-          <a href="#" class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center">
-            <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <div class="i-mdi-book-open-page-variant text-2xl text-indigo-600"></div>
-            </div>
-            <span class="text-gray-700 font-medium">คู่มือ</span>
-          </a>
-          <a href="#" class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center">
-            <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <div class="i-mdi-lightbulb-on text-2xl text-indigo-600"></div>
-            </div>
-            <span class="text-gray-700 font-medium">เทคนิค</span>
-          </a>
-          <a href="#" class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center">
-            <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <div class="i-mdi-star text-2xl text-indigo-600"></div>
-            </div>
-            <span class="text-gray-700 font-medium">รีวิว</span>
-          </a>
-          <a href="#" class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center">
-            <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <div class="i-mdi-chart-line text-2xl text-indigo-600"></div>
-            </div>
-            <span class="text-gray-700 font-medium">ประสิทธิภาพ</span>
-          </a>
-          <a href="#" class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center">
-            <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <div class="i-mdi-magnify text-2xl text-indigo-600"></div>
-            </div>
-            <span class="text-gray-700 font-medium">SEO</span>
-          </a>
-          <a href="#" class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center">
-            <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <div class="i-mdi-trending-up text-2xl text-indigo-600"></div>
-            </div>
-            <span class="text-gray-700 font-medium">เทรนด์</span>
-          </a>
-        </div>
-      </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 mt-16">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <p class="text-center text-gray-500 text-sm">
-          &copy; 2025 AI Wrikka. สงวนลิขสิทธิ์ทุกประการ
-        </p>
-      </div>
-    </footer>
-  </div>
-</template>
-
 <script setup lang="ts">
 const posts = [
   {
@@ -242,6 +92,153 @@ const formatDate = (dateString: string): string => {
 }
 </script>
 
-<style scoped>
-/* เพิ่มสไตล์เพิ่มเติมได้ตามต้องการ */
-</style>
+<template>
+  <div class="min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-block shadow-sm">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          <div class="flex items-center">
+            <span class="text-xl font-bold text-primary">AI Wrikka</span>
+          </div>
+          <div class="hidden md:flex items-center space-x-8">
+            <NuxtLink to="/" class="text hover:text-primary font-medium">หน้าแรก</NuxtLink>
+            <NuxtLink to="/chat" class="text hover:text-primary font-medium">แชท</NuxtLink>
+            <NuxtLink to="/about" class="text hover:text-primary font-medium">เกี่ยวกับเรา</NuxtLink>
+          </div>
+          <div class="flex items-center">
+            <button class="bg-primary text-white px-4 py-2 rounded-md hover:opacity-90 transition-opacity">
+              เริ่มต้นใช้งาน
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Blog Header -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="text-center mb-16">
+        <h1 class="text-4xl md:text-5xl font-bold text mb-4">
+          บทความล่าสุด
+        </h1>
+        <p class="text-xl text max-w-3xl mx-auto">
+          อัปเดตบทความ เทคนิค และความรู้ใหม่ๆ เกี่ยวกับ AI และเทคโนโลยีล่าสุด
+        </p>
+      </div>
+
+      <!-- Blog Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <article v-for="post in posts" :key="post.id" class="bg-block rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
+          <div class="h-48 bg-block overflow-hidden">
+            <img :src="post.image" :alt="post.title" class="w-full h-full object-cover">
+          </div>
+          <div class="p-5">
+            <div class="flex items-center text-sm text mb-2">
+              <span class="i-mdi-calendar mr-1"></span>
+              <span>{{ formatDate(post.date) }}</span>
+              <span class="mx-2">•</span>
+              <span class="flex items-center">
+                <span class="i-mdi-eye mr-1"></span>
+                {{ post.views }}
+              </span>
+            </div>
+            <h2 class="text-xl font-bold text mb-2 line-clamp-2">
+              {{ post.title }}
+            </h2>
+            <p class="text text-sm mb-4 line-clamp-3">
+              {{ post.excerpt }}
+            </p>
+            <div class="flex items-center justify-between">
+              <span class="inline-block bg-primary/10 text-primary text-xs px-2 py-1 rounded">
+                {{ post.category }}
+              </span>
+              <NuxtLink 
+                :to="`/blog/${post.slug}`" 
+                class="text-primary hover:opacity-80 text-sm font-medium flex items-center transition-opacity"
+              >
+                อ่านต่อ
+                <span class="i-mdi-arrow-right ml-1"></span>
+              </NuxtLink>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Pagination -->
+      <div class="mt-12 flex justify-center">
+        <nav class="flex items-center space-x-2">
+          <button class="px-4 py-2 border rounded-md bg-secondary hover:bg-secondary-dark transition-opacity">
+            <span class="i-mdi-chevron-left"></span>
+            ก่อนหน้า
+          </button>
+          <button class="px-4 py-2 border rounded-md bg-primary text-white">
+            1
+          </button>
+          <button class="px-4 py-2 border rounded-md bg-block/50 hover:bg-block/70 transition-opacity">
+            2
+          </button>
+          <button class="px-4 py-2 border rounded-md bg-block/50 hover:bg-block/70 transition-opacity">
+            3
+          </button>
+          <button class="px-4 py-2 border rounded-md text bg-block hover:opacity-90 transition-opacity">
+            ถัดไป
+            <span class="i-mdi-chevron-right"></span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Popular Categories -->
+      <div class="mt-24">
+        <h2 class="text-3xl font-bold text-center text mb-12">หมวดหมู่ยอดนิยม</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+          <a href="#" class="bg-block p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center">
+            <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+              <div class="i-mdi-book-open-page-variant text-2xl text-primary"></div>
+            </div>
+            <span class="text font-medium">คู่มือ</span>
+          </a>
+          <a href="#" class="bg-block p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center">
+            <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+              <div class="i-mdi-lightbulb-on text-2xl text-primary"></div>
+            </div>
+            <span class="text font-medium">เทคนิค</span>
+          </a>
+          <a href="#" class="bg-block p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center">
+            <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+              <div class="i-mdi-star text-2xl text-primary"></div>
+            </div>
+            <span class="text font-medium">รีวิว</span>
+          </a>
+          <a href="#" class="bg-block p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center">
+            <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+              <div class="i-mdi-chart-line text-2xl text-primary"></div>
+            </div>
+            <span class="text font-medium">ประสิทธิภาพ</span>
+          </a>
+          <a href="#" class="bg-block p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center">
+            <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+              <div class="i-mdi-magnify text-2xl text-primary"></div>
+            </div>
+            <span class="text font-medium">SEO</span>
+          </a>
+          <a href="#" class="bg-block p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center">
+            <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+              <div class="i-mdi-trending-up text-2xl text-primary"></div>
+            </div>
+            <span class="text font-medium">เทรนด์</span>
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-block/50 border-t border mt-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <p class="text-center text text-sm">
+          &copy; 2025 AI Wrikka. สงวนลิขสิทธิ์ทุกประการ
+        </p>
+      </div>
+    </footer>
+  </div>
+</template>
+

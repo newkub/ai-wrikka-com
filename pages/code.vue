@@ -1,100 +1,224 @@
+<script setup lang="ts">
+import { ref, onMounted, computed } from 'vue';
+import CodeEditor from '~/components/CodeEditor.vue';
+import Terminal from '~/components/Terminal.vue';
+import FileStructure from '~/components/FileStructure.vue';
+
+const code = ref('// Welcome to Code Editor\n// Start coding here...\n\nfunction helloWorld() {\n  console.log("Hello, World!");\n}\n\nhelloWorld();');
+const terminalOutput = ref('');
+const terminalRef = ref();
+const isDark = ref(false);
+const editorTheme = computed(() => isDark.value ? 'vs-dark' : 'vs');
+const activeFile = ref('index.js');
+
+interface FileItem {
+  name: string;
+  type: 'file' | 'directory';
+  isOpen?: boolean;
+  children?: FileItem[];
+}
+
+// Sample file structure data
+const fileStructure = ref<FileItem[]>([
+  {
+    name: 'project',
+    type: 'directory',
+    isOpen: true,
+    children: [
+      { 
+        name: 'src', 
+        type: 'directory', 
+        isOpen: true, 
+        children: [
+          { name: 'main.js', type: 'file' },
+          { name: 'App.vue', type: 'file' },
+          { 
+            name: 'assets', 
+            type: 'directory', 
+            children: [
+              { name: 'style.css', type: 'file' }
+            ]
+          }
+        ]
+      },
+      { 
+        name: 'public', 
+        type: 'directory', 
+        children: [
+          { name: 'index.html', type: 'file' }
+        ]
+      },
+      { name: 'package.json', type: 'file' },
+      { name: 'vite.config.js', type: 'file' }
+    ]
+  }
+]);
+
+const handleFileSelect = (fileName: string) => {
+  activeFile.value = fileName;
+  // Here you would typically load the file content
+  code.value = `// Content of ${fileName}\n// This is a sample file content.`;
+};
+
+// Handle terminal commands
+const handleCommand = (command: string) => {
+  const terminal = terminalRef.value;
+  if (!terminal) return;
+  
+  switch (command.toLowerCase()) {
+    case 'clear':
+      terminal.clear();
+      break;
+    case 'help':
+      terminal.write('Available commands:');
+      terminal.write('  clear - Clear the terminal');
+      terminal.write('  help - Show this help message');
+      terminal.write('  run - Execute the current code');
+      break;
+    case 'run':
+      executeCode();
+      break;
+    default:
+      terminal.write(`Command not found: ${command}`);
+      terminal.write('Type `help` to see available commands');
+  }
+};
+
+// Execute the current code
+const executeCode = () => {
+  const terminal = terminalRef.value;
+  if (!terminal) return;
+  
+  try {
+    // In a real app, you would send this to a server or use a sandbox
+    terminal.write('$ Executing code...');
+    // Simulate execution
+    setTimeout(() => {
+      terminal.write('Hello, World!');
+      terminal.write('Code executed successfully');
+      terminal.prompt();
+    }, 500);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+    terminal.write(`Error: ${errorMessage}`);
+    terminal.prompt();
+  }
+};
+
+// Handle code changes
+const handleCodeUpdate = (newCode: string) => {
+  code.value = newCode;
+};
+
+// Toggle dark/light theme
+const toggleTheme = () => {
+  isDark.value = !isDark.value;
+  document.documentElement.classList.toggle('dark', isDark.value);
+};
+</script>
+
+
 <template>
-  <div class="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
-    <!-- Navigation -->
-    <nav class="bg-white shadow-sm">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-          <div class="flex items-center">
-            <span class="text-xl font-bold text-indigo-600">AI Wrikka</span>
+  <div class="flex h-screen  transition-colors duration-200">
+    <!-- Left Panel - File Explorer and Chat -->
+    <div class="w-1/3 border-r border-border bg-block flex flex-col">
+      <!-- File Explorer -->
+      <div class="flex-1 flex flex-col border-b border-gray-200 dark:border-gray-700">
+        <div class="p-2 border-b border-border flex justify-between items-center">
+          <h2 class="text-sm font-medium text-text/80">EXPLORER</h2>
+          <div class="flex space-x-2">
+            <button 
+              @click="toggleTheme"
+              class="p-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 rounded transition-colors"
+              :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+            >
+              <div v-if="isDark" class="i-heroicons-sun w-4 h-4 text-yellow-400"></div>
+              <div v-else class="i-heroicons-moon w-4 h-4 text-text/80"></div>
+            </button>
           </div>
-          <div class="hidden md:flex items-center space-x-8">
-            <NuxtLink to="/" class="text-gray-700 hover:text-indigo-600 font-medium">หน้าแรก</NuxtLink>
-            <NuxtLink to="/chat" class="text-gray-700 hover:text-indigo-600 font-medium">แชท</NuxtLink>
-            <NuxtLink to="/about" class="text-gray-700 hover:text-indigo-600 font-medium">เกี่ยวกับเรา</NuxtLink>
+        </div>
+        <FileStructure 
+          :files="fileStructure" 
+          :active-file="activeFile"
+          class="flex-1 overflow-y-auto"
+          @file-select="handleFileSelect"
+        />
+      </div>
+      
+      <!-- Chat -->
+      <div class="h-1/3 flex flex-col border-t border-border">
+        <div class="p-2 border-b border-border">
+          <h2 class="text-sm font-medium text-text/80">CHAT</h2>
+        </div>
+        <div class="flex-1 overflow-y-auto p-4 space-y-4">
+          <div class="p-3 bg-primary/10 rounded-lg">
+            <h3 class="text-sm font-medium text-primary">Welcome to Code Chat</h3>
+            <p class="text-xs text-primary/80 mt-1">
+              Ask questions about your code or get help with programming concepts.
+            </p>
           </div>
-          <div class="flex items-center">
-            <button class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors">
-              เริ่มต้นใช้งาน
+        </div>
+        <div class="p-2 border-t border-border">
+          <div class="flex space-x-2">
+            <input
+              type="text"
+              placeholder="Type a message..."
+              class="flex-1 p-2 text-xs border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary bg-block text-text"
+            />
+            <button class="px-3 py-1 text-xs bg-primary hover:opacity-90 text-white rounded-lg transition-opacity">
+              Send
             </button>
           </div>
         </div>
       </div>
-    </nav>
+    </div>
 
-    <!-- Hero Section -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <div class="text-center">
-        <h1 class="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-          ยินดีต้อนรับสู่ AI Wrikka
-        </h1>
-        <p class="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-          แพลตฟอร์ม AI ช่วยสร้างสรรค์เนื้อหาที่ทันสมัยและมีประสิทธิภาพ
-          พร้อมให้บริการทุกความต้องการด้านการสร้างเนื้อหาของคุณ
-        </p>
-        <div class="flex flex-col sm:flex-row justify-center gap-4">
-          <NuxtLink 
-            to="/chat" 
-            class="bg-indigo-600 text-white px-8 py-3 rounded-md text-lg font-medium hover:bg-indigo-700 transition-colors"
-          >
-            เริ่มแชทตอนนี้
-          </NuxtLink>
-          <button class="bg-white text-indigo-600 px-8 py-3 rounded-md text-lg font-medium border border-indigo-200 hover:bg-indigo-50 transition-colors">
-            เรียนรู้เพิ่มเติม
-          </button>
-        </div>
-      </div>
-
-      <!-- Features Section -->
-      <div class="mt-24">
-        <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">คุณสมบัติเด่น</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div v-for="(feature, index) in features" :key="index" class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-transform hover:-translate-y-1">
-            <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
-              <div :class="`i-mdi-${feature.icon} text-2xl text-indigo-600`"></div>
-            </div>
-            <h3 class="text-xl font-semibold mb-2">{{ feature.title }}</h3>
-            <p class="text-gray-600 text-sm">{{ feature.description }}</p>
+    <!-- Right Panel - Editor and Terminal -->
+    <div class="flex-1 flex flex-col bg-block">
+      <!-- Code Editor -->
+      <div class="flex-1 flex flex-col border-b border-border">
+        <div class="flex justify-between items-center p-2 border-b border-border">
+          <h2 class="text-sm font-medium text-text">{{ activeFile }}</h2>
+          <div class="flex space-x-2">
+            <button 
+              @click="executeCode"
+              class="px-3 py-1 text-sm bg-success hover:opacity-90 text-white rounded-md flex items-center space-x-1 transition-opacity"
+            >
+              <div class="i-heroicons-play w-4 h-4"></div>
+              <span>Run</span>
+            </button>
           </div>
         </div>
+        <CodeEditor 
+          v-model="code"
+          :theme="isDark ? 'vs-dark' : 'vs'"
+          class="flex-1"
+          @update:modelValue="handleCodeUpdate"
+        />
       </div>
-    </main>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 mt-16">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <p class="text-center text-gray-500 text-sm">
-          &copy; 2025 AI Wrikka. สงวนลิขสิทธิ์ทุกประการ
-        </p>
+      <!-- Terminal -->
+      <div class="h-1/3 flex flex-col border-t border-border">
+        <div class="p-2 border-b border-gray-200 flex justify-between items-center">
+          <h2 class="text-sm font-medium text-gray-700">Terminal</h2>
+          <div class="flex space-x-2">
+            <button 
+              @click="terminalRef?.clear()"
+              class="p-1 text-gray-500 hover:text-gray-700 rounded transition-colors"
+              title="Clear terminal"
+            >
+              <div class="i-heroicons-trash w-4 h-4"></div>
+            </button>
+          </div>
+        </div>
+        <Terminal 
+          ref="terminalRef"
+          :theme="isDark ? 'dark' : 'light'"
+          welcome-message="Welcome to the terminal. Type 'help' to see available commands."
+          @command="handleCommand"
+          class="flex-1"
+        />
       </div>
-    </footer>
+    </div>
   </div>
 </template>
-
-<script setup lang="ts">
-const features = [
-  {
-    icon: 'lightning-bolt',
-    title: 'สร้างเนื้อหาได้รวดเร็ว',
-    description: 'สร้างเนื้อหาคุณภาพสูงในเวลาเพียงไม่กี่วินาที ด้วยเทคโนโลยี AI ล้ำสมัย'
-  },
-  {
-    icon: 'hand-okay',
-    title: 'ใช้งานง่าย',
-    description: 'อินเทอร์เฟซที่เรียบง่าย เข้าใจง่าย เหมาะสำหรับผู้ใช้งานทุกระดับ'
-  },
-  {
-    icon: 'earth',
-    title: 'รองรับหลายภาษา',
-    description: 'สามารถสร้างและตอบกลับได้หลายภาษา พร้อมรองรับการใช้งานที่หลากหลาย'
-  },
-  {
-    icon: 'shield-check',
-    title: 'ปลอดภัยสูง',
-    description: 'ระบบรักษาความปลอดภัยมาตรฐานสูง ข้อมูลของคุณจะถูกเก็บเป็นความลับ'
-  }
-]
-</script>
-
-<style scoped>
-/* เพิ่มสไตล์เพิ่มเติมได้ตามต้องการ */
-</style>
