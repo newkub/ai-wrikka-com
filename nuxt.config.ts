@@ -30,9 +30,7 @@ export default defineNuxtConfig({
 		"@unocss/nuxt",
 		"@vueuse/nuxt",
 		"@pinia/nuxt",
-		"@nuxtjs/mdc",
-		//"@nuxt/content",
-		//'nuxt-content-twoslash',
+	
 	],
 
 	mdc: {
