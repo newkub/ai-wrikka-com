@@ -3,11 +3,13 @@ import { ref } from 'vue'
 import Whiteboard from '~/components/Whiteboard.vue'
 import { useFullscreen } from '@vueuse/core'
 
-const { isFullscreen, toggle } = useFullscreen()
-
 definePageMeta({
   layout: 'fullscreen'
-})
+});
+
+
+const { isFullscreen, toggle } = useFullscreen()
+
 
 const tools = [
   { name: 'pen', icon: '✏️', active: false },
