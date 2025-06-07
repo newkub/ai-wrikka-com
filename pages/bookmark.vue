@@ -153,7 +153,7 @@ const getAllTags = (): Tag[] => {
 </script>
 
 <template>
-  <div class="min-h-screen  text">
+  <div class="text">
     <!-- Header -->
     <header class="bg-block border-b border">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -296,4 +296,3 @@ const getAllTags = (): Tag[] => {
     </main>
   </div>
 </template>
-

@@ -58,7 +58,7 @@ const setActiveSection = (sectionId: string) => {
 </script>
 
 <template>
-  <div class="min-h-screen text flex flex-col">
+  <div class="text flex flex-col">
     <!-- Header -->
     <header class="bg-block border-b border">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -7,7 +7,7 @@ definePageMeta({
 </script>
 
 <template>
-  <div class="h-screen flex flex-col">
+  <div class="flex flex-col">
     <header class="bg-block shadow-sm">
       <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
         <h1 class="text-2xl font-bold text-text">Whiteboard</h1>

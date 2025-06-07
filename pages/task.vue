@@ -79,7 +79,7 @@ const formatDate = (dateString?: string) => {
 </script>
 
 <template>
-  <div class="min-h-screen  p-4">
+  <div class="p-4">
     <div class="max-w-6xl mx-auto">
       <!-- Header -->
       <header class="mb-8">
@@ -228,4 +228,3 @@ const formatDate = (dateString?: string) => {
     </div>
   </div>
 </template>
-

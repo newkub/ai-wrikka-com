@@ -93,7 +93,7 @@ const formatDate = (dateString: string): string => {
 </script>
 
 <template>
-  <div class="min-h-screen">
+  <div class="">
     <!-- Navigation -->
     <nav class="bg-block shadow-sm">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -241,4 +241,3 @@ const formatDate = (dateString: string): string => {
     </footer>
   </div>
 </template>
-

@@ -119,7 +119,7 @@ const toggleTheme = () => {
 
 
 <template>
-  <div class="flex h-screen  transition-colors duration-200">
+  <div class="flex transition-colors duration-200">
     <!-- Left Panel - File Explorer and Chat -->
     <div class="w-1/3 border-r border-border bg-block flex flex-col">
       <!-- File Explorer -->
