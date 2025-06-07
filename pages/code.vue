@@ -125,7 +125,7 @@ const toggleTheme = () => {
       <!-- File Explorer -->
       <div class="flex-1 flex flex-col border-b border-gray-200 dark:border-gray-700">
         <div class="p-2 border-b border-border flex justify-between items-center">
-          <h2 class="text-sm font-medium text-text/80">EXPLORER</h2>
+          <h2 class="text-sm font-medium text-black dark:text-white">EXPLORER</h2>
           <div class="flex space-x-2">
             <button 
               @click="toggleTheme"
@@ -133,7 +133,7 @@ const toggleTheme = () => {
               :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
             >
               <div v-if="isDark" class="i-heroicons-sun w-4 h-4 text-yellow-400"></div>
-              <div v-else class="i-heroicons-moon w-4 h-4 text-text/80"></div>
+              <div v-else class="i-heroicons-moon w-4 h-4 text-black dark:text-white"></div>
             </button>
           </div>
         </div>
@@ -148,7 +148,7 @@ const toggleTheme = () => {
       <!-- Chat -->
       <div class="h-1/3 flex flex-col border-t border-border">
         <div class="p-2 border-b border-border">
-          <h2 class="text-sm font-medium text-text/80">CHAT</h2>
+          <h2 class="text-sm font-medium text-black dark:text-white">CHAT</h2>
         </div>
         <div class="flex-1 overflow-y-auto p-4 space-y-4">
           <div class="p-3 bg-primary/10 rounded-lg">
@@ -163,7 +163,7 @@ const toggleTheme = () => {
             <input
               type="text"
               placeholder="Type a message..."
-              class="flex-1 p-2 text-xs border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary bg-block text-text"
+              class="flex-1 p-2 text-xs border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary bg-block text-black dark:text-white"
             />
             <button class="px-3 py-1 text-xs bg-primary hover:opacity-90 text-white rounded-lg transition-opacity">
               Send
@@ -178,7 +178,7 @@ const toggleTheme = () => {
       <!-- Code Editor -->
       <div class="flex-1 flex flex-col border-b border-border">
         <div class="flex justify-between items-center p-2 border-b border-border">
-          <h2 class="text-sm font-medium text-text">{{ activeFile }}</h2>
+          <h2 class="text-sm font-medium text-black dark:text-white">{{ activeFile }}</h2>
           <div class="flex space-x-2">
             <button 
               @click="executeCode"
@@ -200,7 +200,7 @@ const toggleTheme = () => {
       <!-- Terminal -->
       <div class="h-1/3 flex flex-col border-t border-border">
         <div class="p-2 border-b border-gray-200 flex justify-between items-center">
-          <h2 class="text-sm font-medium text-gray-700">Terminal</h2>
+          <h2 class="text-sm font-medium text-black dark:text-white">Terminal</h2>
           <div class="flex space-x-2">
             <button 
               @click="terminalRef?.clear()"

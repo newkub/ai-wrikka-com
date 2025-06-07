@@ -29,7 +29,7 @@ const learningCards = [
   <div class="container mx-auto px-4 py-8 h-screen flex gap-4 scrollbar-thin scrollbar-thumb-border/50 scrollbar-thumb-rounded scrollbar-track-transparent scrollbar-track-rounded">
     <!-- Left Panel (3/4 width) -->
     <div class="w-3/4 pr-4 overflow-y-auto">
-      <h1 class="text-2xl font-bold mb-6">Learning Resources</h1>
+      <h1 class="font-bold mb-6">Learning Resources</h1>
       
       <!-- Grid Layout -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

@@ -1,3 +1,148 @@
+<template>
+  <div>
+    <!-- Header -->
+    <header class="bg-block border-b border">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="flex justify-between items-center">
+          <h1 class="text-2xl font-bold">Bookmarks</h1>
+          <button class="px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90 transition-opacity">
+            Add Bookmark
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <!-- Search and Filter -->
+      <div class="mb-6">
+        <div class="relative">
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Search bookmarks..."
+            class="w-full px-4 py-2 bg-block border border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+          />
+          <div class="absolute right-3 top-2.5 text/50">
+            <i class="i-mdi-magnify text-xl"></i>
+          </div>
+        </div>
+        
+        <!-- Tags -->
+        <div class="flex flex-wrap gap-2 mt-4">
+          <button 
+            @click="setActiveTag(null)"
+            :class="[
+              'px-3 py-1 text-sm rounded-full transition-colors',
+              !activeTag 
+                ? 'bg-primary/10 text-primary' 
+                : 'bg-block/50 hover:bg-block/70'
+            ]"
+          >
+            All
+          </button>
+          <template v-for="tag in getAllTags()" :key="tag.id">
+            <button 
+              @click="setActiveTag(tag.id)"
+              :class="[
+                'px-3 py-1 text-sm rounded-full transition-opacity',
+                activeTag === tag.id 
+                  ? 'bg-primary/10 text-primary'
+                  : 'bg-block/50 hover:bg-block/70'
+              ]"
+            >
+              {{ tag.name }}
+            </button>
+          </template>
+        </div>
+      </div>
+
+      <!-- Bookmark Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div 
+          v-for="bookmark in filteredBookmarks" 
+          :key="bookmark.id"
+          class="bg-block rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden border border flex flex-col h-full"
+        >
+          <!-- Bookmark Image/Gradient -->
+          <div 
+            class="h-40 relative"
+            :class="bookmark.gradient ? `bg-gradient-to-r ${bookmark.gradient.from} ${bookmark.gradient.to}` : 'bg-gray-100 dark:bg-gray-700'"
+          >
+            <img 
+              v-if="bookmark.image" 
+              :src="bookmark.image" 
+              :alt="bookmark.title" 
+              class="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity"
+            />
+            <div class="absolute bottom-2 right-2">
+              <button class="p-1.5 bg-white/20 backdrop-blur-sm rounded-full shadow hover:bg-white/30">
+                <i class="i-mdi-dots-vertical" :class="{ 'text-white': bookmark.gradient, 'text-gray-500': !bookmark.gradient }"></i>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Bookmark Content -->
+          <div class="p-4 flex-1 flex flex-col bg-block/50">
+            <div class="flex items-center mb-2">
+              <img 
+                :src="bookmark.favicon" 
+                :alt="bookmark.domain" 
+                class="w-4 h-4 mr-2"
+                onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iY3VycmVudENvbG9yIiBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJzNC40OCAxMCAxMCAxMC01LjQ4IDEwLTEwUzE3LjUyIDIgMTIgMnptLTEgMTdoLTJ2LTloMnY5em0wLTEzaC0ydjZoMnYtNnoiLz48L3N2Zz4='"
+              />
+              <h3 class="font-medium text-sm text-gray-500 truncate">{{ bookmark.domain }}</h3>
+            </div>
+            
+            <a 
+              :href="bookmark.url" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="font-semibold mb-2 line-clamp-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              :title="bookmark.title"
+            >
+              {{ bookmark.title }}
+            </a>
+            
+            <p 
+              v-if="bookmark.description" 
+              class="text-sm  line-clamp-2 mb-3 flex-1"
+            >
+              {{ bookmark.description }}
+            </p>
+            
+            <div class="flex flex-wrap gap-2">
+              <span 
+                v-for="tag in bookmark.tags" 
+                :key="tag.id"
+                class="px-2 py-0.5 text-xs rounded"
+                :class="[
+                  tag.bgColor || 'bg-gray-100 dark:bg-gray-700',
+                  tag.color || 'text-gray-800 dark:text-gray-200'
+                ]"
+              >
+                {{ tag.name }}
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Empty State -->
+        <div 
+          v-if="filteredBookmarks.length === 0"
+          class="col-span-full py-12 text-gray-500 dark:text-gray-400"
+        >
+          <i class="i-mdi-bookmark-outline text-4xl mx-auto mb-4"></i>
+          <p class="text-lg font-medium">No bookmarks found</p>
+          <p v-if="searchQuery || activeTag" class="text-sm">
+            Try adjusting your search or filter criteria
+          </p>
+        </div>
+      </div>
+    </main>
+  </div>
+</template>
+
 <script setup lang="ts">
 interface Tag {
   id: string
@@ -151,148 +296,3 @@ const getAllTags = (): Tag[] => {
   return Array.from(tagsMap.values())
 }
 </script>
-
-<template>
-  <div class="text">
-    <!-- Header -->
-    <header class="bg-block border-b border">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div class="flex justify-between items-center">
-          <h1 class="text-2xl font-bold">Bookmarks</h1>
-          <button class="px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90 transition-opacity">
-            Add Bookmark
-          </button>
-        </div>
-      </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <!-- Search and Filter -->
-      <div class="mb-6">
-        <div class="relative">
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Search bookmarks..."
-            class="w-full px-4 py-2 bg-block border border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-          />
-          <div class="absolute right-3 top-2.5 text/50">
-            <i class="i-mdi-magnify text-xl"></i>
-          </div>
-        </div>
-        
-        <!-- Tags -->
-        <div class="flex flex-wrap gap-2 mt-4">
-          <button 
-            @click="setActiveTag(null)"
-            :class="[
-              'px-3 py-1 text-sm rounded-full transition-colors',
-              !activeTag 
-                ? 'bg-primary/10 text-primary' 
-                : 'bg-block/50 hover:bg-block/70'
-            ]"
-          >
-            All
-          </button>
-          <template v-for="tag in getAllTags()" :key="tag.id">
-            <button 
-              @click="setActiveTag(tag.id)"
-              :class="[
-                'px-3 py-1 text-sm rounded-full transition-opacity',
-                activeTag === tag.id 
-                  ? 'bg-primary/10 text-primary'
-                  : 'bg-block/50 hover:bg-block/70'
-              ]"
-            >
-              {{ tag.name }}
-            </button>
-          </template>
-        </div>
-      </div>
-
-      <!-- Bookmark Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <div 
-          v-for="bookmark in filteredBookmarks" 
-          :key="bookmark.id"
-          class="bg-block rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden border border flex flex-col h-full"
-        >
-          <!-- Bookmark Image/Gradient -->
-          <div 
-            class="h-40 relative"
-            :class="bookmark.gradient ? `bg-gradient-to-r ${bookmark.gradient.from} ${bookmark.gradient.to}` : 'bg-gray-100 dark:bg-gray-700'"
-          >
-            <img 
-              v-if="bookmark.image" 
-              :src="bookmark.image" 
-              :alt="bookmark.title" 
-              class="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity"
-            />
-            <div class="absolute bottom-2 right-2">
-              <button class="p-1.5 bg-white/20 backdrop-blur-sm rounded-full shadow hover:bg-white/30">
-                <i class="i-mdi-dots-vertical" :class="{ 'text-white': bookmark.gradient, 'text-gray-500': !bookmark.gradient }"></i>
-              </button>
-            </div>
-          </div>
-          
-          <!-- Bookmark Content -->
-          <div class="p-4 flex-1 flex flex-col bg-block/50">
-            <div class="flex items-center mb-2">
-              <img 
-                :src="bookmark.favicon" 
-                :alt="bookmark.domain" 
-                class="w-4 h-4 mr-2"
-                onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iY3VycmVudENvbG9yIiBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJzNC40OCAxMCAxMCAxMCAxMC00LjQ4IDEwLTEwUzE3LjUyIDIgMTIgMnptLTEgMTdoLTJ2LTloMnY5em0wLTEzaC0ydjZoMnYtNnoiLz48L3N2Zz4='"
-              />
-              <h3 class="font-medium text-sm text-gray-500 truncate">{{ bookmark.domain }}</h3>
-            </div>
-            
-            <a 
-              :href="bookmark.url" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              class="font-semibold mb-2 line-clamp-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-              :title="bookmark.title"
-            >
-              {{ bookmark.title }}
-            </a>
-            
-            <p 
-              v-if="bookmark.description" 
-              class="text-sm text/70 line-clamp-2 mb-3 flex-1"
-            >
-              {{ bookmark.description }}
-            </p>
-            
-            <div class="flex flex-wrap gap-2">
-              <span 
-                v-for="tag in bookmark.tags" 
-                :key="tag.id"
-                class="px-2 py-0.5 text-xs rounded"
-                :class="[
-                  tag.bgColor || 'bg-gray-100 dark:bg-gray-700',
-                  tag.color || 'text-gray-800 dark:text-gray-200'
-                ]"
-              >
-                {{ tag.name }}
-              </span>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Empty State -->
-        <div 
-          v-if="filteredBookmarks.length === 0"
-          class="col-span-full text-center py-12 text-gray-500 dark:text-gray-400"
-        >
-          <i class="i-mdi-bookmark-outline text-4xl mx-auto mb-4"></i>
-          <p class="text-lg font-medium">No bookmarks found</p>
-          <p v-if="searchQuery || activeTag" class="text-sm">
-            Try adjusting your search or filter criteria
-          </p>
-        </div>
-      </div>
-    </main>
-  </div>
-</template>

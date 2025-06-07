@@ -83,8 +83,8 @@ const formatDate = (dateString?: string) => {
     <div class="max-w-6xl mx-auto">
       <!-- Header -->
       <header class="mb-8">
-        <h1 class="text-3xl font-bold text-text">Tasks</h1>
-        <p class="text-text/80">Manage your tasks efficiently</p>
+        <h1 class="text-3xl font-bold">Tasks</h1>
+        <p>Manage your tasks efficiently</p>
       </header>
 
       <!-- Task Input -->
@@ -99,7 +99,7 @@ const formatDate = (dateString?: string) => {
           />
           <button
             @click="addTask"
-            class="bg-primary text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity"
+            class="bg-primary px-4 py-2 rounded-lg hover:opacity-90 transition-opacity"
           >
             Add Task
           </button>

@@ -145,7 +145,7 @@ onMounted(() => {
               target="_blank"
               class="block rounded-lg border border-border p-4 hover:bg-background/50"
             >
-              <div class="text-sm text-text/60">
+              <div class="text-sm ">
                 {{ (() => {
                   try {
                     return new URL(source.url).hostname;
@@ -154,7 +154,7 @@ onMounted(() => {
                   }
                 })() }}
               </div>
-              <div class="font-medium text-primary">{{ source.title }}</div>
+              <div class="font-medium ">{{ source.title }}</div>
               <p class="mt-1 text-sm text-text/80 line-clamp-2">{{ source.snippet }}</p>
             </a>
           </div>

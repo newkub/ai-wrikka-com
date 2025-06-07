@@ -1,62 +1,3 @@
-<script setup lang="ts">
-import { ref, computed } from 'vue';
-
-// สถานะเมนูสำหรับ mobile
-const isMenuOpen = ref(false);
-const activeSection = ref('getting-started');
-
-// ข้อมูลเมนู
-const menuItems = [
-  {
-    title: 'Getting Started',
-    id: 'getting-started',
-    icon: 'i-mdi-rocket-launch-outline',
-    children: [
-      { title: 'Introduction', id: 'introduction' },
-      { title: 'Installation', id: 'installation' },
-      { title: 'Configuration', id: 'configuration' },
-    ],
-  },
-  {
-    title: 'Guides',
-    id: 'guides',
-    icon: 'i-mdi-book-open-page-variant-outline',
-    children: [
-      { title: 'Basic Concepts', id: 'basic-concepts' },
-      { title: 'Advanced Usage', id: 'advanced-usage' },
-      { title: 'Best Practices', id: 'best-practices' },
-    ],
-  },
-  {
-    title: 'API Reference',
-    id: 'api',
-    icon: 'i-mdi-api',
-    children: [
-      { title: 'Core API', id: 'core-api' },
-      { title: 'Plugins', id: 'plugins' },
-      { title: 'Utilities', id: 'utilities' },
-    ],
-  },
-];
-
-// ข้อมูลหัวข้อในหน้า (สำหรับ TOC)
-const headings = [
-  { id: 'introduction', text: 'Introduction', level: 2 },
-  { id: 'features', text: 'Key Features', level: 2 },
-  { id: 'quick-start', text: 'Quick Start', level: 2 },
-  { id: 'prerequisites', text: 'Prerequisites', level: 3 },
-  { id: 'installation', text: 'Installation', level: 3 },
-  { id: 'usage', text: 'Basic Usage', level: 3 },
-  { id: 'configuration', text: 'Configuration', level: 2 },
-];
-
-// ฟังก์ชันสำหรับเปลี่ยน section
-const setActiveSection = (sectionId: string) => {
-  activeSection.value = sectionId;
-  isMenuOpen.value = false; // ปิดเมนูบนมือถือเมื่อเลือกหัวข้อ
-};
-</script>
-
 <template>
   <div class="text flex flex-col">
     <!-- Header -->
@@ -66,14 +7,14 @@ const setActiveSection = (sectionId: string) => {
           <div class="flex items-center">
             <button 
               @click="isMenuOpen = !isMenuOpen"
-              class="md:hidden p-2 rounded-md text hover:bg-block/50 focus:outline-none"
+              class="md:hidden p-2 rounded-md hover:bg-block/50 focus:outline-none"
             >
               <i class="i-mdi-menu text-2xl"></i>
             </button>
             <h1 class="text-xl font-bold ml-2">Documentation</h1>
           </div>
           <div class="flex items-center space-x-4">
-            <button class="p-2 text-gray-500 hover:text-gray-600 dark:hover:text-gray-300">
+            <button class="p-2 hover:bg-block/50 focus:outline-none">
               <i class="i-mdi-magnify text-xl"></i>
             </button>
             <button class="p-2 text-gray-500 hover:text-gray-600 dark:hover:text-gray-300">
@@ -106,7 +47,7 @@ const setActiveSection = (sectionId: string) => {
                       class="block px-3 py-2 text-sm rounded-md transition-colors duration-200"
                       :class="{
                         'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400': activeSection === item.id,
-'text hover:bg-block/50': activeSection !== item.id
+                        'text hover:bg-block/50': activeSection !== item.id
                       }"
                     >
                       {{ item.title }}
@@ -224,6 +165,65 @@ app.mount('#app');</code></pre>
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ref, computed } from 'vue';
+
+// สถานะเมนูสำหรับ mobile
+const isMenuOpen = ref(false);
+const activeSection = ref('getting-started');
+
+// ข้อมูลเมนู
+const menuItems = [
+  {
+    title: 'Getting Started',
+    id: 'getting-started',
+    icon: 'i-mdi-rocket-launch-outline',
+    children: [
+      { title: 'Introduction', id: 'introduction' },
+      { title: 'Installation', id: 'installation' },
+      { title: 'Configuration', id: 'configuration' },
+    ],
+  },
+  {
+    title: 'Guides',
+    id: 'guides',
+    icon: 'i-mdi-book-open-page-variant-outline',
+    children: [
+      { title: 'Basic Concepts', id: 'basic-concepts' },
+      { title: 'Advanced Usage', id: 'advanced-usage' },
+      { title: 'Best Practices', id: 'best-practices' },
+    ],
+  },
+  {
+    title: 'API Reference',
+    id: 'api',
+    icon: 'i-mdi-api',
+    children: [
+      { title: 'Core API', id: 'core-api' },
+      { title: 'Plugins', id: 'plugins' },
+      { title: 'Utilities', id: 'utilities' },
+    ],
+  },
+];
+
+// ข้อมูลหัวข้อในหน้า (สำหรับ TOC)
+const headings = [
+  { id: 'introduction', text: 'Introduction', level: 2 },
+  { id: 'features', text: 'Key Features', level: 2 },
+  { id: 'quick-start', text: 'Quick Start', level: 2 },
+  { id: 'prerequisites', text: 'Prerequisites', level: 3 },
+  { id: 'installation', text: 'Installation', level: 3 },
+  { id: 'usage', text: 'Basic Usage', level: 3 },
+  { id: 'configuration', text: 'Configuration', level: 2 },
+];
+
+// ฟังก์ชันสำหรับเปลี่ยน section
+const setActiveSection = (sectionId: string) => {
+  activeSection.value = sectionId;
+  isMenuOpen.value = false; // ปิดเมนูบนมือถือเมื่อเลือกหัวข้อ
+};
+</script>
 
 <style scoped>
 /* Custom scrollbar */
