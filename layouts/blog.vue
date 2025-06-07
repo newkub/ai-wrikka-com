@@ -1,24 +1,5 @@
 <template>
   <div class="flex flex-col min-h-screen bg-background">
-    <!-- Navbar Component -->
-    <Nav />
-    <!-- Blog Header -->
-    <header class="bg-surface sticky top-0 z-50 py-4 border-b border-border shadow-sm">
-      <div class="w-full max-w-7xl mx-auto px-6">
-        <div class="flex justify-between items-center">
-          <NuxtLink to="/blog" class="text-foreground font-bold text-2xl transition-colors hover:text-primary">
-            <h1>Blog</h1>
-          </NuxtLink>
-          <nav class="flex gap-6">
-            <NuxtLink to="/" class="text-muted-foreground font-medium py-2 relative transition-colors hover:text-primary">Home</NuxtLink>
-            <NuxtLink to="/blog" class="text-muted-foreground font-medium py-2 relative transition-colors hover:text-primary" :class="{ 'text-primary after:content-[\'\'] after:absolute after:bottom-[-1px] after:left-0 after:right-0 after:h-0.5 after:bg-primary after:rounded-sm': route.path === '/blog' }">All Posts</NuxtLink>
-            <NuxtLink to="/blog/categories" class="text-muted-foreground font-medium py-2 relative transition-colors hover:text-primary" :class="{ 'text-primary after:content-[\'\'] after:absolute after:bottom-[-1px] after:left-0 after:right-0 after:h-0.5 after:bg-primary after:rounded-sm': route.path.startsWith('/blog/categories') }">Categories</NuxtLink>
-            <NuxtLink to="/blog/tags" class="text-muted-foreground font-medium py-2 relative transition-colors hover:text-primary" :class="{ 'text-primary after:content-[\'\'] after:absolute after:bottom-[-1px] after:left-0 after:right-0 after:h-0.5 after:bg-primary after:rounded-sm': route.path.startsWith('/blog/tags') }">Tags</NuxtLink>
-          </nav>
-        </div>
-      </div>
-    </header>
-
     <!-- Main Content -->
     <div class="grid grid-cols-[1fr_280px] flex-1 gap-8 max-w-[1400px] mx-auto w-full px-8 md:grid-cols-1 md:px-6">
       <main class="py-8 bg-background max-w-[800px] mx-auto w-full">
@@ -48,7 +29,7 @@
     <footer class="bg-surface py-8 border-t border-border mt-auto">
       <div class="w-full max-w-7xl mx-auto px-6">
         <div class="flex justify-between items-center text-muted-foreground text-sm md:flex-col md:gap-4 md:text-center">
-          <p>© {{ new Date().getFullYear() }} My Blog. All rights reserved.</p>
+          <p> {{ new Date().getFullYear() }} My Blog. All rights reserved.</p>
           <div class="flex gap-5 md:justify-center">
             <a href="#" class="text-muted-foreground no-underline transition-colors hover:text-primary">Twitter</a>
             <a href="#" class="text-muted-foreground no-underline transition-colors hover:text-primary">GitHub</a>
@@ -63,65 +44,61 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, nextTick } from "vue";
 import { useRoute } from "vue-router";
-import Nav from "~/components/Nav.vue";
 
 const route = useRoute();
-const tableOfContents = ref<Array<{ id: string; text: string; level: number }>>(
-	[],
-);
+const tableOfContents = ref<Array<{ id: string; text: string; level: number }>>([]);
 
 // Generate table of contents from headings
 const generateTableOfContents = () => {
-	if (process.client) {
-		const content = document.querySelector(".blog-post-content");
-		if (!content) return [];
+  if (process.client) {
+    const content = document.querySelector(".blog-post-content");
+    if (!content) return [];
 
-		const headings = Array.from(content.querySelectorAll("h2, h3, h4"));
-		return headings.map((heading) => {
-			const id =
-				heading.id ||
-				heading.textContent?.toLowerCase().replace(/[^\w]+/g, "-") ||
-				`heading-${Math.random().toString(36).substring(2, 9)}`;
-			heading.id = id;
-			return {
-				id,
-				text: heading.textContent || "",
-				level: Number.parseInt(heading.tagName.substring(1)),
-			};
-		});
-	}
-	return [];
+    const headings = Array.from(content.querySelectorAll("h2, h3, h4"));
+    return headings.map((heading) => {
+      const id =
+        heading.id ||
+        heading.textContent?.toLowerCase().replace(/[^\w]+/g, "-") ||
+        `heading-${Math.random().toString(36).substring(2, 9)}`;
+      heading.id = id;
+      return {
+        id,
+        text: heading.textContent || "",
+        level: Number.parseInt(heading.tagName.substring(1)),
+      };
+    });
+  }
+  return [];
 };
 
 // Scroll to heading with offset for fixed header
 const scrollToHeading = (selector: string) => {
-	const element = document.querySelector(selector);
-	if (element) {
-		const headerOffset = 80;
-		const elementPosition = element.getBoundingClientRect().top;
-		const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+  const element = document.querySelector(selector);
+  if (element) {
+    const headerOffset = 80;
+    const elementPosition = element.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
-		window.scrollTo({
-			top: offsetPosition,
-			behavior: "smooth",
-		});
-	}
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: "smooth",
+    });
+  }
 };
 
 // Update TOC when route changes
 onMounted(() => {
-	// Wait for the content to be rendered
-	setTimeout(() => {
-		tableOfContents.value = generateTableOfContents();
-	}, 100);
+  setTimeout(() => {
+    tableOfContents.value = generateTableOfContents();
+  }, 100);
 });
 
 watch(
-	() => route.path,
-	() => {
-		nextTick(() => {
-			tableOfContents.value = generateTableOfContents();
-		});
-	},
+  () => route.path,
+  () => {
+    nextTick(() => {
+      tableOfContents.value = generateTableOfContents();
+    });
+  }
 );
 </script>

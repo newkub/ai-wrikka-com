@@ -1,30 +1,5 @@
 <template>
   <div class="flex flex-col min-h-screen bg-background">
-    <!-- Navbar Component -->
-    <Nav />
-    
-    <!-- Docs Header -->
-    <header class="bg-surface sticky top-0 z-40 py-4 border-b border-border shadow-sm">
-      <div class="w-full max-w-7xl mx-auto px-6">
-        <div class="flex justify-between items-center">
-          <NuxtLink to="/docs" class="text-foreground font-bold text-2xl transition-colors hover:text-primary">
-            <h1>Documentation</h1>
-          </NuxtLink>
-          <div class="flex items-center gap-4">
-            <div class="relative">
-              <input
-                type="text"
-                placeholder="Search docs..."
-                class="pl-10 pr-4 py-2 border border-border rounded-lg text-sm focus:ring-2 focus:ring-primary/50 focus:border-primary w-64 bg-surface text-foreground"
-              >
-              <div class="i-mdi-magnify w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </header>
-
-
     <!-- Main Content -->
     <div class="flex flex-1 max-w-7xl w-full mx-auto px-6 py-8">
       <!-- Sidebar -->
@@ -77,83 +52,80 @@ import type { NavigationItem } from "~/types/content";
 const route = useRoute();
 
 // Table of contents state
-const tableOfContents = ref<Array<{ id: string; text: string; level: number }>>(
-	[],
-);
+const tableOfContents = ref<Array<{ id: string; text: string; level: number }>>([]);
 
 // Fetch navigation from content directory
 const { data: navigation } = await useAsyncData<NavigationItem[]>(
-	"navigation",
-	async () => {
-		return Promise.resolve([
-			{
-				title: "Getting Started",
-				items: [
-					{ name: "Introduction", href: "/docs/intro" },
-					{ name: "Installation", href: "/docs/installation" },
-					{ name: "Configuration", href: "/docs/configuration" },
-				],
-			},
-			{
-				title: "Authentication",
-				items: [{ name: "Overview", href: "/docs/auth" }],
-			},
-			{
-				title: "Guides",
-				items: [
-					{ name: "Best Practices", href: "/docs/best-practices" },
-					{ name: "Endpoints", href: "/docs/endpoints" },
-					{ name: "Examples", href: "/docs/examples" },
-					{ name: "Troubleshooting", href: "/docs/troubleshooting" },
-				],
-			},
-		]);
-	},
+  "navigation",
+  async () => {
+    return Promise.resolve([
+      {
+        title: "Getting Started",
+        items: [
+          { name: "Introduction", href: "/docs/intro" },
+          { name: "Installation", href: "/docs/installation" },
+          { name: "Configuration", href: "/docs/configuration" },
+        ],
+      },
+      {
+        title: "Authentication",
+        items: [{ name: "Overview", href: "/docs/auth" }],
+      },
+      {
+        title: "Guides",
+        items: [
+          { name: "Best Practices", href: "/docs/best-practices" },
+          { name: "Endpoints", href: "/docs/endpoints" },
+          { name: "Examples", href: "/docs/examples" },
+          { name: "Troubleshooting", href: "/docs/troubleshooting" },
+        ],
+      },
+    ]);
+  }
 );
 
 // Generate table of contents from headings
 const generateTableOfContents = () => {
-	if (typeof document === "undefined") return [];
+  if (typeof document === "undefined") return [];
 
-	const headings = Array.from(
-		document.querySelectorAll("h2, h3, h4"),
-	) as HTMLElement[];
+  const headings = Array.from(
+    document.querySelectorAll("h2, h3, h4"),
+  ) as HTMLElement[];
 
-	return headings.map((heading) => {
-		// Generate ID if not exists
-		if (!heading.id) {
-			heading.id =
-				heading.textContent
-					?.toLowerCase()
-					.replace(/[^\w\s-]/g, "")
-					.replace(/\s+/g, "-") || "";
-		}
+  return headings.map((heading) => {
+    // Generate ID if not exists
+    if (!heading.id) {
+      heading.id =
+        heading.textContent
+          ?.toLowerCase()
+          .replace(/[^\w\s-]/g, "")
+          .replace(/\s+/g, "-") || "";
+    }
 
-		return {
-			id: heading.id,
-			text: heading.textContent || "",
-			level: Number.parseInt(heading.tagName.substring(1)),
-		};
-	});
+    return {
+      id: heading.id,
+      text: heading.textContent || "",
+      level: Number.parseInt(heading.tagName.substring(1)),
+    };
+  });
 };
 
 // Update TOC when route changes
 onMounted(() => {
-	// Wait for the content to be rendered
-	setTimeout(() => {
-		tableOfContents.value = generateTableOfContents();
-	}, 100);
+  setTimeout(() => {
+    tableOfContents.value = generateTableOfContents();
+  }, 100);
 });
 
 // Watch for route changes to update TOC
 watch(
-	() => route.path,
-	() => {
-		nextTick(() => {
-			setTimeout(() => {
-				tableOfContents.value = generateTableOfContents();
-			}, 100);
-		});
-	},
+  () => route.path,
+  () => {
+    nextTick(() => {
+      setTimeout(() => {
+        tableOfContents.value = generateTableOfContents();
+      }, 100);
+    });
+  }
 );
 </script>
