@@ -1,7 +1,73 @@
+
+<script setup lang="ts">
+import { ref, watch, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import { Logo, ToggleTheme } from './primitive';
+import type ButtonWorkOS from './ButtonWorkOS.vue';
+
+const menuItems = [
+  { name: 'Chat', path: '/chat' },
+  { name: 'Blog', path: '/blog' },
+  { name: 'Bookmark', path: '/bookmark' },
+  { name: 'Code', path: '/code' },
+  { name: 'Docs', path: '/docs' },
+  { name: 'Learn', path: '/learn' },
+  { name: 'Notes', path: '/notes' },
+  { name: 'Search', path: '/search' },
+  { name: 'Task', path: '/task' },
+  { name: 'Whiteboard', path: '/whiteboard' }
+];
+
+const route = useRoute();
+const isDark = ref(false);
+const isMobileMenuOpen = ref(false);
+const buttonWorkOSRef = ref<typeof ButtonWorkOS | null>(null);
+
+
+
+// Watch for theme changes
+watch(isDark, (newVal) => {
+  if (newVal) {
+    document.documentElement.classList.add('dark');
+    localStorage.theme = 'dark';
+  } else {
+    document.documentElement.classList.remove('dark');
+    localStorage.theme = 'light';
+  }
+});
+
+// Close mobile menu when route changes
+watch(() => route.path, () => {
+  isMobileMenuOpen.value = false;
+});
+
+// Check for saved theme preference
+onMounted(() => {
+  if (typeof window !== 'undefined') {
+    isDark.value = localStorage.theme === 'dark' || 
+      (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  }
+});
+
+const signIn = () => {
+  // Handle sign in
+  console.log('Sign in clicked');
+  // Example: navigate to sign in page
+  // navigateTo('/signin');
+};
+
+const getStarted = () => {
+  // Handle get started
+  console.log('Get started clicked');
+  // Example: navigate to sign up page
+  // navigateTo('/signup');
+};
+</script>
+
 <template>
   <nav class="bg-background shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between py-4">
+      <div class="flex items-center justify-between py-4">
         <!-- Left section - Logo -->
         <div class="flex-shrink-0 flex items-center">
           <NuxtLink to="/" class="flex items-center">
@@ -25,30 +91,17 @@
         </div>
 
         <!-- Right section - Theme Toggle and Buttons -->
-        <div class="flex items-center space-x-4">
+        <div class="flex items-center justify-end ml-auto space-x-2">
           <!-- Theme Toggle -->
           <div class="flex items-center">
-            <Toggle v-model="isDark" />
+            <ToggleTheme v-model="isDark" />
           </div>
           
-          <!-- Sign In Button -->
-          <Button 
-            variant="secondary" 
-            size="sm"
-            class="hidden md:inline-flex"
-            @click="signIn"
-          >
-            Sign In
-          </Button>
+          <!-- Auth Buttons -->
+          <div class="ml-2">
+            <ButtonWorkOS ref="buttonWorkOSRef" />
+          </div>
           
-          <!-- Get Started Button -->
-          <Button
-            size="sm"
-            class="hidden md:inline-flex"
-            @click="getStarted"
-          >
-            Get Started
-          </Button>
           
           <!-- Mobile menu button -->
           <div class="md:hidden flex items-center">
@@ -95,74 +148,6 @@
       </div>
     </div>
   </nav>
+
+  <!-- Auth Modal is now handled inside ButtonWorkOS component -->
 </template>
-
-<script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-import Logo from './Logo.vue';
-import Toggle from './Toggle.vue';
-import Button from './Button.vue';
-
-const menuItems = [
-  { name: 'Home', path: '/' },
-  { name: 'Chat', path: '/chat' },
-  { name: 'Blog', path: '/blog' },
-  { name: 'Bookmark', path: '/bookmark' },
-  { name: 'Code', path: '/code' },
-  { name: 'Docs', path: '/docs' },
-  { name: 'Learn', path: '/learn' },
-  { name: 'Notes', path: '/notes' },
-  { name: 'Search', path: '/search' },
-  { name: 'Task', path: '/task' },
-  { name: 'Whiteboard', path: '/whiteboard' }
-];
-
-const route = useRoute();
-const isDark = ref(false);
-const isMobileMenuOpen = ref(false);
-
-
-
-// Watch for theme changes
-watch(isDark, (newVal) => {
-  if (newVal) {
-    document.documentElement.classList.add('dark');
-    localStorage.theme = 'dark';
-  } else {
-    document.documentElement.classList.remove('dark');
-    localStorage.theme = 'light';
-  }
-});
-
-// Close mobile menu when route changes
-watch(() => route.path, () => {
-  isMobileMenuOpen.value = false;
-});
-
-// Check for saved theme preference
-onMounted(() => {
-  if (typeof window !== 'undefined') {
-    isDark.value = localStorage.theme === 'dark' || 
-      (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  }
-});
-
-const signIn = () => {
-  // Handle sign in
-  console.log('Sign in clicked');
-  // Example: navigate to sign in page
-  // navigateTo('/signin');
-};
-
-const getStarted = () => {
-  // Handle get started
-  console.log('Get started clicked');
-  // Example: navigate to sign up page
-  // navigateTo('/signup');
-};
-</script>
-
-<style scoped>
-/* Add any custom styles here if needed */
-</style>
