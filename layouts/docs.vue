@@ -3,8 +3,8 @@ import Nav from '~/components/Nav.vue';
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col bg-background text-text">
-    <Nav />
+  <div class="min-h-screen flex flex-col">
+
     <main class="flex-grow">
       <slot />
     </main>
