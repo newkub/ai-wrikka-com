@@ -38,13 +38,14 @@ export default defineConfig({
 	theme: {
 		colors: {
 			background: "var(--background)",
-			brand: "var(--brand)",
+			block: "var(--block)",
+			primary: "var(--primary)",
+			border: "var(--border)",
+			secondary: "var(--secondary)",
 			text: "var(--text)",
 			alert: "var(--alert)",
 			error: "var(--error)",
 			success: "var(--success)",
-			surface: "var(--surface)",
-			border: "var(--border)",
 		},
 		spacing: {
 			sm: "var(--spacing-unit)",
@@ -61,15 +62,22 @@ export default defineConfig({
 			DEFAULT: "var(--shadow-md)",
 			lg: "var(--shadow-lg)",
 		},
-		transitionDuration: {
-			DEFAULT: "var(--transition-duration)",
-			fast: "150ms",
-			slow: "var(--transition-duration-slow)",
+		border: {
+			DEFAULT: "var(--border)",
 		},
-		transitionTimingFunction: {
-			DEFAULT: "var(--transition-timing)",
-			ease: "var(--transition-timing-ease)",
-			linear: "var(--transition-timing-linear)",
+		breakpoints: {
+			mobile: "var(--breakpoints-mobile)",
+			tablet: "var(--breakpoints-tablet)",
+			desktop: "var(--breakpoints-desktop)",
+		},
+		transition: {
+			DEFAULT: "var(--transition)",
 		},
 	},
+	shortcuts: {
+		'block': '',
+		'text': '',
+		'grid': '',
+		'': '',
+	}
 });

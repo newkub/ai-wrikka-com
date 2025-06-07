@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useDropdown } from '~/composables/useDropdown';
+import { computed } from "vue";
+import { useDropdown } from "~/composables/useDropdown";
 
 const props = defineProps<{
-  isOpen: boolean;
-  position?: "left" | "right";
+	isOpen: boolean;
+	position?: "left" | "right";
 }>();
 
 const emit = defineEmits<{
-  close: [];
+	close: [];
 }>();
 
 const { dropdownRef, close } = useDropdown();
 
 // Sync with parent component's isOpen state
 const handleClose = () => {
-  close();
-  emit('close');
+	close();
+	emit("close");
 };
 
 const handleClickOutside = (event: MouseEvent) => {

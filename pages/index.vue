@@ -42,6 +42,6 @@
 <script setup lang="ts">
 // You can add any necessary component logic here
 definePageMeta({
-  layout: 'default'
-})
+	layout: "default",
+});
 </script>

@@ -1,37 +1,40 @@
 <script lang="ts" setup>
-import { ref, watch } from 'vue'
+import { ref, watch } from "vue";
 
 const props = defineProps({
-  modelValue: {
-    type: String,
-    default: ''
-  },
-  placeholder: {
-    type: String,
-    default: 'Search...'
-  },
-  debounce: {
-    type: Number,
-    default: 300
-  }
-})
+	modelValue: {
+		type: String,
+		default: "",
+	},
+	placeholder: {
+		type: String,
+		default: "Search...",
+	},
+	debounce: {
+		type: Number,
+		default: 300,
+	},
+});
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"]);
 
-const searchQuery = ref(props.modelValue)
-let timeout: ReturnType<typeof setTimeout> | null = null
+const searchQuery = ref(props.modelValue);
+let timeout: ReturnType<typeof setTimeout> | null = null;
 
 const updateSearch = (value: string) => {
-  if (timeout) clearTimeout(timeout)
-  
-  timeout = setTimeout(() => {
-    emit('update:modelValue', value)
-  }, props.debounce)
-}
+	if (timeout) clearTimeout(timeout);
 
-watch(() => props.modelValue, (newVal) => {
-  searchQuery.value = newVal
-})
+	timeout = setTimeout(() => {
+		emit("update:modelValue", value);
+	}, props.debounce);
+};
+
+watch(
+	() => props.modelValue,
+	(newVal) => {
+		searchQuery.value = newVal;
+	},
+);
 </script>
 
 <template>

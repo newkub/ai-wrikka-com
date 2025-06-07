@@ -65,36 +65,36 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, toRef } from 'vue';
-import { useModal } from '~/composables/useModal';
+import { ref, watch, toRef } from "vue";
+import { useModal } from "~/composables/useModal";
 
 interface ModalProps {
-  modelValue: boolean;
-  contentClass?: string;
-  title?: string;
-  titleId?: string;
-  showCloseButton?: boolean;
-  noPadding?: boolean;
+	modelValue: boolean;
+	contentClass?: string;
+	title?: string;
+	titleId?: string;
+	showCloseButton?: boolean;
+	noPadding?: boolean;
 }
 
 const props = withDefaults(defineProps<ModalProps>(), {
-  contentClass: '',
-  title: '',
-  titleId: 'modal-title',
-  showCloseButton: true,
-  noPadding: false,
+	contentClass: "",
+	title: "",
+	titleId: "modal-title",
+	showCloseButton: true,
+	noPadding: false,
 });
 
-const emit = defineEmits<(e: 'update:modelValue', value: boolean) => void>();
+const emit = defineEmits<(e: "update:modelValue", value: boolean) => void>();
 
 const modalRef = ref<HTMLElement | null>(null);
 
 const { isOpen, close } = useModal({
-  isOpen: toRef(props, 'modelValue'),
-  onClose: () => emit('update:modelValue', false),
+	isOpen: toRef(props, "modelValue"),
+	onClose: () => emit("update:modelValue", false),
 });
 
 const handleClose = () => {
-  close();
+	close();
 };
 </script>

@@ -1,6 +1,4 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import { defineNuxtConfig } from "nuxt/config";
-
 export default defineNuxtConfig({
 	compatibilityDate: "2025-05-21",
 
@@ -11,40 +9,29 @@ export default defineNuxtConfig({
 		},
 	},
 	devtools: { enabled: false },
-	css: [
-		"@unocss/reset/tailwind.css",
-		"~/assets/index.css",
-		"~/assets/content.css",
-	],
+	css: ["@unocss/reset/tailwind.css", "~/assets/design-tokens.css"],
 	app: {
 		head: {
-			charset: "utf-8",
-			viewport: "width=device-width, initial-scale=1",
-			title: "My Nuxt App",
-			meta: [{ name: "description", content: "My amazing Nuxt application" }],
-			link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
+			title: 'AI Wrikka',
+			htmlAttrs: {
+				lang: 'en',
+			},
+			meta: [
+				{ charset: 'utf-8' },
+				{ name: 'viewport', content: 'width=device-width, initial-scale=1' },
+				{ name: 'description', content: 'AI Wrikka Application' },
+			],
+			link: [
+				{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+			],
 		},
 	},
 
-	modules: [
-		"@unocss/nuxt",
-		"@vueuse/nuxt",
-		"@pinia/nuxt",
-	
-	],
+	modules: ["@unocss/nuxt", "@vueuse/nuxt", "@pinia/nuxt"],
 
-	mdc: {
-		highlight: {
-			theme: "github-dark",
-			preload: ["ts", "js", "vue", "html", "css", "json", "bash", "markdown"],
-		},
-		components: {
-			prose: true,
-		},
-	},
 	typescript: {
 		strict: true,
-		//typeCheck: true,
+		typeCheck : true
 	},
 	runtimeConfig: {
 		openaiApiKey: process.env.OPENAI_API_KEY,

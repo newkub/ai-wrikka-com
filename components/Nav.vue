@@ -6,9 +6,9 @@ import Avatar from "~/components/Avatar.vue";
 import Dropdown from "~/components/input/Dropdown.vue";
 import NavItems from "~/components/navigation/NavItems.vue";
 import Button from "~/components/button/Button.vue";
-import { useTheme } from '~/composables/useTheme';
-import { useModal } from '~/composables/useModal';
-import { useDropdown } from '~/composables/useDropdown';
+import { useTheme } from "~/composables/useTheme";
+import { useModal } from "~/composables/useModal";
+import { useDropdown } from "~/composables/useDropdown";
 
 // Theme
 const { isDark, toggleTheme } = useTheme();
@@ -16,44 +16,50 @@ const { isDark, toggleTheme } = useTheme();
 // Modals
 const { isOpen: showModalSettings, toggle: toggleSettings } = useModal();
 const { isOpen: showAuthModal, toggle: toggleAuth } = useModal();
-const { isOpen: showModalCommandPalette, toggle: toggleCommandPalette } = useModal();
+const { isOpen: showModalCommandPalette, toggle: toggleCommandPalette } =
+	useModal();
 
 // Dropdown
-const { isOpen: isProfileOpen, dropdownRef: profileDropdownRef, toggle: toggleProfile } = useDropdown();
+const {
+	isOpen: isProfileOpen,
+	dropdownRef: profileDropdownRef,
+	toggle: toggleProfile,
+} = useDropdown();
 const isDropdownOpen = ref(false);
 
 // Theme toggle is now handled by useTheme composable
 
 // Modal controls
-const openModal = (modal: "settings" | "profile" | "commandPalette") => (event: Event) => {
-  event.stopPropagation();
-  closeModals();
+const openModal =
+	(modal: "settings" | "profile" | "commandPalette") => (event: Event) => {
+		event.stopPropagation();
+		closeModals();
 
-  // Open the requested modal
-  switch (modal) {
-    case "settings":
-      showModalSettings.value = true;
-      break;
-    case "profile":
-      isProfileOpen.value = true;
-      isDropdownOpen.value = true;
-      break;
-    case "commandPalette":
-      showModalCommandPalette.value = true;
-      break;
-  }
+		// Open the requested modal
+		switch (modal) {
+			case "settings":
+				showModalSettings.value = true;
+				break;
+			case "profile":
+				isProfileOpen.value = true;
+				isDropdownOpen.value = true;
+				break;
+			case "commandPalette":
+				showModalCommandPalette.value = true;
+				break;
+		}
 
-  // Prevent body scroll when modal is open
-  document.body.style.overflow = "hidden";
-};
+		// Prevent body scroll when modal is open
+		document.body.style.overflow = "hidden";
+	};
 
 const closeModals = () => {
-  showModalSettings.value = false;
-  showAuthModal.value = false;
-  showModalCommandPalette.value = false;
-  isProfileOpen.value = false;
-  isDropdownOpen.value = false;
-  document.body.style.overflow = "";
+	showModalSettings.value = false;
+	showAuthModal.value = false;
+	showModalCommandPalette.value = false;
+	isProfileOpen.value = false;
+	isDropdownOpen.value = false;
+	document.body.style.overflow = "";
 };
 
 // User actions
@@ -70,11 +76,11 @@ const openBilling = (event: Event) => {
 };
 
 const toggleDropdown = (event: Event) => {
-  event.stopPropagation();
-  isDropdownOpen.value = !isDropdownOpen.value;
-  if (!isDropdownOpen.value) {
-    isProfileOpen.value = false;
-  }
+	event.stopPropagation();
+	isDropdownOpen.value = !isDropdownOpen.value;
+	if (!isDropdownOpen.value) {
+		isProfileOpen.value = false;
+	}
 };
 </script>
 

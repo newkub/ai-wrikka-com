@@ -1,158 +1,166 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { onClickOutside } from '@vueuse/core'
+import { ref, onMounted, onUnmounted, computed } from "vue";
+import { onClickOutside } from "@vueuse/core";
 
 defineOptions({
-  name: 'ButtonDropdownMenu'
-})
+	name: "ButtonDropdownMenu",
+});
 
 interface MenuItem {
-  label: string
-  icon?: string
-  action?: () => void
-  disabled?: boolean
-  divider?: boolean
-  children?: MenuItem[]
+	label: string;
+	icon?: string;
+	action?: () => void;
+	disabled?: boolean;
+	divider?: boolean;
+	children?: MenuItem[];
 }
 
 interface Props {
-  /** Button text */
-  label?: string
-  /** Button variant */
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'link' | 'danger'
-  /** Button size */
-  size?: 'sm' | 'md' | 'lg'
-  /** Show loading state */
-  loading?: boolean
-  /** Disable the button */
-  disabled?: boolean
-  /** Menu items */
-  items: MenuItem[]
-  /** Menu alignment */
-  align?: 'left' | 'right'
-  /** Trigger on hover */
-  hover?: boolean
-  /** Custom button class */
-  buttonClass?: string
-  /** Custom menu class */
-  menuClass?: string
+	/** Button text */
+	label?: string;
+	/** Button variant */
+	variant?: "primary" | "secondary" | "outline" | "ghost" | "link" | "danger";
+	/** Button size */
+	size?: "sm" | "md" | "lg";
+	/** Show loading state */
+	loading?: boolean;
+	/** Disable the button */
+	disabled?: boolean;
+	/** Menu items */
+	items: MenuItem[];
+	/** Menu alignment */
+	align?: "left" | "right";
+	/** Trigger on hover */
+	hover?: boolean;
+	/** Custom button class */
+	buttonClass?: string;
+	/** Custom menu class */
+	menuClass?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  variant: 'secondary',
-  size: 'md',
-  loading: false,
-  disabled: false,
-  align: 'left',
-  hover: false,
-  buttonClass: '',
-  menuClass: ''
-})
+	variant: "secondary",
+	size: "md",
+	loading: false,
+	disabled: false,
+	align: "left",
+	hover: false,
+	buttonClass: "",
+	menuClass: "",
+});
 
 const emit = defineEmits<{
-  select: [item: MenuItem]
-}>()
+	select: [item: MenuItem];
+}>();
 
-const isOpen = ref(false)
-const buttonRef = ref<HTMLElement | null>(null)
-const menuRef = ref<HTMLElement | null>(null)
+const isOpen = ref(false);
+const buttonRef = ref<HTMLElement | null>(null);
+const menuRef = ref<HTMLElement | null>(null);
 
 // Close menu when clicking outside
 onClickOutside(menuRef, (event) => {
-  if (buttonRef.value && !buttonRef.value.contains(event.target as Node)) {
-    isOpen.value = false
-  }
-})
+	if (buttonRef.value && !buttonRef.value.contains(event.target as Node)) {
+		isOpen.value = false;
+	}
+});
 
 // Handle keyboard navigation
 const handleKeydown = (e: KeyboardEvent) => {
-  if (e.key === 'Escape') {
-    isOpen.value = false
-  }
-}
+	if (e.key === "Escape") {
+		isOpen.value = false;
+	}
+};
 
 // Handle item click
 const handleItemClick = (item: MenuItem) => {
-  if (item.disabled) return
-  
-  if (item.action) {
-    item.action()
-  } else if (!item.children) {
-    emit('select', item)
-  }
-  
-  if (!item.children) {
-    isOpen.value = false
-  }
-}
+	if (item.disabled) return;
+
+	if (item.action) {
+		item.action();
+	} else if (!item.children) {
+		emit("select", item);
+	}
+
+	if (!item.children) {
+		isOpen.value = false;
+	}
+};
 
 // Toggle menu
 const toggleMenu = () => {
-  if (!props.disabled && !props.loading) {
-    isOpen.value = !isOpen.value
-  }
-}
+	if (!props.disabled && !props.loading) {
+		isOpen.value = !isOpen.value;
+	}
+};
 
 // Handle hover if enabled
 const onMouseEnter = () => {
-  if (props.hover && !props.disabled) {
-    isOpen.value = true
-  }
-}
+	if (props.hover && !props.disabled) {
+		isOpen.value = true;
+	}
+};
 
 const onMouseLeave = () => {
-  if (props.hover) {
-    isOpen.value = false
-  }
-}
+	if (props.hover) {
+		isOpen.value = false;
+	}
+};
 
 // Add/remove event listeners
 onMounted(() => {
-  document.addEventListener('keydown', handleKeydown)
-})
+	document.addEventListener("keydown", handleKeydown);
+});
 
 onUnmounted(() => {
-  document.removeEventListener('keydown', handleKeydown)
-})
+	document.removeEventListener("keydown", handleKeydown);
+});
 
 // Button classes
 const buttonClasses = computed(() => {
-  const base = 'inline-flex items-center justify-center rounded font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors'
-  
-  const variants = {
-    primary: 'bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500',
-    secondary: 'bg-gray-100 text-gray-700 hover:bg-gray-200 focus:ring-gray-500 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600',
-    outline: 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700',
-    ghost: 'text-gray-700 hover:bg-gray-100 focus:ring-primary-500 dark:text-gray-200 dark:hover:bg-gray-700',
-    link: 'text-primary-600 hover:text-primary-800 focus:ring-primary-500 dark:text-primary-400 dark:hover:text-primary-300',
-    danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500'
-  }
-  
-  const sizes = {
-    sm: 'px-2.5 py-1.5 text-xs',
-    md: 'px-3 py-2 text-sm',
-    lg: 'px-4 py-2 text-base'
-  }
-  
-  const disabledClass = 'opacity-50 cursor-not-allowed'
-  const loadingClass = 'opacity-75 cursor-wait'
-  
-  return [
-    base,
-    variants[props.variant],
-    sizes[props.size],
-    props.disabled ? disabledClass : '',
-    props.loading ? loadingClass : '',
-    props.buttonClass
-  ].filter(Boolean).join(' ')
-})
+	const base =
+		"inline-flex items-center justify-center rounded font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors";
+
+	const variants = {
+		primary:
+			"bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500",
+		secondary:
+			"bg-gray-100 text-gray-700 hover:bg-gray-200 focus:ring-gray-500 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600",
+		outline:
+			"border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700",
+		ghost:
+			"text-gray-700 hover:bg-gray-100 focus:ring-primary-500 dark:text-gray-200 dark:hover:bg-gray-700",
+		link: "text-primary-600 hover:text-primary-800 focus:ring-primary-500 dark:text-primary-400 dark:hover:text-primary-300",
+		danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
+	};
+
+	const sizes = {
+		sm: "px-2.5 py-1.5 text-xs",
+		md: "px-3 py-2 text-sm",
+		lg: "px-4 py-2 text-base",
+	};
+
+	const disabledClass = "opacity-50 cursor-not-allowed";
+	const loadingClass = "opacity-75 cursor-wait";
+
+	return [
+		base,
+		variants[props.variant],
+		sizes[props.size],
+		props.disabled ? disabledClass : "",
+		props.loading ? loadingClass : "",
+		props.buttonClass,
+	]
+		.filter(Boolean)
+		.join(" ");
+});
 
 // Menu classes
 const menuClasses = computed(() => {
-  const base = 'absolute z-50 mt-1 w-56 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none overflow-hidden transition-all duration-100 transform origin-top-right'
-  const alignment = props.align === 'right' ? 'right-0' : 'left-0'
-  return [base, alignment, props.menuClass].filter(Boolean).join(' ')
-})
+	const base =
+		"absolute z-50 mt-1 w-56 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none overflow-hidden transition-all duration-100 transform origin-top-right";
+	const alignment = props.align === "right" ? "right-0" : "left-0";
+	return [base, alignment, props.menuClass].filter(Boolean).join(" ");
+});
 </script>
 
 <template>

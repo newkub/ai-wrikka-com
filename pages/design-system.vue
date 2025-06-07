@@ -2,7 +2,7 @@
 import DesignSystem from "~/components/DesignSystem.vue";
 
 definePageMeta({
-  layout: 'default'
+	layout: "default",
 });
 </script>
 

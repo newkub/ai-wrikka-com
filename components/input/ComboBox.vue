@@ -1,468 +1,494 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from "vue";
 // Icons will be used from UnoCSS
-import { onClickOutside } from '@vueuse/core'
+import { onClickOutside } from "@vueuse/core";
 
 defineOptions({
-  name: 'ComboBox'
-})
+	name: "ComboBox",
+});
 
-type ItemValue = string | number | boolean | object | null | undefined
+type ItemValue = string | number | boolean | object | null | undefined;
 
 interface Item {
-  value: ItemValue
-  label: string
-  disabled?: boolean
-  [key: string]: unknown
+	value: ItemValue;
+	label: string;
+	disabled?: boolean;
+	[key: string]: unknown;
 }
 
 type ItemValueArray = ItemValue[];
 
 interface Props {
-  /** Selected value */
-  modelValue?: ItemValue | ItemValue[]
-  /** List of items */
-  items: Item[]
-  /** Label text */
-  label?: string
-  /** Placeholder text */
-  placeholder?: string
-  /** Disable the combobox */
-  disabled?: boolean
-  /** Show loading state */
-  loading?: boolean
-  /** Allow clearing the selection */
-  clearable?: boolean
-  /** Allow searching/filtering */
-  searchable?: boolean
-  /** Custom item text key */
-  itemText?: string
-  /** Custom item value key */
-  itemValue?: string
-  /** Custom no results text */
-  noResultsText?: string
-  /** Custom loading text */
-  loadingText?: string
-  /** Custom clear button text */
-  clearText?: string
-  /** Custom dropdown width */
-  dropdownWidth?: string
-  /** Custom dropdown max height */
-  dropdownMaxHeight?: string
-  /** Custom class for the combobox */
-  class?: string
-  /** Custom class for the dropdown */
-  dropdownClass?: string
-  /** Custom class for the input */
-  inputClass?: string
-  /** Custom class for the label */
-  labelClass?: string
-  /** Custom class for the error message */
-  errorClass?: string
-  /** Error message */
-  error?: string
-  /** Show error state */
-  hasError?: boolean
-  /** Allow multiple selection */
-  multiple?: boolean
+	/** Selected value */
+	modelValue?: ItemValue | ItemValue[];
+	/** List of items */
+	items: Item[];
+	/** Label text */
+	label?: string;
+	/** Placeholder text */
+	placeholder?: string;
+	/** Disable the combobox */
+	disabled?: boolean;
+	/** Show loading state */
+	loading?: boolean;
+	/** Allow clearing the selection */
+	clearable?: boolean;
+	/** Allow searching/filtering */
+	searchable?: boolean;
+	/** Custom item text key */
+	itemText?: string;
+	/** Custom item value key */
+	itemValue?: string;
+	/** Custom no results text */
+	noResultsText?: string;
+	/** Custom loading text */
+	loadingText?: string;
+	/** Custom clear button text */
+	clearText?: string;
+	/** Custom dropdown width */
+	dropdownWidth?: string;
+	/** Custom dropdown max height */
+	dropdownMaxHeight?: string;
+	/** Custom class for the combobox */
+	class?: string;
+	/** Custom class for the dropdown */
+	dropdownClass?: string;
+	/** Custom class for the input */
+	inputClass?: string;
+	/** Custom class for the label */
+	labelClass?: string;
+	/** Custom class for the error message */
+	errorClass?: string;
+	/** Error message */
+	error?: string;
+	/** Show error state */
+	hasError?: boolean;
+	/** Allow multiple selection */
+	multiple?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: null,
-  items: () => [],
-  label: '',
-  placeholder: 'Select an option',
-  disabled: false,
-  loading: false,
-  clearable: true,
-  searchable: true,
-  itemText: 'label',
-  itemValue: 'value',
-  noResultsText: 'No results found',
-  loadingText: 'Loading...',
-  clearText: 'Clear',
-  dropdownWidth: 'w-full',
-  dropdownMaxHeight: 'max-h-60',
-  class: '',
-  dropdownClass: '',
-  inputClass: '',
-  labelClass: '',
-  errorClass: '',
-  error: '',
-  hasError: false,
-  multiple: false
-})
+	modelValue: null,
+	items: () => [],
+	label: "",
+	placeholder: "Select an option",
+	disabled: false,
+	loading: false,
+	clearable: true,
+	searchable: true,
+	itemText: "label",
+	itemValue: "value",
+	noResultsText: "No results found",
+	loadingText: "Loading...",
+	clearText: "Clear",
+	dropdownWidth: "w-full",
+	dropdownMaxHeight: "max-h-60",
+	class: "",
+	dropdownClass: "",
+	inputClass: "",
+	labelClass: "",
+	errorClass: "",
+	error: "",
+	hasError: false,
+	multiple: false,
+});
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: ItemValue | ItemValue[]): void;
-  (e: 'update:search', value: string): void;
-  (e: 'change', value: ItemValue | ItemValue[]): void;
-  (e: 'open'): void;
-  (e: 'close'): void;
-  (e: 'clear'): void;
-}>()
+	(e: "update:modelValue", value: ItemValue | ItemValue[]): void;
+	(e: "update:search", value: string): void;
+	(e: "change", value: ItemValue | ItemValue[]): void;
+	(e: "open"): void;
+	(e: "close"): void;
+	(e: "clear"): void;
+}>();
 
 const comboboxRef = ref<HTMLElement | null>(null);
 const dropdownRef = ref<HTMLElement | null>(null);
 const inputRef = ref<HTMLInputElement | null>(null);
 const isOpen = ref(false);
-const searchQuery = ref('');
+const searchQuery = ref("");
 const highlightedIndex = ref(-1);
 const selectedItems = ref<Item[]>([]);
 
 // Type guard to check if a value is an array of ItemValue
 const isItemValueArray = (value: unknown): value is ItemValue[] => {
-  return Array.isArray(value) && value.every(v => 
-    typeof v === 'string' || 
-    typeof v === 'number' || 
-    typeof v === 'boolean' || 
-    v === null || 
-    v === undefined || 
-    typeof v === 'object'
-  );
+	return (
+		Array.isArray(value) &&
+		value.every(
+			(v) =>
+				typeof v === "string" ||
+				typeof v === "number" ||
+				typeof v === "boolean" ||
+				v === null ||
+				v === undefined ||
+				typeof v === "object",
+		)
+	);
 };
 
 // Update selected items when modelValue changes
-watch(() => props.modelValue, (newVal: ItemValue | ItemValue[] | null | undefined) => {
-  updateSelectedItems(newVal);
-}, { immediate: true });
+watch(
+	() => props.modelValue,
+	(newVal: ItemValue | ItemValue[] | null | undefined) => {
+		updateSelectedItems(newVal);
+	},
+	{ immediate: true },
+);
 
 // Update search query when items change
-watch(() => props.items, () => {
-  if (searchQuery.value) {
-    highlightedIndex.value = 0;
-  }
-}, { deep: true });
+watch(
+	() => props.items,
+	() => {
+		if (searchQuery.value) {
+			highlightedIndex.value = 0;
+		}
+	},
+	{ deep: true },
+);
 
 // Filter items based on search query
 const filteredItems = computed(() => {
-  if (!props.searchable || !searchQuery.value) {
-    return props.items
-  }
-  
-  const query = searchQuery.value.toLowerCase()
-  return props.items.filter(item => {
-    const label = getItemLabel(item);
-    return typeof label === 'string' && label.toLowerCase().includes(query);
-  })
-})
+	if (!props.searchable || !searchQuery.value) {
+		return props.items;
+	}
+
+	const query = searchQuery.value.toLowerCase();
+	return props.items.filter((item) => {
+		const label = getItemLabel(item);
+		return typeof label === "string" && label.toLowerCase().includes(query);
+	});
+});
 
 // Check if an item is selected
 const isSelected = (item: Item): boolean => {
-  const itemValue = getItemValue(item);
-  if (itemValue === null || itemValue === undefined) return false;
-  
-  if (props.multiple && Array.isArray(props.modelValue)) {
-    return props.modelValue.some(val => 
-      val !== null && val !== undefined && val === itemValue
-    );
-  }
-  
-  return itemValue === props.modelValue;
-}
+	const itemValue = getItemValue(item);
+	if (itemValue === null || itemValue === undefined) return false;
+
+	if (props.multiple && Array.isArray(props.modelValue)) {
+		return props.modelValue.some(
+			(val) => val !== null && val !== undefined && val === itemValue,
+		);
+	}
+
+	return itemValue === props.modelValue;
+};
 
 // Get item label
 const getItemLabel = (item: Item): string => {
-  const label = item[props.itemText];
-  return typeof label === 'string' ? label : String(label || '');
-}
+	const label = item[props.itemText];
+	return typeof label === "string" ? label : String(label || "");
+};
 
 // Get item value
 const getItemValue = (item: Item): ItemValue => {
-  if (props.itemValue in item) {
-    const value = item[props.itemValue];
-    if (value !== undefined && value !== null) {
-      return value as ItemValue;
-    }
-  }
-  
-  if ('value' in item && item.value !== undefined) {
-    return item.value as ItemValue;
-  }
-  
-  return null;
+	if (props.itemValue in item) {
+		const value = item[props.itemValue];
+		if (value !== undefined && value !== null) {
+			return value as ItemValue;
+		}
+	}
+
+	if ("value" in item && item.value !== undefined) {
+		return item.value as ItemValue;
+	}
+
+	return null;
 };
 
 // Update selected items based on modelValue
-const updateSelectedItems = (value: ItemValue | ItemValue[] | null | undefined) => {
-  if (value === null || value === undefined) {
-    selectedItems.value = [];
-    return;
-  }
-  
-  if (Array.isArray(value)) {
-    selectedItems.value = value
-      .filter((val): val is ItemValue => val !== null && val !== undefined)
-      .map(val => {
-        // Find the item with matching value
-        const foundItem = props.items.find(item => {
-          const itemVal = getItemValue(item);
-          return itemVal !== null && itemVal !== undefined && itemVal === val;
-        });
-        
-        // Return the found item or create a new one
-        return foundItem || { 
-          value: val, 
-          label: typeof val === 'object' ? JSON.stringify(val) : String(val),
-          disabled: false
-        };
-      });
-  } else {
-    // Handle single value
-    const selectedItem = props.items.find(item => {
-      const itemVal = getItemValue(item);
-      return itemVal !== null && itemVal !== undefined && itemVal === value;
-    });
-    
-    selectedItems.value = selectedItem ? [selectedItem] : [];
-  }
+const updateSelectedItems = (
+	value: ItemValue | ItemValue[] | null | undefined,
+) => {
+	if (value === null || value === undefined) {
+		selectedItems.value = [];
+		return;
+	}
+
+	if (Array.isArray(value)) {
+		selectedItems.value = value
+			.filter((val): val is ItemValue => val !== null && val !== undefined)
+			.map((val) => {
+				// Find the item with matching value
+				const foundItem = props.items.find((item) => {
+					const itemVal = getItemValue(item);
+					return itemVal !== null && itemVal !== undefined && itemVal === val;
+				});
+
+				// Return the found item or create a new one
+				return (
+					foundItem || {
+						value: val,
+						label: typeof val === "object" ? JSON.stringify(val) : String(val),
+						disabled: false,
+					}
+				);
+			});
+	} else {
+		// Handle single value
+		const selectedItem = props.items.find((item) => {
+			const itemVal = getItemValue(item);
+			return itemVal !== null && itemVal !== undefined && itemVal === value;
+		});
+
+		selectedItems.value = selectedItem ? [selectedItem] : [];
+	}
 };
 
 // Handle item selection
 const selectItem = (item: Item) => {
-  if (item.disabled) return
-  
-  if (props.multiple) {
-    const itemValue = getItemValue(item)
-    if (itemValue === null || itemValue === undefined) return;
-    
-    const currentValue = Array.isArray(props.modelValue) 
-      ? [...props.modelValue].filter((v): v is ItemValue => v !== null && v !== undefined)
-      : []
-      
-    const index = currentValue.findIndex(val => val === itemValue)
-    
-    const newValue = [...currentValue]
-    if (index === -1) {
-      newValue.push(itemValue)
-    } else {
-      newValue.splice(index, 1)
-    }
-    
-    emit('update:modelValue', newValue)
-    emit('change', newValue)
-  } else {
-    const newValue = getItemValue(item)
-    emit('update:modelValue', newValue)
-    emit('change', newValue)
-    
-    // Close dropdown for single select
-    closeDropdown()
-  }
-  
-  // Reset search query
-  searchQuery.value = ''
-}
+	if (item.disabled) return;
+
+	if (props.multiple) {
+		const itemValue = getItemValue(item);
+		if (itemValue === null || itemValue === undefined) return;
+
+		const currentValue = Array.isArray(props.modelValue)
+			? [...props.modelValue].filter(
+					(v): v is ItemValue => v !== null && v !== undefined,
+				)
+			: [];
+
+		const index = currentValue.findIndex((val) => val === itemValue);
+
+		const newValue = [...currentValue];
+		if (index === -1) {
+			newValue.push(itemValue);
+		} else {
+			newValue.splice(index, 1);
+		}
+
+		emit("update:modelValue", newValue);
+		emit("change", newValue);
+	} else {
+		const newValue = getItemValue(item);
+		emit("update:modelValue", newValue);
+		emit("change", newValue);
+
+		// Close dropdown for single select
+		closeDropdown();
+	}
+
+	// Reset search query
+	searchQuery.value = "";
+};
 
 // Handle input change
 const handleInput = (event: Event) => {
-  const target = event.target as HTMLInputElement | null;
-  if (!target) return;
-  
-  const value = target.value || '';
-  searchQuery.value = value;
-  emit('update:search', value);
-  
-  // Reset highlighted index when searching
-  highlightedIndex.value = -1;
-  
-  if (!isOpen.value) {
-    openDropdown();
-  }
+	const target = event.target as HTMLInputElement | null;
+	if (!target) return;
+
+	const value = target.value || "";
+	searchQuery.value = value;
+	emit("update:search", value);
+
+	// Reset highlighted index when searching
+	highlightedIndex.value = -1;
+
+	if (!isOpen.value) {
+		openDropdown();
+	}
 };
 
 // Toggle dropdown
 const toggleDropdown = () => {
-  if (props.disabled || props.loading) return
-  
-  if (isOpen.value) {
-    closeDropdown()
-  } else {
-    openDropdown()
-  }
-}
+	if (props.disabled || props.loading) return;
+
+	if (isOpen.value) {
+		closeDropdown();
+	} else {
+		openDropdown();
+	}
+};
 
 // Open dropdown
 const openDropdown = () => {
-  if (isOpen.value || props.disabled || props.loading) return
-  
-  isOpen.value = true
-  emit('open')
-  
-  // Focus input when dropdown opens
-  nextTick(() => {
-    if (props.searchable && inputRef.value) {
-      inputRef.value.focus()
-    }
-  })
-}
+	if (isOpen.value || props.disabled || props.loading) return;
+
+	isOpen.value = true;
+	emit("open");
+
+	// Focus input when dropdown opens
+	nextTick(() => {
+		if (props.searchable && inputRef.value) {
+			inputRef.value.focus();
+		}
+	});
+};
 
 // Close dropdown
 const closeDropdown = () => {
-  if (!isOpen.value) return
-  
-  isOpen.value = false
-  searchQuery.value = ''
-  highlightedIndex.value = -1
-  emit('close')
-}
+	if (!isOpen.value) return;
+
+	isOpen.value = false;
+	searchQuery.value = "";
+	highlightedIndex.value = -1;
+	emit("close");
+};
 
 // Handle clear button click
 const handleClear = (event: Event) => {
-  event.stopPropagation()
-  clearSelection(event)
-  
-  if (inputRef.value) {
-    inputRef.value.focus()
-  }
-  
-  // Reset search query
-  searchQuery.value = '';
-  emit('update:search', '');
-}
+	event.stopPropagation();
+	clearSelection(event);
+
+	if (inputRef.value) {
+		inputRef.value.focus();
+	}
+
+	// Reset search query
+	searchQuery.value = "";
+	emit("update:search", "");
+};
 
 // Clear selection
 const clearSelection = (event: Event) => {
-  event.stopPropagation()
-  
-  if (props.disabled || props.loading) return
-  
-  const newValue = props.multiple ? [] : null
-  emit('update:modelValue', newValue)
-  emit('change', newValue)
-  emit('clear')
-  
-  // Close dropdown if open
-  if (isOpen.value) {
-    closeDropdown()
-  }
-}
+	event.stopPropagation();
+
+	if (props.disabled || props.loading) return;
+
+	const newValue = props.multiple ? [] : null;
+	emit("update:modelValue", newValue);
+	emit("change", newValue);
+	emit("clear");
+
+	// Close dropdown if open
+	if (isOpen.value) {
+		closeDropdown();
+	}
+};
 
 // Handle keyboard navigation
 const handleKeydown = (event: KeyboardEvent) => {
-  if (!isOpen.value) {
-    if (['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(event.key)) {
-      event.preventDefault();
-      openDropdown();
-    }
-    return;
-  }
-  
-  const handleArrowDown = () => {
-    event.preventDefault();
-    if (highlightedIndex.value < filteredItems.value.length - 1) {
-      highlightedIndex.value++;
-      scrollToHighlighted();
-    }
-  };
-  
-  const handleArrowUp = () => {
-    event.preventDefault();
-    if (highlightedIndex.value > 0) {
-      highlightedIndex.value--;
-      scrollToHighlighted();
-    }
-  };
-  
-  const handleEnterOrSpace = () => {
-    event.preventDefault();
-    const item = filteredItems.value[highlightedIndex.value];
-    if (item && !item.disabled) {
-      selectItem(item);
-    }
-  };
-  
-  const keyHandlers: Record<string, () => void> = {
-    Escape: () => {
-      event.preventDefault();
-      closeDropdown();
-    },
-    ArrowDown: handleArrowDown,
-    ArrowUp: handleArrowUp,
-    Enter: handleEnterOrSpace,
-    ' ': handleEnterOrSpace,
-    Tab: () => closeDropdown(),
-  };
-  
-  const handler = keyHandlers[event.key];
-  if (handler) {
-    handler();
-  }
-}
+	if (!isOpen.value) {
+		if (["ArrowDown", "ArrowUp", "Enter", " "].includes(event.key)) {
+			event.preventDefault();
+			openDropdown();
+		}
+		return;
+	}
+
+	const handleArrowDown = () => {
+		event.preventDefault();
+		if (highlightedIndex.value < filteredItems.value.length - 1) {
+			highlightedIndex.value++;
+			scrollToHighlighted();
+		}
+	};
+
+	const handleArrowUp = () => {
+		event.preventDefault();
+		if (highlightedIndex.value > 0) {
+			highlightedIndex.value--;
+			scrollToHighlighted();
+		}
+	};
+
+	const handleEnterOrSpace = () => {
+		event.preventDefault();
+		const item = filteredItems.value[highlightedIndex.value];
+		if (item && !item.disabled) {
+			selectItem(item);
+		}
+	};
+
+	const keyHandlers: Record<string, () => void> = {
+		Escape: () => {
+			event.preventDefault();
+			closeDropdown();
+		},
+		ArrowDown: handleArrowDown,
+		ArrowUp: handleArrowUp,
+		Enter: handleEnterOrSpace,
+		" ": handleEnterOrSpace,
+		Tab: () => closeDropdown(),
+	};
+
+	const handler = keyHandlers[event.key];
+	if (handler) {
+		handler();
+	}
+};
 
 // Scroll to highlighted item
 const scrollToHighlighted = () => {
-  if (!dropdownRef.value) return;
-  
-  const items = dropdownRef.value.querySelectorAll<HTMLElement>('[role="option"]');
-  const targetItem = items[highlightedIndex.value];
-  
-  if (targetItem) {
-    targetItem.scrollIntoView({
-      behavior: 'smooth',
-      block: 'nearest',
-      inline: 'nearest'
-    });
-  }
-}
+	if (!dropdownRef.value) return;
+
+	const items =
+		dropdownRef.value.querySelectorAll<HTMLElement>('[role="option"]');
+	const targetItem = items[highlightedIndex.value];
+
+	if (targetItem) {
+		targetItem.scrollIntoView({
+			behavior: "smooth",
+			block: "nearest",
+			inline: "nearest",
+		});
+	}
+};
 
 // Handle click outside
 onClickOutside(comboboxRef, () => {
-  closeDropdown()
-})
+	closeDropdown();
+});
 
 // Add/remove event listeners
 onMounted(() => {
-  document.addEventListener('keydown', handleKeydown)
-})
+	document.addEventListener("keydown", handleKeydown);
+});
 
 onUnmounted(() => {
-  document.removeEventListener('keydown', handleKeydown)
-})
+	document.removeEventListener("keydown", handleKeydown);
+});
 
 // Computed classes
 const comboboxClasses = computed(() => {
-  const base = 'relative w-full'
-  return [base, props.class].filter(Boolean).join(' ')
-})
+	const base = "relative w-full";
+	return [base, props.class].filter(Boolean).join(" ");
+});
 
 const inputWrapperClasses = computed(() => {
-  const base = 'relative mt-1 rounded-md shadow-sm'
-  return [base].filter(Boolean).join(' ')
-})
+	const base = "relative mt-1 rounded-md shadow-sm";
+	return [base].filter(Boolean).join(" ");
+});
 
 const inputClasses = computed(() => {
-  const base = 'block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm'
-  const disabled = 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-700'
-  const error = 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-500 focus:outline-none focus:ring-red-500'
-  
-  return [
-    base,
-    props.disabled ? disabled : '',
-    props.hasError || props.error ? error : '',
-    props.inputClass
-  ].filter(Boolean).join(' ')
-})
+	const base =
+		"block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm";
+	const disabled = "opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-700";
+	const error =
+		"border-red-300 text-red-900 placeholder-red-300 focus:border-red-500 focus:outline-none focus:ring-red-500";
+
+	return [
+		base,
+		props.disabled ? disabled : "",
+		props.hasError || props.error ? error : "",
+		props.inputClass,
+	]
+		.filter(Boolean)
+		.join(" ");
+});
 
 const labelClasses = computed(() => {
-  const base = 'block text-sm font-medium text-gray-700 dark:text-gray-300'
-  return [base, props.labelClass].filter(Boolean).join(' ')
-})
+	const base = "block text-sm font-medium text-gray-700 dark:text-gray-300";
+	return [base, props.labelClass].filter(Boolean).join(" ");
+});
 
 const errorClasses = computed(() => {
-  const base = 'mt-1 text-sm text-red-600 dark:text-red-400'
-  return [base, props.errorClass].filter(Boolean).join(' ')
-})
+	const base = "mt-1 text-sm text-red-600 dark:text-red-400";
+	return [base, props.errorClass].filter(Boolean).join(" ");
+});
 
 const dropdownClasses = computed(() => {
-  const base = 'absolute z-10 mt-1 w-full rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none overflow-auto'
-  return [
-    base,
-    props.dropdownWidth,
-    props.dropdownMaxHeight,
-    props.dropdownClass
-  ].filter(Boolean).join(' ')
-})
+	const base =
+		"absolute z-10 mt-1 w-full rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none overflow-auto";
+	return [
+		base,
+		props.dropdownWidth,
+		props.dropdownMaxHeight,
+		props.dropdownClass,
+	]
+		.filter(Boolean)
+		.join(" ");
+});
 </script>
 
 <template>

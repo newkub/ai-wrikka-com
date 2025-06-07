@@ -1,76 +1,76 @@
 <script setup lang="ts">
-import { watch } from 'vue';
-import { useEditor } from '~/composables/useEditor';
+import { watch } from "vue";
+import { useEditor } from "~/composables/useEditor";
 
 interface EditorProps {
-  modelValue: string;
-  language?: string;
-  readOnly?: boolean;
-  lineNumbers?: boolean;
-  theme?: string;
-  [key: string]: string | boolean | undefined; // Index signature for component props
+	modelValue: string;
+	language?: string;
+	readOnly?: boolean;
+	lineNumbers?: boolean;
+	theme?: string;
+	[key: string]: string | boolean | undefined; // Index signature for component props
 }
 
 const props = withDefaults(defineProps<EditorProps>(), {
-  modelValue: '',
-  language: 'typescript',
-  readOnly: false,
-  lineNumbers: true,
-  theme: 'vs-dark',
+	modelValue: "",
+	language: "typescript",
+	readOnly: false,
+	lineNumbers: true,
+	theme: "vs-dark",
 });
 
 const emit = defineEmits<{
-  'update:modelValue': [value: string];
+	"update:modelValue": [value: string];
 }>();
 
 const {
-  editorContent,
-  editorOptions,
-  tabs,
-  activeTabId,
-  isEditorReady,
-  editorInstance,
-  setActiveTab,
-  updateContent,
-  getActiveTab,
-  addTab,
-  closeTab,
-  onEditorMounted,
+	editorContent,
+	editorOptions,
+	tabs,
+	activeTabId,
+	isEditorReady,
+	editorInstance,
+	setActiveTab,
+	updateContent,
+	getActiveTab,
+	addTab,
+	closeTab,
+	onEditorMounted,
 } = useEditor(props.modelValue, {
-  theme: props.theme as 'vs' | 'vs-dark' | 'hc-black' | 'hc-light',
-  lineNumbers: props.lineNumbers ? 'on' : 'off',
-  minimap: { enabled: true },
-  readOnly: props.readOnly,
-  wordWrap: 'on',
+	theme: props.theme as "vs" | "vs-dark" | "hc-black" | "hc-light",
+	lineNumbers: props.lineNumbers ? "on" : "off",
+	minimap: { enabled: true },
+	readOnly: props.readOnly,
+	wordWrap: "on",
 });
 
 // Watch for content changes from parent
 watch(
-  () => props.modelValue,
-  (newVal) => {
-    if (newVal !== editorContent.value) {
-      updateContent(newVal);
-    }
-  }
+	() => props.modelValue,
+	(newVal) => {
+		if (newVal !== editorContent.value) {
+			updateContent(newVal);
+		}
+	},
 );
 
 // Emit updates from the editor
 watch(editorContent, (newVal) => {
-  emit('update:modelValue', newVal);
+	emit("update:modelValue", newVal);
 });
 
 // Expose methods
 const getValue = () => editorContent.value;
 const setValue = (value: string) => {
-  updateContent(value);
+	updateContent(value);
 };
 
 defineExpose({
-  getValue,
-  setValue,
-  setActiveTab,
-  editor: editorInstance,
-  isReady: isEditorReady,
+	getValue,
+	setValue,
+	setActiveTab,
+	editor: editorInstance,
+	isReady: isEditorReady,
 });
 </script>
 

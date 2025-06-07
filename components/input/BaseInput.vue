@@ -1,61 +1,63 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed } from "vue";
 
 export interface InputProps {
-  modelValue?: string | number
-  type?: 'text' | 'email' | 'tel' | 'number' | 'search' | 'password'
-  placeholder?: string
-  disabled?: boolean
-  error?: boolean
-  errorMessage?: string
-  label?: string
-  id?: string
-  name?: string
-  required?: boolean
-  autocomplete?: string
+	modelValue?: string | number;
+	type?: "text" | "email" | "tel" | "number" | "search" | "password";
+	placeholder?: string;
+	disabled?: boolean;
+	error?: boolean;
+	errorMessage?: string;
+	label?: string;
+	id?: string;
+	name?: string;
+	required?: boolean;
+	autocomplete?: string;
 }
 
 const props = withDefaults(defineProps<InputProps>(), {
-  modelValue: '',
-  type: 'text',
-  placeholder: '',
-  disabled: false,
-  error: false,
-  errorMessage: '',
-  label: '',
-  id: '',
-  name: '',
-  required: false,
-  autocomplete: 'off'
-})
+	modelValue: "",
+	type: "text",
+	placeholder: "",
+	disabled: false,
+	error: false,
+	errorMessage: "",
+	label: "",
+	id: "",
+	name: "",
+	required: false,
+	autocomplete: "off",
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: string | number]
-}>()
+	"update:modelValue": [value: string | number];
+}>();
 
 const computedValue = computed({
-  get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value)
-})
+	get: () => props.modelValue,
+	set: (value) => emit("update:modelValue", value),
+});
 
-const inputId = computed(() => props.id || `input-${Math.random().toString(36).slice(2, 11)}`)
+const inputId = computed(
+	() => props.id || `input-${Math.random().toString(36).slice(2, 11)}`,
+);
 
 const inputClasses = computed(() => ({
-  'w-full px-3 py-2 border rounded-md': true,
-  'border-red-500': props.error,
-  'border-gray-300 dark:border-gray-600': !props.error,
-  'bg-gray-100 dark:bg-gray-700 cursor-not-allowed': props.disabled,
-  'bg-white dark:bg-gray-800': !props.disabled,
-  'focus:ring-2 focus:ring-primary-500 focus:border-transparent': !props.error,
-  'focus:ring-red-500 focus:border-transparent': props.error,
-  'text-gray-900 dark:text-gray-100': true,
-  'placeholder-gray-400 dark:placeholder-gray-500': true,
-  'transition duration-150 ease-in-out': true
-}))
+	"w-full px-3 py-2 border rounded-md": true,
+	"border-red-500": props.error,
+	"border-gray-300 dark:border-gray-600": !props.error,
+	"bg-gray-100 dark:bg-gray-700 cursor-not-allowed": props.disabled,
+	"bg-white dark:bg-gray-800": !props.disabled,
+	"focus:ring-2 focus:ring-primary-500 focus:border-transparent": !props.error,
+	"focus:ring-red-500 focus:border-transparent": props.error,
+	"text-gray-900 dark:text-gray-100": true,
+	"placeholder-gray-400 dark:placeholder-gray-500": true,
+	"transition duration-150 ease-in-out": true,
+}));
 
 defineOptions({
-  name: 'Input'
-})
+	name: "Input",
+});
 </script>
 
 <template>

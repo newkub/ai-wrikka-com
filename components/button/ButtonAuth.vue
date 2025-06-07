@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import ModalAuth from '~/components/modal/ModalAuth.vue'
-import type { AuthSuccessData } from '~/components/modal/ModalAuth.vue'
+import { ref } from "vue";
+import ModalAuth from "~/components/modal/ModalAuth.vue";
+import type { AuthSuccessData } from "~/components/modal/ModalAuth.vue";
 
-const isModalOpen = ref(false)
+const isModalOpen = ref(false);
 
 const openAuthModal = () => {
-  isModalOpen.value = true
-}
+	isModalOpen.value = true;
+};
 
 const onAuthSuccess = (data: AuthSuccessData) => {
-  // Handle successful authentication
-  console.log('Authentication successful:', data)
-  isModalOpen.value = false
-}
+	// Handle successful authentication
+	console.log("Authentication successful:", data);
+	isModalOpen.value = false;
+};
 
 const onModalClose = () => {
-  isModalOpen.value = false
-}
+	isModalOpen.value = false;
+};
 </script>
 
 <template>

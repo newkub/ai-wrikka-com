@@ -1,100 +1,100 @@
 <script setup lang="ts">
-import { watch } from 'vue';
-import { useBrowser } from '~/composables/useBrowser';
+import { watch } from "vue";
+import { useBrowser } from "~/composables/useBrowser";
 
 interface BrowserProps {
-  url?: string;
-  showControls?: boolean;
-  showAddressBar?: boolean;
-  height?: string;
-  loadingText?: string;
+	url?: string;
+	showControls?: boolean;
+	showAddressBar?: boolean;
+	height?: string;
+	loadingText?: string;
 }
 
 const props = withDefaults(defineProps<BrowserProps>(), {
-  url: 'https://example.com',
-  showControls: true,
-  showAddressBar: true,
-  height: '300px',
-  loadingText: 'Loading...',
+	url: "https://example.com",
+	showControls: true,
+	showAddressBar: true,
+	height: "300px",
+	loadingText: "Loading...",
 });
 
 const emit = defineEmits<{
-  (e: 'update:url', url: string): void;
-  (e: 'navigate', url: string): void;
-  (e: 'refresh'): void;
-  (e: 'back'): void;
-  (e: 'forward'): void;
+	(e: "update:url", url: string): void;
+	(e: "navigate", url: string): void;
+	(e: "refresh"): void;
+	(e: "back"): void;
+	(e: "forward"): void;
 }>();
 
 const {
-  currentUrl,
-  isLoading,
-  iframeRef,
-  canGoBack,
-  canGoForward,
-  navigate: browserNavigate,
-  refresh: browserRefresh,
-  goBack: browserGoBack,
-  goForward: browserGoForward,
-  onIframeLoad: browserOnIframeLoad,
-  onIframeLoadStart: browserOnIframeLoadStart,
+	currentUrl,
+	isLoading,
+	iframeRef,
+	canGoBack,
+	canGoForward,
+	navigate: browserNavigate,
+	refresh: browserRefresh,
+	goBack: browserGoBack,
+	goForward: browserGoForward,
+	onIframeLoad: browserOnIframeLoad,
+	onIframeLoadStart: browserOnIframeLoadStart,
 } = useBrowser({
-  initialUrl: props.url,
-  showControls: props.showControls,
-  showAddressBar: props.showAddressBar,
-  enableHistory: true,
+	initialUrl: props.url,
+	showControls: props.showControls,
+	showAddressBar: props.showAddressBar,
+	enableHistory: true,
 });
 
 // Handle navigation with emit
 const navigate = () => {
-  const newUrl = browserNavigate(currentUrl.value);
-  if (newUrl) {
-    emit('navigate', newUrl);
-  }
+	const newUrl = browserNavigate(currentUrl.value);
+	if (newUrl) {
+		emit("navigate", newUrl);
+	}
 };
 
 // Handle refresh with emit
 const refresh = () => {
-  if (browserRefresh()) {
-    emit('refresh');
-  }
+	if (browserRefresh()) {
+		emit("refresh");
+	}
 };
 
 // Handle back with emit
 const goBack = () => {
-  const result = browserGoBack();
-  if (result) {
-    emit('back');
-  }
+	const result = browserGoBack();
+	if (result) {
+		emit("back");
+	}
 };
 
 // Handle forward with emit
 const goForward = () => {
-  const result = browserGoForward();
-  if (result) {
-    emit('forward');
-  }
+	const result = browserGoForward();
+	if (result) {
+		emit("forward");
+	}
 };
 
 // Handle iframe load events
 const onIframeLoad = () => {
-  browserOnIframeLoad();
-  if (iframeRef.value?.contentWindow?.location.href) {
-    const newUrl = iframeRef.value.contentWindow.location.href;
-    emit('update:url', newUrl);
-  }
+	browserOnIframeLoad();
+	if (iframeRef.value?.contentWindow?.location.href) {
+		const newUrl = iframeRef.value.contentWindow.location.href;
+		emit("update:url", newUrl);
+	}
 };
 
 const onIframeLoadStart = browserOnIframeLoadStart;
 
 // Watch for URL changes from parent
 watch(
-  () => props.url,
-  (newUrl) => {
-    if (newUrl && newUrl !== currentUrl.value) {
-      currentUrl.value = newUrl;
-    }
-  },
+	() => props.url,
+	(newUrl) => {
+		if (newUrl && newUrl !== currentUrl.value) {
+			currentUrl.value = newUrl;
+		}
+	},
 );
 </script>
 

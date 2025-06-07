@@ -1,157 +1,166 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch } from "vue";
 // Icons will be used from UnoCSS
 
 interface Props {
-  /** Current page number (1-based) */
-  currentPage: number
-  /** Total number of items */
-  totalItems: number
-  /** Number of items per page */
-  pageSize: number
-  /** Available page size options */
-  pageSizeOptions?: number[]
-  /** Show page size selector */
-  showPageSize?: boolean
-  /** Show page info */
-  showInfo?: boolean
-  /** Maximum number of page buttons to show */
-  maxButtons?: number
-  /** Custom class for the pagination container */
-  class?: string
+	/** Current page number (1-based) */
+	currentPage: number;
+	/** Total number of items */
+	totalItems: number;
+	/** Number of items per page */
+	pageSize: number;
+	/** Available page size options */
+	pageSizeOptions?: number[];
+	/** Show page size selector */
+	showPageSize?: boolean;
+	/** Show page info */
+	showInfo?: boolean;
+	/** Maximum number of page buttons to show */
+	maxButtons?: number;
+	/** Custom class for the pagination container */
+	class?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  pageSizeOptions: () => [10, 20, 30, 50, 100],
-  showPageSize: true,
-  showInfo: true,
-  maxButtons: 5,
-  class: ''
-})
+	pageSizeOptions: () => [10, 20, 30, 50, 100],
+	showPageSize: true,
+	showInfo: true,
+	maxButtons: 5,
+	class: "",
+});
 
 const emit = defineEmits<{
-  /** Emitted when page changes */
-  (e: 'update:currentPage', page: number): void
-  /** Emitted when page size changes */
-  (e: 'update:pageSize', size: number): void
-  /** Emitted when either page or page size changes */
-  (e: 'change', { page, pageSize }: { page: number; pageSize: number }): void
-}>()
+	/** Emitted when page changes */
+	(e: "update:currentPage", page: number): void;
+	/** Emitted when page size changes */
+	(e: "update:pageSize", size: number): void;
+	/** Emitted when either page or page size changes */
+	(e: "change", { page, pageSize }: { page: number; pageSize: number }): void;
+}>();
 
-const localPageSize = ref(props.pageSize)
+const localPageSize = ref(props.pageSize);
 
 // Ensure page size is one of the available options
-watch(() => props.pageSize, (newSize) => {
-  if (props.pageSizeOptions.includes(newSize)) {
-    localPageSize.value = newSize
-  } else {
-    // If the provided page size is not in options, use the first available option
-    localPageSize.value = props.pageSizeOptions[0] || 10
-    emit('update:pageSize', localPageSize.value)
-  }
-}, { immediate: true })
+watch(
+	() => props.pageSize,
+	(newSize) => {
+		if (props.pageSizeOptions.includes(newSize)) {
+			localPageSize.value = newSize;
+		} else {
+			// If the provided page size is not in options, use the first available option
+			localPageSize.value = props.pageSizeOptions[0] || 10;
+			emit("update:pageSize", localPageSize.value);
+		}
+	},
+	{ immediate: true },
+);
 
-const totalPages = computed(() => Math.ceil(props.totalItems / localPageSize.value))
+const totalPages = computed(() =>
+	Math.ceil(props.totalItems / localPageSize.value),
+);
 
 // Ensure current page is within valid range
 const currentPage = computed({
-  get: () => Math.min(Math.max(props.currentPage, 1), totalPages.value || 1),
-  set: (page) => {
-    const newPage = Math.max(1, Math.min(page, totalPages.value || 1))
-    if (newPage !== props.currentPage) {
-      emit('update:currentPage', newPage)
-      emit('change', { page: newPage, pageSize: localPageSize.value })
-    }
-  }
-})
+	get: () => Math.min(Math.max(props.currentPage, 1), totalPages.value || 1),
+	set: (page) => {
+		const newPage = Math.max(1, Math.min(page, totalPages.value || 1));
+		if (newPage !== props.currentPage) {
+			emit("update:currentPage", newPage);
+			emit("change", { page: newPage, pageSize: localPageSize.value });
+		}
+	},
+});
 
 // Handle page size change
 const handlePageSizeChange = (event: Event) => {
-  const newSize = Number((event.target as HTMLSelectElement).value)
-  if (newSize !== localPageSize.value) {
-    localPageSize.value = newSize
-    emit('update:pageSize', newSize)
-    
-    // Adjust current page if needed after page size change
-    const firstItemIndex = (currentPage.value - 1) * props.pageSize
-    const newPage = Math.floor(firstItemIndex / newSize) + 1
-    
-    if (newPage !== currentPage.value) {
-      emit('update:currentPage', newPage)
-    }
-    
-    emit('change', { page: newPage, pageSize: newSize })
-  }
-}
+	const newSize = Number((event.target as HTMLSelectElement).value);
+	if (newSize !== localPageSize.value) {
+		localPageSize.value = newSize;
+		emit("update:pageSize", newSize);
+
+		// Adjust current page if needed after page size change
+		const firstItemIndex = (currentPage.value - 1) * props.pageSize;
+		const newPage = Math.floor(firstItemIndex / newSize) + 1;
+
+		if (newPage !== currentPage.value) {
+			emit("update:currentPage", newPage);
+		}
+
+		emit("change", { page: newPage, pageSize: newSize });
+	}
+};
 
 // Generate page numbers to display
 const pageNumbers = computed(() => {
-  const pages: (number | '...')[] = []
-  const maxButtons = Math.min(props.maxButtons, totalPages.value)
-  
-  if (totalPages.value <= maxButtons) {
-    // Show all pages if there are fewer than maxButtons
-    for (let i = 1; i <= totalPages.value; i++) {
-      pages.push(i)
-    }
-  } else {
-    // Always show first page
-    pages.push(1)
-    
-    // Calculate start and end of the middle section
-    const start = Math.max(2, currentPage.value - Math.floor((maxButtons - 2) / 2))
-    let end = Math.min(totalPages.value - 1, start + maxButtons - 3)
-    
-    // Adjust if we're at the end
-    if (end === totalPages.value - 1) {
-      const newStart = Math.max(2, end - (maxButtons - 3))
-      end = Math.min(end, newStart + maxButtons - 3)
-    }
-    
-    // Add ellipsis if needed
-    if (start > 2) {
-      pages.push('...')
-    }
-    
-    // Add middle pages
-    for (let i = start; i <= end; i++) {
-      pages.push(i)
-    }
-    
-    // Add ellipsis if needed
-    if (end < totalPages.value - 1) {
-      pages.push('...')
-    }
-    
-    // Always show last page
-    if (totalPages.value > 1) {
-      pages.push(totalPages.value)
-    }
-  }
-  
-  return pages
-})
+	const pages: (number | "...")[] = [];
+	const maxButtons = Math.min(props.maxButtons, totalPages.value);
+
+	if (totalPages.value <= maxButtons) {
+		// Show all pages if there are fewer than maxButtons
+		for (let i = 1; i <= totalPages.value; i++) {
+			pages.push(i);
+		}
+	} else {
+		// Always show first page
+		pages.push(1);
+
+		// Calculate start and end of the middle section
+		const start = Math.max(
+			2,
+			currentPage.value - Math.floor((maxButtons - 2) / 2),
+		);
+		let end = Math.min(totalPages.value - 1, start + maxButtons - 3);
+
+		// Adjust if we're at the end
+		if (end === totalPages.value - 1) {
+			const newStart = Math.max(2, end - (maxButtons - 3));
+			end = Math.min(end, newStart + maxButtons - 3);
+		}
+
+		// Add ellipsis if needed
+		if (start > 2) {
+			pages.push("...");
+		}
+
+		// Add middle pages
+		for (let i = start; i <= end; i++) {
+			pages.push(i);
+		}
+
+		// Add ellipsis if needed
+		if (end < totalPages.value - 1) {
+			pages.push("...");
+		}
+
+		// Always show last page
+		if (totalPages.value > 1) {
+			pages.push(totalPages.value);
+		}
+	}
+
+	return pages;
+});
 
 // Navigation methods
 const goToPage = (page: number) => {
-  currentPage.value = page
-}
+	currentPage.value = page;
+};
 
 const goToFirst = () => {
-  currentPage.value = 1
-}
+	currentPage.value = 1;
+};
 
 const goToLast = () => {
-  currentPage.value = totalPages.value
-}
+	currentPage.value = totalPages.value;
+};
 
 const goToPrev = () => {
-  currentPage.value = Math.max(1, currentPage.value - 1)
-}
+	currentPage.value = Math.max(1, currentPage.value - 1);
+};
 
 const goToNext = () => {
-  currentPage.value = Math.min(totalPages.value, currentPage.value + 1)
-}
+	currentPage.value = Math.min(totalPages.value, currentPage.value + 1);
+};
 </script>
 
 <template>

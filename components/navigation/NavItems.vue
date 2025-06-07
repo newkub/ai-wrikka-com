@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useNavigation } from '~/composables/useNavigation';
+import { useNavigation } from "~/composables/useNavigation";
 
 const props = defineProps<{
-  vertical?: boolean;
+	vertical?: boolean;
 }>();
 
 const { navigation, isActive } = useNavigation();

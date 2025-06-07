@@ -3,7 +3,7 @@ import ModalFileUpload from "~/components/chat/ModalFileUpload.vue";
 
 const isOpen = ref<boolean>(false);
 const emit = defineEmits<{
-	upload: [files: File[]]
+	upload: [files: File[]];
 }>();
 
 function openModal() {

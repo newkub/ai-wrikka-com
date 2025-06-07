@@ -59,7 +59,7 @@ function closeModal() {
 function handleFileTypeSelect(typeId: string) {
 	// You can use this to filter file types or set accept attribute on file input
 	// For now, just trigger the file input click
-	document.getElementById('file-upload')?.click();
+	document.getElementById("file-upload")?.click();
 }
 </script>
 

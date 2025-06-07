@@ -1,66 +1,71 @@
 <script setup lang="ts">
-import { watch, onMounted } from 'vue';
-import { useTerminal, type TerminalLine, type TerminalLineType, type TerminalTheme } from '~/composables/useTerminal';
+import { watch, onMounted } from "vue";
+import {
+	useTerminal,
+	type TerminalLine,
+	type TerminalLineType,
+	type TerminalTheme,
+} from "~/composables/useTerminal";
 
 interface TerminalProps {
-  content?: string;
-  autoScroll?: boolean;
-  theme?: TerminalTheme;
-  lines?: TerminalLine[];
+	content?: string;
+	autoScroll?: boolean;
+	theme?: TerminalTheme;
+	lines?: TerminalLine[];
 }
 
 const props = withDefaults(defineProps<TerminalProps>(), {
-  content: () => '',
-  autoScroll: () => true,
-  theme: () => 'dark' as TerminalTheme,
+	content: () => "",
+	autoScroll: () => true,
+	theme: () => "dark" as TerminalTheme,
 });
 
 const emit = defineEmits<{
-  (e: 'execute', command: string): void;
-  (e: 'output', output: string): void;
+	(e: "execute", command: string): void;
+	(e: "output", output: string): void;
 }>();
 
 const {
-  terminalContent,
-  commandInput,
-  terminalRef,
-  autoScroll,
-  executeCommand,
-  addOutput,
-  clearTerminal,
-  handleKeyDown
+	terminalContent,
+	commandInput,
+	terminalRef,
+	autoScroll,
+	executeCommand,
+	addOutput,
+	clearTerminal,
+	handleKeyDown,
 } = useTerminal();
 
 // Handle command execution
 const handleCommand = (command: string) => {
-  const executedCommand = executeCommand(command);
-  if (executedCommand) {
-    emit('execute', executedCommand);
-  }
+	const executedCommand = executeCommand(command);
+	if (executedCommand) {
+		emit("execute", executedCommand);
+	}
 };
 
 // Watch for content changes from parent
 watch(
-  () => props.content,
-  (newContent) => {
-    if (newContent) {
-      addOutput(newContent, 'info');
-    }
-  },
-  { immediate: true }
+	() => props.content,
+	(newContent) => {
+		if (newContent) {
+			addOutput(newContent, "info");
+		}
+	},
+	{ immediate: true },
 );
 
 // Handle keydown events
 const onKeyDown = (event: KeyboardEvent) => {
-  const command = handleKeyDown(event);
-  if (command) {
-    handleCommand(command);
-  }
+	const command = handleKeyDown(event);
+	if (command) {
+		handleCommand(command);
+	}
 };
 
 defineExpose({
-  clearTerminal,
-  addLine: (text: string) => addOutput(text, 'info')
+	clearTerminal,
+	addLine: (text: string) => addOutput(text, "info"),
 });
 </script>
 

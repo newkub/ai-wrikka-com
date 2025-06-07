@@ -1,175 +1,183 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed } from "vue";
 // Icons will be used from UnoCSS
-import { onClickOutside } from '@vueuse/core'
+import { onClickOutside } from "@vueuse/core";
 
 defineOptions({
-  name: 'ButtonDialog'
-})
+	name: "ButtonDialog",
+});
 
 interface Props {
-  /** Dialog title */
-  title?: string
-  /** Show/hide the dialog */
-  modelValue?: boolean
-  /** Dialog width */
-  width?: string
-  /** Show close button */
-  showClose?: boolean
-  /** Show footer */
-  showFooter?: boolean
-  /** Show backdrop */
-  showBackdrop?: boolean
-  /** Close on click outside */
-  closeOnClickOutside?: boolean
-  /** Close on press escape */
-  closeOnEscape?: boolean
-  /** Prevent body scroll when dialog is open */
-  preventScroll?: boolean
-  /** Custom dialog class */
-  dialogClass?: string
-  /** Custom header class */
-  headerClass?: string
-  /** Custom body class */
-  bodyClass?: string
-  /** Custom footer class */
-  footerClass?: string
-  /** Custom overlay class */
-  overlayClass?: string
+	/** Dialog title */
+	title?: string;
+	/** Show/hide the dialog */
+	modelValue?: boolean;
+	/** Dialog width */
+	width?: string;
+	/** Show close button */
+	showClose?: boolean;
+	/** Show footer */
+	showFooter?: boolean;
+	/** Show backdrop */
+	showBackdrop?: boolean;
+	/** Close on click outside */
+	closeOnClickOutside?: boolean;
+	/** Close on press escape */
+	closeOnEscape?: boolean;
+	/** Prevent body scroll when dialog is open */
+	preventScroll?: boolean;
+	/** Custom dialog class */
+	dialogClass?: string;
+	/** Custom header class */
+	headerClass?: string;
+	/** Custom body class */
+	bodyClass?: string;
+	/** Custom footer class */
+	footerClass?: string;
+	/** Custom overlay class */
+	overlayClass?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  title: '',
-  modelValue: false,
-  width: 'max-w-2xl',
-  showClose: true,
-  showFooter: true,
-  showBackdrop: true,
-  closeOnClickOutside: true,
-  closeOnEscape: true,
-  preventScroll: true,
-  dialogClass: '',
-  headerClass: '',
-  bodyClass: '',
-  footerClass: '',
-  overlayClass: ''
-})
+	title: "",
+	modelValue: false,
+	width: "max-w-2xl",
+	showClose: true,
+	showFooter: true,
+	showBackdrop: true,
+	closeOnClickOutside: true,
+	closeOnEscape: true,
+	preventScroll: true,
+	dialogClass: "",
+	headerClass: "",
+	bodyClass: "",
+	footerClass: "",
+	overlayClass: "",
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: boolean]
-  open: []
-  close: []
-  confirm: []
-  cancel: []
-}>()
+	"update:modelValue": [value: boolean];
+	open: [];
+	close: [];
+	confirm: [];
+	cancel: [];
+}>();
 
-const dialogRef = ref<HTMLElement | null>(null)
-const isOpen = ref(props.modelValue)
+const dialogRef = ref<HTMLElement | null>(null);
+const isOpen = ref(props.modelValue);
 
 // Update isOpen when modelValue changes
-watch(() => props.modelValue, (newVal) => {
-  isOpen.value = newVal
-  if (newVal) {
-    emit('open')
-    if (props.preventScroll) {
-      document.body.style.overflow = 'hidden'
-    }
-  } else {
-    emit('close')
-    if (props.preventScroll) {
-      document.body.style.overflow = ''
-    }
-  }
-}, { immediate: true })
+watch(
+	() => props.modelValue,
+	(newVal) => {
+		isOpen.value = newVal;
+		if (newVal) {
+			emit("open");
+			if (props.preventScroll) {
+				document.body.style.overflow = "hidden";
+			}
+		} else {
+			emit("close");
+			if (props.preventScroll) {
+				document.body.style.overflow = "";
+			}
+		}
+	},
+	{ immediate: true },
+);
 
 // Handle escape key
 const handleKeydown = (e: KeyboardEvent) => {
-  if (props.closeOnEscape && e.key === 'Escape' && isOpen.value) {
-    closeDialog()
-  }
-}
+	if (props.closeOnEscape && e.key === "Escape" && isOpen.value) {
+		closeDialog();
+	}
+};
 
 // Handle click outside
 onClickOutside(dialogRef, () => {
-  if (props.closeOnClickOutside && isOpen.value) {
-    closeDialog()
-  }
-})
+	if (props.closeOnClickOutside && isOpen.value) {
+		closeDialog();
+	}
+});
 
 // Add/remove event listeners
 onMounted(() => {
-  document.addEventListener('keydown', handleKeydown)
-})
+	document.addEventListener("keydown", handleKeydown);
+});
 
 onUnmounted(() => {
-  document.removeEventListener('keydown', handleKeydown)
-  if (props.preventScroll) {
-    document.body.style.overflow = ''
-  }
-})
+	document.removeEventListener("keydown", handleKeydown);
+	if (props.preventScroll) {
+		document.body.style.overflow = "";
+	}
+});
 
 // Dialog classes
 const dialogClasses = computed(() => {
-  const base = 'relative bg-white dark:bg-gray-800 rounded-lg shadow-xl transform transition-all sm:my-8 w-full max-h-[90vh] flex flex-col overflow-hidden'
-  return [base, props.width, props.dialogClass].filter(Boolean).join(' ')
-})
+	const base =
+		"relative bg-white dark:bg-gray-800 rounded-lg shadow-xl transform transition-all sm:my-8 w-full max-h-[90vh] flex flex-col overflow-hidden";
+	return [base, props.width, props.dialogClass].filter(Boolean).join(" ");
+});
 
 const headerClasses = computed(() => {
-  const base = 'px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between'
-  return [base, props.headerClass].filter(Boolean).join(' ')
-})
+	const base =
+		"px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between";
+	return [base, props.headerClass].filter(Boolean).join(" ");
+});
 
 const bodyClasses = computed(() => {
-  const base = 'px-6 py-4 flex-1 overflow-y-auto'
-  return [base, props.bodyClass].filter(Boolean).join(' ')
-})
+	const base = "px-6 py-4 flex-1 overflow-y-auto";
+	return [base, props.bodyClass].filter(Boolean).join(" ");
+});
 
 const footerClasses = computed(() => {
-  const base = 'px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex justify-end space-x-3'
-  return [base, props.footerClass].filter(Boolean).join(' ')
-})
+	const base =
+		"px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex justify-end space-x-3";
+	return [base, props.footerClass].filter(Boolean).join(" ");
+});
 
 const overlayClasses = computed(() => {
-  const base = 'fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 transition-opacity z-50 flex items-center justify-center p-4'
-  return [base, props.overlayClass].filter(Boolean).join(' ')
-})
+	const base =
+		"fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 transition-opacity z-50 flex items-center justify-center p-4";
+	return [base, props.overlayClass].filter(Boolean).join(" ");
+});
 
 // Dialog methods
 const openDialog = () => {
-  isOpen.value = true
-  emit('update:modelValue', true)
-  emit('open')
-  if (props.preventScroll) {
-    document.body.style.overflow = 'hidden'
-  }
-}
+	isOpen.value = true;
+	emit("update:modelValue", true);
+	emit("open");
+	if (props.preventScroll) {
+		document.body.style.overflow = "hidden";
+	}
+};
 
 const closeDialog = () => {
-  isOpen.value = false
-  emit('update:modelValue', false)
-  emit('close')
-  if (props.preventScroll) {
-    document.body.style.overflow = ''
-  }
-}
+	isOpen.value = false;
+	emit("update:modelValue", false);
+	emit("close");
+	if (props.preventScroll) {
+		document.body.style.overflow = "";
+	}
+};
 
 const confirmDialog = () => {
-  emit('confirm')
-  closeDialog()
-}
+	emit("confirm");
+	closeDialog();
+};
 
 const cancelDialog = () => {
-  emit('cancel')
-  closeDialog()
-}
+	emit("cancel");
+	closeDialog();
+};
 
 // Expose methods
 defineExpose({
-  open: openDialog,
-  close: closeDialog,
-  confirm: confirmDialog,
-  cancel: cancelDialog
-})
+	open: openDialog,
+	close: closeDialog,
+	confirm: confirmDialog,
+	cancel: cancelDialog,
+});
 </script>
 
 <template>

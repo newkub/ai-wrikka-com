@@ -190,250 +190,255 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { computed, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 interface Tab {
-  id: string
-  label: string
-  icon: string
-  keywords?: string[]
+	id: string;
+	label: string;
+	icon: string;
+	keywords?: string[];
 }
 
 interface SearchableItem {
-  id: string
-  label: string
-  icon?: string
-  keywords: string[]
-  tab: string
-  section?: string
-  items?: SearchableItem[]
+	id: string;
+	label: string;
+	icon?: string;
+	keywords: string[];
+	tab: string;
+	section?: string;
+	items?: SearchableItem[];
 }
 
 const props = withDefaults(
-  defineProps<{
-    modelValue: boolean
-  }>(),
-  {
-    modelValue: false
-  }
-)
+	defineProps<{
+		modelValue: boolean;
+	}>(),
+	{
+		modelValue: false,
+	},
+);
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: boolean): void
-  (e: 'close'): void
-  (e: 'open'): void
-}>()
+	(e: "update:modelValue", value: boolean): void;
+	(e: "close"): void;
+	(e: "open"): void;
+}>();
 
-const route = useRoute()
-const router = useRouter()
+const route = useRoute();
+const router = useRouter();
 
 // Handle v-model
 const isOpen = computed({
-  get: () => props.modelValue,
-  set: (value: boolean) => {
-    emit('update:modelValue', value)
-  }
-})
+	get: () => props.modelValue,
+	set: (value: boolean) => {
+		emit("update:modelValue", value);
+	},
+});
 
 const activeTab = ref<string>(
-  (route.query.tab && typeof route.query.tab === 'string') 
-    ? route.query.tab 
-    : 'profile'
-)
-const searchQuery = ref('')
-const isSearching = computed(() => searchQuery.value.trim().length > 0)
+	route.query.tab && typeof route.query.tab === "string"
+		? route.query.tab
+		: "profile",
+);
+const searchQuery = ref("");
+const isSearching = computed(() => searchQuery.value.trim().length > 0);
 
 const tabs: Tab[] = [
-  { id: 'profile', label: 'Profile', icon: 'i-mdi-account' },
-  { id: 'billing', label: 'Billing', icon: 'i-mdi-credit-card' },
-  { id: 'appearance', label: 'Appearance', icon: 'i-mdi-palette' },
-  { id: 'accounts', label: 'Accounts', icon: 'i-mdi-account-group' },
-  { id: 'security', label: 'Security', icon: 'i-mdi-shield-lock' },
-  { id: 'data-privacy', label: 'Data & Privacy', icon: 'i-mdi-shield-account' },
-  { id: 'wallet', label: 'Wallet', icon: 'i-mdi-wallet' },
-  { id: 'integration', label: 'Integration', icon: 'i-mdi-puzzle' }
-]
+	{ id: "profile", label: "Profile", icon: "i-mdi-account" },
+	{ id: "billing", label: "Billing", icon: "i-mdi-credit-card" },
+	{ id: "appearance", label: "Appearance", icon: "i-mdi-palette" },
+	{ id: "accounts", label: "Accounts", icon: "i-mdi-account-group" },
+	{ id: "security", label: "Security", icon: "i-mdi-shield-lock" },
+	{ id: "data-privacy", label: "Data & Privacy", icon: "i-mdi-shield-account" },
+	{ id: "wallet", label: "Wallet", icon: "i-mdi-wallet" },
+	{ id: "integration", label: "Integration", icon: "i-mdi-puzzle" },
+];
 
 // Searchable settings items
 const searchableItems: SearchableItem[] = [
-  // Profile
-  {
-    id: "profile-account",
-    label: "Account Information",
-    tab: "profile",
-    keywords: ["profile", "account", "name", "email", "information"],
-  },
-  {
-    id: "profile-avatar",
-    label: "Profile Picture",
-    tab: "profile",
-    keywords: ["profile", "picture", "avatar", "photo", "image"],
-  },
-  // Billing
-  {
-    id: "billing-info",
-    label: "Billing Information",
-    tab: "billing",
-    keywords: ["billing", "payment", "credit card", "subscription"],
-  },
-  {
-    id: "billing-invoices",
-    label: "Invoices",
-    tab: "billing",
-    keywords: ["billing", "invoices", "receipts", "payments"],
-  },
-  {
-    id: "billing-plan",
-    label: "Plan & Usage",
-    tab: "billing",
-    keywords: ["plan", "subscription", "usage", "upgrade", "downgrade"],
-  },
-  // Appearance
-  {
-    id: "appearance-theme",
-    label: "Theme",
-    tab: "appearance",
-    keywords: ["appearance", "theme", "dark mode", "light mode", "system"],
-  },
-  {
-    id: "appearance-font",
-    label: "Font",
-    tab: "appearance",
-    keywords: ["appearance", "font", "typography", "text"],
-  },
-  {
-    id: "appearance-density",
-    label: "Density",
-    tab: "appearance",
-    keywords: ["appearance", "density", "compact", "spacing"],
-  },
-  // Accounts
-  {
-    id: "accounts-connected",
-    label: "Connected Accounts",
-    tab: "accounts",
-    keywords: ["accounts", "connected", "social", "link"],
-  },
-  {
-    id: "accounts-import",
-    label: "Import Data",
-    tab: "accounts",
-    keywords: ["accounts", "import", "export", "data"],
-  },
-  // Security
-  {
-    id: "security-password",
-    label: "Password",
-    tab: "security",
-    keywords: ["security", "password", "login", "authentication"],
-  },
-  {
-    id: "security-2fa",
-    label: "Two-Factor Authentication",
-    tab: "security",
-    keywords: ["security", "2fa", "two factor", "authentication"],
-  },
-  {
-    id: "security-sessions",
-    label: "Active Sessions",
-    tab: "security",
-    keywords: ["security", "sessions", "devices", "login"],
-  },
-  // Data & Privacy
-  {
-    id: "privacy-data",
-    label: "Data Usage",
-    tab: "data-privacy",
-    keywords: ["privacy", "data", "usage", "collection"],
-  },
-  {
-    id: "privacy-export",
-    label: "Export Data",
-    tab: "data-privacy",
-    keywords: ["privacy", "export", "data", "download"],
-  },
-  {
-    id: "privacy-delete",
-    label: "Delete Account",
-    tab: "data-privacy",
-    keywords: ["privacy", "delete", "account", "remove"],
-  },
-  // Wallet
-  {
-    id: "wallet-balance",
-    label: "Balance",
-    tab: "wallet",
-    keywords: ["wallet", "balance", "credits", "tokens"],
-  },
-  {
-    id: "wallet-transactions",
-    label: "Transaction History",
-    tab: "wallet",
-    keywords: ["wallet", "transactions", "history", "payments"],
-  },
-  // Integration
-  {
-    id: "integration-github",
-    label: "GitHub",
-    tab: "integration",
-    keywords: ["integration", "github", "repository", "code"],
-  },
-  {
-    id: "integration-google",
-    label: "Google Workspace",
-    tab: "integration",
-    keywords: ["integration", "google", "workspace", "drive", "calendar"],
-  },
-  {
-    id: "integration-slack",
-    label: "Slack",
-    tab: "integration",
-    keywords: ["integration", "slack", "notifications", "messages"],
-  },
-]
+	// Profile
+	{
+		id: "profile-account",
+		label: "Account Information",
+		tab: "profile",
+		keywords: ["profile", "account", "name", "email", "information"],
+	},
+	{
+		id: "profile-avatar",
+		label: "Profile Picture",
+		tab: "profile",
+		keywords: ["profile", "picture", "avatar", "photo", "image"],
+	},
+	// Billing
+	{
+		id: "billing-info",
+		label: "Billing Information",
+		tab: "billing",
+		keywords: ["billing", "payment", "credit card", "subscription"],
+	},
+	{
+		id: "billing-invoices",
+		label: "Invoices",
+		tab: "billing",
+		keywords: ["billing", "invoices", "receipts", "payments"],
+	},
+	{
+		id: "billing-plan",
+		label: "Plan & Usage",
+		tab: "billing",
+		keywords: ["plan", "subscription", "usage", "upgrade", "downgrade"],
+	},
+	// Appearance
+	{
+		id: "appearance-theme",
+		label: "Theme",
+		tab: "appearance",
+		keywords: ["appearance", "theme", "dark mode", "light mode", "system"],
+	},
+	{
+		id: "appearance-font",
+		label: "Font",
+		tab: "appearance",
+		keywords: ["appearance", "font", "typography", "text"],
+	},
+	{
+		id: "appearance-density",
+		label: "Density",
+		tab: "appearance",
+		keywords: ["appearance", "density", "compact", "spacing"],
+	},
+	// Accounts
+	{
+		id: "accounts-connected",
+		label: "Connected Accounts",
+		tab: "accounts",
+		keywords: ["accounts", "connected", "social", "link"],
+	},
+	{
+		id: "accounts-import",
+		label: "Import Data",
+		tab: "accounts",
+		keywords: ["accounts", "import", "export", "data"],
+	},
+	// Security
+	{
+		id: "security-password",
+		label: "Password",
+		tab: "security",
+		keywords: ["security", "password", "login", "authentication"],
+	},
+	{
+		id: "security-2fa",
+		label: "Two-Factor Authentication",
+		tab: "security",
+		keywords: ["security", "2fa", "two factor", "authentication"],
+	},
+	{
+		id: "security-sessions",
+		label: "Active Sessions",
+		tab: "security",
+		keywords: ["security", "sessions", "devices", "login"],
+	},
+	// Data & Privacy
+	{
+		id: "privacy-data",
+		label: "Data Usage",
+		tab: "data-privacy",
+		keywords: ["privacy", "data", "usage", "collection"],
+	},
+	{
+		id: "privacy-export",
+		label: "Export Data",
+		tab: "data-privacy",
+		keywords: ["privacy", "export", "data", "download"],
+	},
+	{
+		id: "privacy-delete",
+		label: "Delete Account",
+		tab: "data-privacy",
+		keywords: ["privacy", "delete", "account", "remove"],
+	},
+	// Wallet
+	{
+		id: "wallet-balance",
+		label: "Balance",
+		tab: "wallet",
+		keywords: ["wallet", "balance", "credits", "tokens"],
+	},
+	{
+		id: "wallet-transactions",
+		label: "Transaction History",
+		tab: "wallet",
+		keywords: ["wallet", "transactions", "history", "payments"],
+	},
+	// Integration
+	{
+		id: "integration-github",
+		label: "GitHub",
+		tab: "integration",
+		keywords: ["integration", "github", "repository", "code"],
+	},
+	{
+		id: "integration-google",
+		label: "Google Workspace",
+		tab: "integration",
+		keywords: ["integration", "google", "workspace", "drive", "calendar"],
+	},
+	{
+		id: "integration-slack",
+		label: "Slack",
+		tab: "integration",
+		keywords: ["integration", "slack", "notifications", "messages"],
+	},
+];
 
 // Filter items based on search query
 const filteredItems = computed(() => {
-  if (!isSearching.value) return searchableItems;
-  
-  const query = searchQuery.value.toLowerCase();
-  return searchableItems.filter(item => {
-    const matchesLabel = item.label.toLowerCase().includes(query);
-    const matchesKeywords = item.keywords.some(keyword => keyword.toLowerCase().includes(query));
-    return matchesLabel || matchesKeywords;
-  });
-})
+	if (!isSearching.value) return searchableItems;
+
+	const query = searchQuery.value.toLowerCase();
+	return searchableItems.filter((item) => {
+		const matchesLabel = item.label.toLowerCase().includes(query);
+		const matchesKeywords = item.keywords.some((keyword) =>
+			keyword.toLowerCase().includes(query),
+		);
+		return matchesLabel || matchesKeywords;
+	});
+});
 
 // Get current tab
 const currentTab = computed(() => {
-  return tabs.find(tab => tab.id === activeTab.value);
-})
+	return tabs.find((tab) => tab.id === activeTab.value);
+});
 
 // Close modal
 const closeModal = () => {
-  emit('close');
-  emit('update:modelValue', false);
+	emit("close");
+	emit("update:modelValue", false);
 };
 
 // Watch for route changes to update active tab
-watch(() => route.query.tab, (newTab) => {
-  if (newTab && typeof newTab === 'string') {
-    activeTab.value = newTab;
-  }
-});
+watch(
+	() => route.query.tab,
+	(newTab) => {
+		if (newTab && typeof newTab === "string") {
+			activeTab.value = newTab;
+		}
+	},
+);
 
 // Watch for active tab changes to update route
 watch(activeTab, (newTab) => {
-  router.replace({ query: { ...route.query, tab: newTab } });
+	router.replace({ query: { ...route.query, tab: newTab } });
 });
 
 // Watch for modal open/close
 watch(isOpen, (value) => {
-  if (value) {
-    emit('open');
-  } else {
-    emit('close');
-  }
+	if (value) {
+		emit("open");
+	} else {
+		emit("close");
+	}
 });
 </script>
