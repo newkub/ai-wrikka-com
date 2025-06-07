@@ -14,7 +14,6 @@ const tabs = [
   { id: 'problems', label: 'Problems', component: Problems },
   { id: 'output', label: 'Output', component: Console },
   { id: 'debug-console', label: 'Debug Console', component: Console },
-  { id: 'terminal', label: 'Terminal', component: Terminal },
   { id: 'git', label: 'Git', component: Git },
   { id: 'dependencies', label: 'Dependencies', component: Dependencies },
   { id: 'search', label: 'Search', component: Search },

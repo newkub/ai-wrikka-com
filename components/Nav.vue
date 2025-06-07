@@ -65,7 +65,7 @@ const getStarted = () => {
 </script>
 
 <template>
-  <nav class="bg-background shadow-sm">
+  <nav class="shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between py-4">
         <!-- Left section - Logo -->
@@ -82,8 +82,8 @@ const getStarted = () => {
               v-for="item in menuItems"
               :key="item.path"
               :to="item.path"
-              class="px-3 py-2 text-sm font-medium transition-colors duration-200 hover:text-color-primary"
-              :class="{ 'text-color-primary': $route.path === item.path }"
+              class="px-3 py-2 text-sm font-medium"
+              :class="{ 'font-bold': $route.path === item.path }"
             >
               {{ item.name }}
             </NuxtLink>
@@ -106,7 +106,7 @@ const getStarted = () => {
           <!-- Mobile menu button -->
           <div class="md:hidden flex items-center">
             <button 
-              class=" hover:text-color-primary focus:outline-none"
+              class="focus:outline-none"
               @click="isMobileMenuOpen = !isMobileMenuOpen"
             >
               <div class="i-mdi-menu text-2xl" />
@@ -117,20 +117,19 @@ const getStarted = () => {
     </div>
 
     <!-- Mobile menu -->
-    <div v-if="isMobileMenuOpen" class="md:hidden bg-background border-t border-border">
+    <div v-if="isMobileMenuOpen" class="md:hidden border-t">
       <div class="px-2 pt-2 pb-3 space-y-1">
         <NuxtLink 
           v-for="item in menuItems"
           :key="`mobile-${item.path}`"
           :to="item.path"
-          class="block px-3 py-2 rounded-md text-base font-medium  hover:bg-block"
-          :class="{ 'bg-block': $route.path === item.path }"
+          class="block px-3 py-2 rounded-md text-base font-medium"
           @click="isMobileMenuOpen = false"
         >
           {{ item.name }}
         </NuxtLink>
         
-        <div class="pt-4 pb-2 border-t border-border">
+        <div class="pt-4 pb-2">
           <Button 
             variant="secondary" 
             class="w-full mb-2"
