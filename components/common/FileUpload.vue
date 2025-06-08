@@ -138,78 +138,38 @@ const formatFileSize = (bytes: number): string => {
 };
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 .file-upload {
-  background-color: var(--color-block);
-  border-radius: 0.5rem;
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  width: 100%;
-  max-width: 28rem;
-  max-height: 80vh;
-  display: flex;
-  flex-direction: column;
+  @apply bg-block rounded-lg shadow-lg w-full max-w-[28rem] max-h-[80vh] flex flex-col;
 }
 
 .file-upload-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  border-bottom: 1px solid var(--color-border);
+  @apply flex justify-between items-center p-4 border-b border-border;
 }
 
 .file-sources {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-  padding: 1rem;
+  @apply grid grid-cols-3 gap-4 p-4;
 }
 
 .source-option {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--color-border);
-  cursor: pointer;
-  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-  text-align: center;
+  @apply flex flex-col items-center p-4 rounded-lg border border-border cursor-pointer
+         transition-all duration-150 ease-in-out text-center;
 }
 
 .source-option:hover {
-  background-color: rgba(var(--color-primary-rgb), 0.05);
+  @apply bg-primary/5;
 }
 
 .source-icon {
-  width: 4rem;
-  height: 4rem;
-  border-radius: 9999px;
-  background-color: rgba(var(--color-primary-rgb), 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0.5rem;
+  @apply w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-2;
 }
 
 .file-preview {
-  flex: 1 1 0%;
-  overflow-y: auto;
-  padding: 1rem;
-  border-top: 1px solid var(--color-border);
+  @apply flex-1 overflow-y-auto p-4 border-t border-border;
 }
 
 .file-item {
-  display: flex;
-  align-items: center;
-  padding: 0.5rem;
-  border-radius: 0.25rem;
-}
-
-.file-item:hover {
-  background-color: rgba(var(--color-primary-rgb), 0.05);
+  @apply flex items-center p-2 rounded-md bg-block mb-2;
 }
 
 .file-icon {
@@ -218,8 +178,7 @@ const formatFileSize = (bytes: number): string => {
 }
 
 .file-info {
-  flex: 1 1 0%;
-  min-width: 0;
+  @apply flex-1 min-w-0;
 }
 
 .file-name {
@@ -229,9 +188,7 @@ const formatFileSize = (bytes: number): string => {
 }
 
 .file-size {
-  font-size: 0.75rem;
-  line-height: 1rem;
-  color: #6b7280;
+  @apply text-xs text-text-secondary;
 }
 
 .remove-file {
@@ -244,37 +201,18 @@ const formatFileSize = (bytes: number): string => {
 }
 
 .file-upload-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  padding: 1rem;
-  border-top: 1px solid var(--color-border);
+  @apply flex justify-end gap-3 p-4 border-t border-border;
 }
 
 .cancel-button {
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--color-border);
-}
-
-.cancel-button:hover {
-  background-color: #f3f4f6;
+  @apply px-4 py-2 rounded-md font-medium text-text bg-transparent border border-border
+         transition-all duration-150 ease-in-out hover:bg-bg-hover;
 }
 
 .submit-button {
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  background-color: var(--color-primary);
-  color: white;
-}
-
-.submit-button:hover:not(:disabled) {
-  background-color: color-mix(in srgb, var(--color-primary) 90%, black);
-}
-
-.submit-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  @apply px-4 py-2 rounded-md font-medium text-white bg-primary border border-primary
+         transition-all duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed
+         hover:bg-primary-dark hover:border-primary-dark;
 }
 
 .close-button {

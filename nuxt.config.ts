@@ -25,7 +25,17 @@ export default defineNuxtConfig({
 		},
 	},
 
-	modules: ["@unocss/nuxt", "@vueuse/nuxt", "@pinia/nuxt"],
+	modules: [
+		"@unocss/nuxt",
+		"@vueuse/nuxt",
+		["@pinia/nuxt", {
+			autoImports: ["defineStore", "storeToRefs"]
+		}],
+		["@pinia-plugin-persistedstate/nuxt", {
+			storage: 'localStorage',
+			autoImports: ['defineStore', 'acceptHMRUpdate']
+		}]
+	],
 
 	typescript: {
 		strict: true,
@@ -40,6 +50,13 @@ export default defineNuxtConfig({
 			baseUrl: process.env.BASE_URL || "http://localhost:3000",
 			apiBase: process.env.API_BASE_URL || "https://api.example.com",
 			workosApiKey: process.env.WORKOS_API_KEY,
+			persistedState: {
+				cookieOptions: {
+					sameSite: 'lax',
+					secure: true,
+					maxAge: 60 * 60 * 24 * 30 // 30 days
+				}
+			},
 		},
 	},
 });

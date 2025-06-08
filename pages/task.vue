@@ -1,229 +1,245 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from 'vue'
+import { storeToRefs } from 'pinia'
+import TaskForm from '~/components/task/TaskForm.vue'
+import KanBanView from '~/components/task/views/KanBan.vue'
+import TableView from '~/components/task/views/Table.vue'
+import Sidebar from '~/components/task/Sidebar.vue'
+import { useTaskStore } from '~/stores/task'
+import type { Task, TaskStatus } from '~/stores/task'
 
-interface Task {
-	id: string;
-	title: string;
-	description: string;
-	completed: boolean;
-	dueDate?: string;
-	priority?: "low" | "medium" | "high";
-	tags?: string;
+// View mode
+type ViewMode = 'kanban' | 'table'
+const viewMode = ref<ViewMode>('kanban')
+
+// Task store
+const taskStore = useTaskStore()
+const { 
+  tasks, 
+  selectedTask, 
+  isTaskFormOpen,
+  todoTasks,
+  inProgressTasks,
+  reviewTasks,
+  doneTasks
+} = storeToRefs(taskStore)
+
+// Define statuses with id and title to match KanBan component props
+type StatusItem = { id: TaskStatus; title: string }
+const statuses: StatusItem[] = [
+  { id: 'todo', title: 'To Do' },
+  { id: 'in-progress', title: 'In Progress' },
+  { id: 'review', title: 'Review' },
+  { id: 'done', title: 'Done' }
+]
+
+// Computed
+const allTasks = computed(() => [
+  ...todoTasks.value,
+  ...inProgressTasks.value,
+  ...reviewTasks.value,
+  ...doneTasks.value
+])
+
+// Methods
+const handleCreateTask = async (taskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => {
+  try {
+    await taskStore.createTask(taskData)
+  } catch (error) {
+    console.error('Error creating task:', error)
+    throw error
+  }
 }
 
-const tasks = ref<Task[]>([]);
-const newTask = ref<Partial<Task>>({
-	title: "",
-	description: "",
-	completed: false,
-});
-const showTaskDetails = ref(false);
+const handleUpdateTask = async (task: Task) => {
+  try {
+    const { id, ...updates } = task
+    await taskStore.updateTask(id, updates)
+  } catch (error) {
+    console.error('Error updating task:', error)
+    throw error
+  }
+}
 
-// Load tasks from localStorage
+const handleDeleteTask = async (taskId: string) => {
+  try {
+    await taskStore.deleteTask(taskId)
+  } catch (error) {
+    console.error('Error deleting task:', error)
+    throw error
+  }
+}
+
+const handleTaskClick = (task: Task) => {
+  taskStore.selectTask(task)
+  taskStore.openTaskForm()
+}
+
+const handleStatusChange = async (taskId: string, newStatus: TaskStatus) => {
+  try {
+    await taskStore.updateTask(taskId, { status: newStatus })
+  } catch (error) {
+    console.error('Error updating task status:', error)
+  }
+}
+
+// Drag and drop
+const onDragStart = (e: DragEvent, taskId: string) => {
+  if (e.dataTransfer) {
+    e.dataTransfer.setData('taskId', taskId)
+  }
+}
+
+const onDrop = async (e: DragEvent, status: TaskStatus) => {
+  e.preventDefault()
+  const taskId = e.dataTransfer?.getData('taskId')
+  if (taskId) {
+    await handleStatusChange(taskId, status)
+  }
+}
+
+// Handle sidebar item selection
+const handleSidebarSelect = (itemId: string, type: 'workspace' | 'status' | 'view') => {
+  console.log(`Selected ${type}:`, itemId)
+  
+  // Handle selection based on type
+  switch (type) {
+    case 'workspace':
+      // Filter tasks by workspace
+      console.log('Filtering by workspace:', itemId)
+      break
+      
+    case 'status':
+      // Filter tasks by status
+      console.log('Filtering by status:', itemId)
+      break
+      
+    case 'view':
+      // Handle view type selection
+      console.log('Selected view:', itemId)
+      break
+  }
+}
+
+// Fetch tasks on component mount
 onMounted(() => {
-	const savedTasks = localStorage.getItem("tasks");
-	if (savedTasks) {
-		tasks.value = JSON.parse(savedTasks);
-	}
-});
-
-// Save tasks to localStorage
-const saveTasks = () => {
-	localStorage.setItem("tasks", JSON.stringify(tasks.value));
-};
-
-// Add new task
-const addTask = () => {
-	if (!newTask.value.title?.trim()) return;
-
-	const task: Task = {
-		id: Date.now().toString(),
-		title: newTask.value.title,
-		description: newTask.value.description || "",
-		completed: false,
-		dueDate: newTask.value.dueDate,
-		priority: newTask.value.priority || "medium",
-		tags: newTask.value.tags,
-	};
-
-	tasks.value.unshift(task);
-	saveTasks();
-
-	// Reset form
-	newTask.value = {
-		title: "",
-		description: "",
-		completed: false,
-	};
-	showTaskDetails.value = false;
-};
-
-// Delete task
-const deleteTask = (index: number) => {
-	if (confirm("Are you sure you want to delete this task?")) {
-		tasks.value.splice(index, 1);
-		saveTasks();
-	}
-};
-
-// Format date for display
-const formatDate = (dateString?: string) => {
-	if (!dateString) return "";
-	const options: Intl.DateTimeFormatOptions = {
-		year: "numeric",
-		month: "short",
-		day: "numeric",
-	};
-	return new Date(dateString).toLocaleDateString(undefined, options);
-};
+  taskStore.fetchTasks()
+})
 </script>
 
 <template>
-  <div class="p-4">
-    <div class="max-w-6xl mx-auto">
-      <!-- Header -->
-      <header class="mb-8">
-        <h1 class="text-3xl font-bold">Tasks</h1>
-        <p>Manage your tasks efficiently</p>
-      </header>
-
-      <!-- Task Input -->
-      <div class="bg-block rounded-lg shadow p-4 mb-6">
-        <div class="flex gap-2">
-          <input
-            v-model="newTask.title"
-            @keyup.enter="addTask"
-            type="text"
-            placeholder="Add a new task..."
-            class="flex-1 p-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-          />
-          <button
-            @click="addTask"
-            class="bg-primary px-4 py-2 rounded-lg hover:opacity-90 transition-opacity"
-          >
-            Add Task
-          </button>
-        </div>
-        <!-- Task Details -->
-        <div v-if="showTaskDetails" class="mt-4 space-y-4">
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium mb-1">Due Date</label>
-              <input
-                v-model="newTask.dueDate"
-                type="date"
-                class="w-full p-2 border rounded-lg"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium mb-1">Priority</label>
-              <select v-model="newTask.priority" class="w-full p-2 border rounded-lg">
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-              </select>
-            </div>
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-1">Description</label>
-            <textarea
-              v-model="newTask.description"
-              class="w-full p-2 border rounded-lg"
-              rows="3"
-              placeholder="Add details..."
-            ></textarea>
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-1">Tags (comma separated)</label>
-            <input
-              v-model="newTask.tags"
-              type="text"
-              class="w-full p-2 border rounded-lg"
-              placeholder="work, important, etc."
-            />
-          </div>
-        </div>
-        <button
-          @click="showTaskDetails = !showTaskDetails"
-          class="mt-2 text-sm hover:opacity-80 flex items-center gap-1"
-        >
-          <span v-if="!showTaskDetails">+ Add details</span>
-          <span v-else>- Hide details</span>
-        </button>
-      </div>
-
-      <!-- Task List -->
-      <div class="space-y-3">
-        <div
-          v-for="(task, index) in tasks"
-          :key="task.id"
-          class="bg-block rounded-lg shadow p-4 hover:shadow-md transition-shadow"
-        >
-          <div class="flex items-start justify-between">
-            <div class="flex items-start gap-3">
-              <input
-                type="checkbox"
-                v-model="task.completed"
-                class="mt-1 h-5 w-5 rounded border-border focus:ring-primary"
-              />
-              <div>
-                <div class="flex items-center gap-2">
-                  <span
-                    :class="{
-                      'line-through': task.completed,
-                      'font-medium': true
-                    }"
-                  >
-                    {{ task.title }}
-                  </span>
-                  <span
-                    v-if="task.priority"
-                    class="px-2 py-0.5 text-xs rounded-full"
-                    :class="{
-                      'bg-error/20': task.priority === 'high',
-                      'bg-alert/20': task.priority === 'medium',
-                      'bg-success/20': task.priority === 'low',
-                    }"
-                  >
-                    {{ task.priority }}
-                  </span>
-                </div>
-                <p v-if="task.description" class="text-sm mt-1">
-                  {{ task.description }}
-                </p>
-                <div v-if="task.dueDate" class="flex items-center gap-2 mt-2 text-xs">
-                  <i class="i-mdi-calendar"></i>
-                  <span>{{ formatDate(task.dueDate) }}</span>
-                </div>
-                <div v-if="task.tags" class="flex flex-wrap gap-1 mt-2">
-                  <span
-                    v-for="(tag, i) in task.tags.split(',')"
-                    :key="i"
-                    class="px-2 py-0.5 bg-primary/20 text-xs rounded-full"
-                  >
-                    {{ tag.trim() }}
-                  </span>
-                </div>
-              </div>
-            </div>
+  <div class="flex min-h-screen bg-gray-50">
+    <!-- Sidebar -->
+    <Sidebar 
+      @select="handleSidebarSelect"
+      :workspaces="[
+        { id: 'workspace-1', name: 'Personal' },
+        { id: 'workspace-2', name: 'Work' },
+        { id: 'workspace-3', name: 'Team' }
+      ]"
+      :statuses="[
+        { id: 'todo', name: 'To Do' },
+        { id: 'in-progress', name: 'In Progress' },
+        { id: 'review', name: 'Review' },
+        { id: 'done', name: 'Done' }
+      ]"
+      class="flex-shrink-0 hidden md:block"
+    />
+    
+    <!-- Main Content -->
+    <div class="flex-1 overflow-auto">
+    <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+      <div class="flex flex-col justify-between py-6 space-y-4 md:flex-row md:items-center md:space-y-0">
+        <h1 class="text-2xl font-bold text-gray-900">Task Management</h1>
+        
+        <div class="flex items-center space-x-4">
+          <!-- View Toggle -->
+          <div class="inline-flex rounded-md shadow-sm">
             <button
-              @click="deleteTask(index)"
-              class="hover:text-error transition-colors"
+              type="button"
+              @click="viewMode = 'kanban'"
+              :class="[
+                'px-4 py-2 text-sm font-medium rounded-l-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500',
+                viewMode === 'kanban' 
+                  ? 'bg-primary-600 text-white' 
+                  : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-300'
+              ]"
             >
-              <i class="i-mdi-delete"></i>
+              Kanban
+            </button>
+            <button
+              type="button"
+              @click="viewMode = 'table'"
+              :class="[
+                'px-4 py-2 text-sm font-medium rounded-r-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500',
+                viewMode === 'table' 
+                  ? 'bg-primary-600 text-white' 
+                  : 'bg-white text-gray-700 hover:bg-gray-50 border-t border-b border-r border-gray-300'
+              ]"
+            >
+              Table
             </button>
           </div>
+          
+          <!-- New Task Button -->
+          <button
+            type="button"
+            @click="taskStore.openTaskForm()"
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 border border-transparent rounded-md shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+          >
+            <svg
+              class="w-5 h-5 mr-2 -ml-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              ></path>
+            </svg>
+            New Task
+          </button>
         </div>
       </div>
 
-      <!-- Empty State -->
-      <div
-        v-if="tasks.length === 0"
-        class="text-center py-12"
-      >
-        <i class="i-mdi-checkbox-marked-outline text-4xl mb-2"></i>
-        <p>No tasks yet. Add one above!</p>
-      </div>
+      <!-- Kanban View -->
+      <KanBanView
+        v-if="viewMode === 'kanban'"
+        :tasks="allTasks"
+        :statuses="statuses"
+        :on-task-click="handleTaskClick"
+        :on-status-change="handleStatusChange"
+        :on-drag-start="onDragStart"
+        :on-drop="onDrop"
+        @edit="handleTaskClick"
+        @delete="handleDeleteTask"
+        class="mt-6"
+      />
+
+      <!-- Table View -->
+      <TableView
+        v-else
+        :tasks="allTasks"
+        :on-edit="handleTaskClick"
+        :on-delete="handleDeleteTask"
+        :on-status-change="(taskId: string, status: string) => handleStatusChange(taskId, status as TaskStatus)"
+        class="mt-6"
+      />
     </div>
+
+    <!-- Task Form Modal -->
+    <TaskForm
+      v-if="isTaskFormOpen"
+      v-model:is-open="isTaskFormOpen"
+      :task="selectedTask || undefined"
+      @submit="handleCreateTask"
+      @update:task="handleUpdateTask"
+      @close="taskStore.closeTaskForm"
+    />
   </div>
+</div>
 </template>
