@@ -70,9 +70,7 @@ const getPriorityClass = (priority: string) => {
     <div class="flex flex-col space-y-4 sm:flex-row sm:justify-between sm:items-center sm:space-y-0">
       <div class="relative flex-1 max-w-md">
         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+          <div class="i-mdi-magnify text-gray-400 w-4 h-4" />
         </div>
         <input
           v-model="searchQuery"
@@ -214,9 +212,7 @@ const getPriorityClass = (priority: string) => {
               ]"
             >
               <span class="sr-only">Previous</span>
-              <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
-              </svg>
+              <div class="i-mdi-chevron-left w-5 h-5" />
             </button>
             <template v-for="page in totalPages" :key="page">
               <button
@@ -240,9 +236,7 @@ const getPriorityClass = (priority: string) => {
               ]"
             >
               <span class="sr-only">Next</span>
-              <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
-              </svg>
+              <div class="i-mdi-chevron-right w-5 h-5" />
             </button>
           </nav>
         </div>

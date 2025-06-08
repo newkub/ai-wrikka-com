@@ -70,19 +70,7 @@ const handleDelete = (taskId: string) => {
           v-if="tasksByStatus(status.id).length === 0"
           class="flex flex-col items-center justify-center h-24 text-center text-gray-400"
         >
-          <svg 
-            class="w-8 h-8 mb-1 text-gray-300" 
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24"
-          >
-            <path 
-              stroke-linecap="round" 
-              stroke-linejoin="round" 
-              stroke-width="1.5" 
-              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-            />
-          </svg>
+          <div class="i-mdi-plus-circle-outline text-gray-300 w-8 h-8 mb-1" />
           <p class="text-sm">Drop task here</p>
         </div>
       </div>

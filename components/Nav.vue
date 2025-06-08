@@ -15,6 +15,8 @@ const menuItems = [
 	{ name: "Notes", path: "/notes" },
 	{ name: "Search", path: "/search" },
 	{ name: "Task", path: "/task" },
+	{ name: "Image", path: "/image" },
+	{ name: "Video", path: "/video" },
 	{ name: "Whiteboard", path: "/whiteboard" },
 ];
 

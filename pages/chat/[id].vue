@@ -51,9 +51,7 @@ watch(() => useRoute().params.id, (newId) => {
           @click="createNewSession"
           class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-          </svg>
+          <div class="i-mdi-plus w-4 h-4 mr-2 -ml-1" />
           New Chat
         </button>
       </div>
@@ -70,10 +68,8 @@ watch(() => useRoute().params.id, (newId) => {
       class="fixed left-4 top-4 z-50 p-2 rounded-full bg-white dark:bg-gray-800 shadow-md lg:hidden"
       aria-label="Toggle sidebar"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path v-if="isSidebarOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-      </svg>
+      <div v-if="isSidebarOpen" class="i-mdi-close h-6 w-6 text-gray-600 dark:text-gray-300" />
+      <div v-else class="i-mdi-menu h-6 w-6 text-gray-600 dark:text-gray-300" />
     </button>
 
     <div 
@@ -93,9 +89,7 @@ watch(() => useRoute().params.id, (newId) => {
           @click="createNewSession"
           class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-          </svg>
+          <div class="i-mdi-plus w-4 h-4 mr-2 -ml-1" />
           New Chat
         </button>
       </div>
@@ -134,9 +128,7 @@ watch(() => useRoute().params.id, (newId) => {
           <div v-else class="h-full flex items-center justify-center">
             <div class="text-center max-w-md mx-auto">
               <div class="w-16 h-16 mx-auto mb-4 text-gray-300 dark:text-gray-600">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                </svg>
+                <div class="i-mdi-message w-16 h-16" />
               </div>
               <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-1">เริ่มการสนทนาใหม่</h3>
               <p class="text-sm text-gray-500 dark:text-gray-400">
