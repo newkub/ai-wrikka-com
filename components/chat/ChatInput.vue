@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed bottom-0 left-0 right-0 bg-block p-4 border-t border-border">
+  <div class="bottom-0 left-0 right-0 bg-block p-4 border-t border-border">
     <div class="max-w-3xl mx-auto">
       <!-- Selected Files Preview -->
       <div v-if="selectedFiles.length > 0" class="mb-2 flex flex-wrap gap-2">
@@ -56,6 +56,7 @@
         class="z-10"
       />
     </div>
+	
   </div>
 </template>
 
