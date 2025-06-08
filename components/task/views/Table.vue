@@ -151,6 +151,7 @@ const getPriorityClass = (priority: string) => {
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <span
+                v-if="task.priority"
                 :class="[
                   'px-2 py-1 text-xs font-medium rounded-full',
                   getPriorityClass(task.priority)
@@ -160,7 +161,7 @@ const getPriorityClass = (priority: string) => {
               </span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              {{ formatDate(task.dueDate) }}
+              {{ task.dueDate ? formatDate(new Date(task.dueDate)) : '' }}
             </td>
             <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
               <button

@@ -8,9 +8,9 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  'update:isOpen': [value: boolean]
-  submit: [task: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>]
-  'update:task': [task: Task]
+  (e: 'update:isOpen', value: boolean): void
+  (e: 'submit', task: Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'workspaceId'> & { workspaceId: string }): void
+  (e: 'update:task', task: Task): void
 }>()
 
 const title = ref(props.task?.title || '')
@@ -40,14 +40,17 @@ const handleSubmit = () => {
     description: description.value,
     status: status.value,
     priority: priority.value,
-    dueDate: dueDate.value ? new Date(dueDate.value) : undefined
+    dueDate: dueDate.value ? new Date(dueDate.value).toISOString() : undefined,
+    workspaceId: props.task?.workspaceId || '' // ต้องมี workspaceId
   }
 
   if (isEditMode.value && props.task) {
-    emit('update:task', {
+    const updatedTask = {
       ...props.task,
-      ...taskData
-    })
+      ...taskData,
+      dueDate: taskData.dueDate || props.task.dueDate
+    }
+    emit('update:task', updatedTask)
   } else {
     emit('submit', taskData)
   }

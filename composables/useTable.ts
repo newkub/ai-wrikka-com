@@ -37,7 +37,7 @@ export const useTable = (tasks: Task[]) => {
       task.title.toLowerCase().includes(query) ||
       task.description?.toLowerCase().includes(query) ||
       task.status.includes(query) ||
-      task.priority.includes(query)
+      task.priority?.includes(query)
     )
   })
 
