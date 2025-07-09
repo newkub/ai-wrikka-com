@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import BottomPanel from "~/components/code/bottom/index.vue";
 import CodeEditor from "~/components/code/CodeEditor.vue";
 import FileStructure from "~/components/code/FileStructure.vue";
-import BottomPanel from "~/components/code/bottom/index.vue";
 
 definePageMeta({
 	layout: "fullscreen",
@@ -43,21 +43,22 @@ const {
 	startHorizontalResize,
 } = useResize();
 
-// Theme
+// Theme - Using system preference
 const isDark = ref(false);
+// Note: Dark mode is now handled by CSS variables in uno.config.ts
 </script>
 
 <template>
-  <div class="h-full flex flex-col bg-white dark:bg-gray-900">
+  <div class="h-full flex flex-col bg-background">
     <div class="flex-1 flex overflow-hidden">
       <!-- Left Panel - File Explorer -->
       <div 
-        class="h-full bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col flex-shrink-0"
+        class="h-full bg-block border-r border-border flex flex-col flex-shrink-0"
         :style="{ width: leftPanelWidth }"
       >
         <!-- File Explorer Header -->
-        <div class="p-2 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-          <h2 class="text-sm font-medium text-gray-700 dark:text-gray-300">EXPLORER</h2>
+        <div class="p-2 border-b border-border flex justify-between items-center">
+          <h2 class="text-sm font-medium text-text">EXPLORER</h2>
         </div>
         
         <!-- File Structure -->
@@ -72,7 +73,7 @@ const isDark = ref(false);
 
       <!-- Resize Handle -->
       <div 
-        class="w-1 bg-gray-100 dark:bg-gray-700 hover:bg-blue-500 cursor-col-resize active:bg-blue-600 transition-colors flex-shrink-0"
+        class="w-1 bg-block hover:bg-color-primary cursor-col-resize active:bg-color-primary transition-colors flex-shrink-0"
         @mousedown="startVerticalResize"
       ></div>
 
@@ -96,7 +97,7 @@ const isDark = ref(false);
         ></div>
 
         <!-- Bottom Panel -->
-        <div class="flex-1 overflow-hidden border-t border-gray-200 dark:border-gray-700">
+        <div class="flex-1 overflow-hidden border-t border-border">
           <BottomPanel class="h-full w-full" />
         </div>
       </div>
@@ -120,7 +121,8 @@ const isDark = ref(false);
   border-radius: 3px;
 }
 
-.dark ::-webkit-scrollbar-thumb {
-  background: #4b5563;
+/* Using theme colors for scrollbar */
+::-webkit-scrollbar-thumb {
+  background: var(--border);
 }
 </style>

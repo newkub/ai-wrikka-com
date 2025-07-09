@@ -1,44 +1,48 @@
 <script setup lang="ts">
-import { ref, onMounted, nextTick, watch } from 'vue';
-import type { Message } from '~/types/chat';
+import { ref, onMounted, nextTick, watch } from "vue";
+import type { Message } from "~/types/chat";
 
 const props = defineProps<{
-  messages: Message[];
-  isLoading: boolean;
-  formatTimeAgo: (date: Date | string) => string;
+	messages: Message[];
+	isLoading: boolean;
+	formatTimeAgo: (date: Date | string) => string;
 }>();
 
 const emit = defineEmits<{
-  (e: 'reply', content: string): void;
-  (e: 'copy', content: string): void;
-  (e: 'save', message: Message): void;
+	(e: "reply", content: string): void;
+	(e: "copy", content: string): void;
+	(e: "save", message: Message): void;
 }>();
 
 const chatContainerRef = ref<HTMLElement | null>(null);
 
-const scrollToBottom = (behavior: ScrollBehavior = 'smooth'): void => {
-  nextTick(() => {
-    if (chatContainerRef.value) {
-      chatContainerRef.value.scrollTo({
-        top: chatContainerRef.value.scrollHeight,
-        behavior
-      });
-    }
-  });
+const scrollToBottom = (behavior: ScrollBehavior = "smooth"): void => {
+	nextTick(() => {
+		if (chatContainerRef.value) {
+			chatContainerRef.value.scrollTo({
+				top: chatContainerRef.value.scrollHeight,
+				behavior,
+			});
+		}
+	});
 };
 
 // Auto scroll when messages change
-watch(() => [...props.messages], () => {
-  scrollToBottom('auto');
-}, { deep: true });
+watch(
+	() => [...props.messages],
+	() => {
+		scrollToBottom("auto");
+	},
+	{ deep: true },
+);
 
 // Initial scroll to bottom
 onMounted(() => {
-  scrollToBottom('auto');
+	scrollToBottom("auto");
 });
 
 defineExpose({
-  scrollToBottom
+	scrollToBottom,
 });
 </script>
 
@@ -89,11 +93,11 @@ defineExpose({
         <div class="mt-2 text-xs opacity-70">{{ formatTimeAgo(message.timestamp) }}</div>
         <div 
           v-if="!message.isTyping"
-          class="absolute -bottom-5 right-0 flex items-center space-x-1 bg-white dark:bg-gray-800 rounded-full px-2 py-1 shadow-md border border-border opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+          class="absolute -bottom-5 right-0 flex items-center space-x-1 bg-block rounded-full px-2 py-1 shadow-md border border-border opacity-0 group-hover:opacity-100 transition-opacity duration-200"
         >
           <button 
             @click.stop="emit('copy', message.content)"
-            class="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            class="p-1 rounded-full hover:bg-block-hover transition-colors"
             title="คัดลอก"
           >
             <div class="i-mdi-content-copy w-4 h-4"></div>
@@ -101,14 +105,14 @@ defineExpose({
           <button 
             v-if="message.sender === 'ai'"
             @click.stop="emit('reply', message.content)"
-            class="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            class="p-1 rounded-full hover:bg-block-hover transition-colors"
             title="ตอบกลับ"
           >
             <div class="i-mdi-reply w-4 h-4"></div>
           </button>
           <button 
             @click.stop="emit('save', message)"
-            class="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            class="p-1 rounded-full hover:bg-block-hover transition-colors"
             title="บันทึก"
           >
             <div class="i-mdi-bookmark-outline w-4 h-4"></div>
@@ -119,11 +123,11 @@ defineExpose({
     
     <!-- Loading indicator -->
     <div v-if="isLoading" class="flex justify-start">
-      <div class="bg-gray-200 dark:bg-gray-800 max-w-[80%] rounded-2xl p-4">
+      <div class="bg-block max-w-[80%] rounded-2xl p-4">
         <div class="flex items-center gap-2">
-          <div class="h-2 w-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-pulse"></div>
-          <div class="h-2 w-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-pulse"></div>
-          <div class="h-2 w-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-pulse"></div>
+            <div class="h-2 w-2 bg-text/50 rounded-full animate-pulse"></div>
+            <div class="h-2 w-2 bg-text/50 rounded-full animate-pulse"></div>
+            <div class="h-2 w-2 bg-text/50 rounded-full animate-pulse"></div>
         </div>
       </div>
     </div>

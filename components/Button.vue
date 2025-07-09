@@ -1,5 +1,3 @@
-
-
 <script setup lang="ts">
 withDefaults(
 	defineProps<{
@@ -26,14 +24,22 @@ defineEmits<(e: "click", event: MouseEvent) => void>();
 <template>
   <button
     :type="type"
-    class="inline-flex items-center justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2"
+    class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2"
     :class="[
-      variant === 'primary' && 'bg-primary hover:opacity-90 focus:ring-primary',
-      variant === 'secondary' && 'bg-color-primary border border-border hover:bg-block focus:ring-primary',
-      variant === 'danger' && 'bg-error hover:opacity-90 focus:ring-error',
-      size === 'sm' && 'px-3 py-1.5 text-xs',
-      size === 'lg' && 'px-6 py-3 text-base',
-      { 'opacity-50 cursor-not-allowed': disabled }
+      {
+        'bg-primary-500 hover:bg-primary-600 text-white focus:ring-primary-500': variant === 'primary',
+        'bg-secondary-500 hover:bg-secondary-600 text-white focus:ring-secondary-500': variant === 'secondary',
+        'bg-danger-500 hover:bg-danger-600 text-white focus:ring-danger-500': variant === 'danger',
+        'opacity-50 cursor-not-allowed': disabled,
+      },
+      {
+        'px-2 py-1 text-xs': size === 'sm',
+        'px-4 py-2 text-sm': size === 'md',
+        'px-6 py-3 text-base': size === 'lg',
+      },
+      {
+        'flex-row-reverse': iconPosition === 'right',
+      },
     ]"
     :disabled="disabled"
     @click="$emit('click', $event)"

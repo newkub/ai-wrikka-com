@@ -1,3 +1,72 @@
+<script setup lang="ts">
+import { ref, computed } from "vue";
+
+// สถานะเมนูสำหรับ mobile
+const isMenuOpen = ref(false);
+const activeSection = ref("getting-started");
+
+// ข้อมูลเมนู
+interface MenuItem {
+	id: string;
+	title: string;
+	icon: string;
+	children: {
+		id: string;
+		title: string;
+	}[];
+}
+
+const menuItems: MenuItem[] = [
+	{
+		id: "getting-started",
+		title: "Getting Started",
+		icon: "i-mdi-rocket-launch-outline",
+		children: [
+			{ id: "introduction", title: "Introduction" },
+			{ id: "installation", title: "Installation" },
+			{ id: "configuration", title: "Configuration" },
+		],
+	},
+	{
+		id: "guides",
+		title: "Guides",
+		icon: "i-mdi-book-open-page-variant-outline",
+		children: [
+			{ id: "basic-concepts", title: "Basic Concepts" },
+			{ id: "advanced-usage", title: "Advanced Usage" },
+			{ id: "best-practices", title: "Best Practices" },
+		],
+	},
+	{
+		id: "api",
+		title: "API Reference",
+		icon: "i-mdi-api",
+		children: [
+			{ id: "core-api", title: "Core API" },
+			{ id: "plugins", title: "Plugins" },
+			{ id: "utilities", title: "Utilities" },
+		],
+	},
+];
+
+// ข้อมูลหัวข้อในหน้า (สำหรับ TOC)
+const headings = [
+	{ id: "introduction", text: "Introduction", level: 2 },
+	{ id: "features", text: "Key Features", level: 2 },
+	{ id: "quick-start", text: "Quick Start", level: 2 },
+	{ id: "prerequisites", text: "Prerequisites", level: 3 },
+	{ id: "installation", text: "Installation", level: 3 },
+	{ id: "usage", text: "Basic Usage", level: 3 },
+	{ id: "configuration", text: "Configuration", level: 2 },
+];
+
+// ฟังก์ชันสำหรับเปลี่ยน section
+const setActiveSection = (sectionId: string) => {
+	activeSection.value = sectionId;
+	isMenuOpen.value = false; // ปิดเมนูบนมือถือเมื่อเลือกหัวข้อ
+};
+</script>
+
 <template>
   <div class="text flex flex-col">
     <!-- Header -->
@@ -163,65 +232,6 @@ app.mount('#app');</code></pre>
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, computed } from "vue";
-
-// สถานะเมนูสำหรับ mobile
-const isMenuOpen = ref(false);
-const activeSection = ref("getting-started");
-
-// ข้อมูลเมนู
-const menuItems = [
-	{
-		title: "Getting Started",
-		id: "getting-started",
-		icon: "i-mdi-rocket-launch-outline",
-		children: [
-			{ title: "Introduction", id: "introduction" },
-			{ title: "Installation", id: "installation" },
-			{ title: "Configuration", id: "configuration" },
-		],
-	},
-	{
-		title: "Guides",
-		id: "guides",
-		icon: "i-mdi-book-open-page-variant-outline",
-		children: [
-			{ title: "Basic Concepts", id: "basic-concepts" },
-			{ title: "Advanced Usage", id: "advanced-usage" },
-			{ title: "Best Practices", id: "best-practices" },
-		],
-	},
-	{
-		title: "API Reference",
-		id: "api",
-		icon: "i-mdi-api",
-		children: [
-			{ title: "Core API", id: "core-api" },
-			{ title: "Plugins", id: "plugins" },
-			{ title: "Utilities", id: "utilities" },
-		],
-	},
-];
-
-// ข้อมูลหัวข้อในหน้า (สำหรับ TOC)
-const headings = [
-	{ id: "introduction", text: "Introduction", level: 2 },
-	{ id: "features", text: "Key Features", level: 2 },
-	{ id: "quick-start", text: "Quick Start", level: 2 },
-	{ id: "prerequisites", text: "Prerequisites", level: 3 },
-	{ id: "installation", text: "Installation", level: 3 },
-	{ id: "usage", text: "Basic Usage", level: 3 },
-	{ id: "configuration", text: "Configuration", level: 2 },
-];
-
-// ฟังก์ชันสำหรับเปลี่ยน section
-const setActiveSection = (sectionId: string) => {
-	activeSection.value = sectionId;
-	isMenuOpen.value = false; // ปิดเมนูบนมือถือเมื่อเลือกหัวข้อ
-};
-</script>
 
 <style scoped>
 /* Custom scrollbar */

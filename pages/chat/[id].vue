@@ -1,40 +1,43 @@
 
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { useChat } from '~/composables/useChat'
-import ChatInput from '~/components/chat/ChatInput.vue'
-import ChatContent from '~/components/chat/ChatContent.vue'
-import ChatHistory from '~/components/chat/ChatHistory.vue'
+import { ref, onMounted, onUnmounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useChat } from "~/composables/useChat";
+import ChatInput from "~/components/chat/ChatInput.vue";
+import ChatContent from "~/components/chat/ChatContent.vue";
+import ChatHistory from "~/components/chat/ChatHistory.vue";
 
 // Composable
 const {
-  chatContentRef,
-  userInput,
-  isSidebarOpen,
-  currentSessionTitle,
-  isLoading,
-  messages,
-  hasMessages,
-  formatTimeAgo,
-  handleClickOutside,
-  createNewSession,
-  loadSessionFromRoute,
-  sendMessage
-} = useChat()
+	chatContentRef,
+	userInput,
+	isSidebarOpen,
+	currentSessionTitle,
+	isLoading,
+	messages,
+	hasMessages,
+	formatTimeAgo,
+	handleClickOutside,
+	createNewSession,
+	loadSessionFromRoute,
+	sendMessage,
+} = useChat();
 
 // Event listeners
-onMounted(() => document.addEventListener('click', handleClickOutside))
-onUnmounted(() => document.removeEventListener('click', handleClickOutside))
+onMounted(() => document.addEventListener("click", handleClickOutside));
+onUnmounted(() => document.removeEventListener("click", handleClickOutside));
 
 // เริ่มต้นโหลดเซสชัน
-loadSessionFromRoute(useRoute().params.id)
+loadSessionFromRoute(useRoute().params.id);
 
 // ติดตามการเปลี่ยนแปลงของ route
-watch(() => useRoute().params.id, (newId) => {
-  loadSessionFromRoute(newId)
-})
+watch(
+	() => useRoute().params.id,
+	(newId) => {
+		loadSessionFromRoute(newId);
+	},
+);
 </script>
 
 

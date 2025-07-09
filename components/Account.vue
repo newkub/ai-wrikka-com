@@ -18,8 +18,8 @@ const signOut = () => {
 </script>
 
 <template>
-  <div class="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">
+  <div class="px-4 py-3 text-sm text">
     <div class="font-medium">{{ user.name }}</div>
-    <div class="truncate text-gray-500 dark:text-gray-400">{{ user.email }}</div>
+    <div class="truncate text-gray-500">{{ user.email }}</div>
   </div>
 </template>

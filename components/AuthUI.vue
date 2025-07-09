@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, watch, computed } from "vue";
-import { Input, Button, Checkbox, Tab } from "./primitive";
+import { computed, ref, watch } from "vue";
+import { Button, Checkbox, Input, Tab } from "./primitive";
 
 const props = defineProps<{
 	isOpen: boolean;
@@ -96,7 +96,7 @@ const closeModal = () => {
           leave-from-class="opacity-100 translate-y-0 sm:scale-100"
           leave-to-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
         >
-          <div class="inline-block w-full max-w-md my-8 overflow-hidden text-left align-middle transition-all transform bg-white rounded-xl shadow-xl dark:bg-gray-800">
+          <div class="inline-block w-full max-w-md my-8 overflow-hidden text-left align-middle transition-all transform bg-white rounded-xl shadow-xl">
             <!-- Tabs -->
             <Tab
               v-model="localMode"
@@ -124,7 +124,7 @@ const closeModal = () => {
                 </button>
               </div>
 
-            <div v-if="error" class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+            <div v-if="error" class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
               {{ error }}
             </div>
 
@@ -184,10 +184,10 @@ const closeModal = () => {
             <div v-if="localMode === 'signin'" class="px-6 pb-6">
               <div class="relative">
                 <div class="absolute inset-0 flex items-center">
-                  <div class="w-full border-t border-gray-200 dark:border-gray-700"></div>
+                  <div class="w-full border-t border-gray-200"></div>
                 </div>
                 <div class="relative flex justify-center text-sm">
-                  <span class="px-2 text-gray-500 bg-white dark:bg-gray-800">
+                  <span class="px-2 text-gray-500 bg-white">
                     Or continue with
                   </span>
                 </div>
@@ -216,7 +216,7 @@ const closeModal = () => {
             </div>
 
             <div class="mt-6 text-center">
-              <p class="text-sm text-gray-600 dark:text-gray-400">
+              <p class="text-sm text-gray-600">
                 {{ localMode === 'signin' ? "Don't have an account?" : 'Already have an account?' }}
                 <button
                   type="button"

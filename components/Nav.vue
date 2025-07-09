@@ -3,7 +3,7 @@
 import { ref, watch, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { Logo, ToggleTheme } from "./primitive";
-import type ButtonWorkOS from "./ButtonWorkOS.vue";
+import type ButtonWorkOs from "./ButtonWorkOS.vue";
 
 const menuItems = [
 	{ name: "Chat", path: "/chat" },
@@ -23,7 +23,7 @@ const menuItems = [
 const route = useRoute();
 const isDark = ref(false);
 const isMobileMenuOpen = ref(false);
-const buttonWorkOSRef = ref<typeof ButtonWorkOS | null>(null);
+const buttonWorkOsRef = ref<typeof ButtonWorkOs | null>(null);
 
 // Watch for theme changes
 watch(isDark, (newVal) => {

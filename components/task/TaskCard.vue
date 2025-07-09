@@ -1,85 +1,85 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import type { Task } from '~/stores/task'
+import { computed } from "vue";
+import type { Task } from "~/stores/task";
 
 const props = defineProps<{
-  task: Task
-}>()
+	task: Task;
+}>();
 
 const emit = defineEmits<{
-  click: [task: Task]
-  statusChange: [status: Task['status']]
-}>()
+	click: [task: Task];
+	statusChange: [status: Task["status"]];
+}>();
 
 interface PriorityColors {
-  [key: string]: string;
-  low: string;
-  medium: string;
-  high: string;
+	[key: string]: string;
+	low: string;
+	medium: string;
+	high: string;
 }
 
 interface StatusColors {
-  [key: string]: string;
-  todo: string;
-  'in-progress': string;
-  review: string;
-  done: string;
+	[key: string]: string;
+	todo: string;
+	"in-progress": string;
+	review: string;
+	done: string;
 }
 
 interface StatusLabels {
-  [key: string]: string;
-  todo: string;
-  'in-progress': string;
-  review: string;
-  done: string;
+	[key: string]: string;
+	todo: string;
+	"in-progress": string;
+	review: string;
+	done: string;
 }
 
 const priorityColors: PriorityColors = {
-  low: 'bg-blue-100 text-blue-800',
-  medium: 'bg-yellow-100 text-yellow-800',
-  high: 'bg-red-100 text-red-800'
-}
+	low: "bg-blue-100 text-blue-800",
+	medium: "bg-yellow-100 text-yellow-800",
+	high: "bg-red-100 text-red-800",
+};
 
 const statusColors: StatusColors = {
-  todo: 'bg-gray-100 text-gray-800',
-  'in-progress': 'bg-blue-100 text-blue-800',
-  review: 'bg-purple-100 text-purple-800',
-  done: 'bg-green-100 text-green-800'
-}
+	todo: "bg-gray-100 text-gray-800",
+	"in-progress": "bg-blue-100 text-blue-800",
+	review: "bg-purple-100 text-purple-800",
+	done: "bg-green-100 text-green-800",
+};
 
 const statusLabels: StatusLabels = {
-  todo: 'To Do',
-  'in-progress': 'In Progress',
-  review: 'Review',
-  done: 'Done'
-}
+	todo: "To Do",
+	"in-progress": "In Progress",
+	review: "Review",
+	done: "Done",
+};
 
 const priorityLabel = computed(() => {
-  const priorityMap = {
-    low: 'Low',
-    medium: 'Medium',
-    high: 'High'
-  } as const
-  return priorityMap[props.task.priority || 'medium']
-})
+	const priorityMap = {
+		low: "Low",
+		medium: "Medium",
+		high: "High",
+	} as const;
+	return priorityMap[props.task.priority || "medium"];
+});
 
 const formattedDueDate = computed(() => {
-  if (!props.task.dueDate) return null
-  return new Date(props.task.dueDate).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  })
-})
+	if (!props.task.dueDate) return null;
+	return new Date(props.task.dueDate).toLocaleDateString("en-US", {
+		year: "numeric",
+		month: "short",
+		day: "numeric",
+	});
+});
 
 const handleClick = () => {
-  emit('click', props.task)
-}
+	emit("click", props.task);
+};
 
 const handleStatusChange = (e: Event) => {
-  const select = e.target as HTMLSelectElement
-  emit('statusChange', select.value as Task['status'])
-}
+	const select = e.target as HTMLSelectElement;
+	emit("statusChange", select.value as Task["status"]);
+};
 </script>
 
 <template>

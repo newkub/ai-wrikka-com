@@ -158,7 +158,7 @@ const getFileIcon = (file: FileItem) => {
             ref="renameInputRef"
             v-model="newName"
             type="text"
-            class="w-full px-1 py-0.5 text-sm border border-blue-400 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-400"
+            class="w-full px-1 py-0.5 text-sm border border-blue-400 rounded bg-white text-text focus:outline-none focus:ring-1 focus:ring-blue-400"
             @blur="handleRenameInputBlur"
             @keydown="handleRenameInputKeydown"
             @click.stop
@@ -171,14 +171,14 @@ const getFileIcon = (file: FileItem) => {
           @click="handleFileSelect(file)"
           @dblclick="toggleDirectory(file)"
           @contextmenu.prevent="showContextMenu($event, file)"
-          class="flex items-center px-2 py-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors group"
-          :class="{ 'bg-gray-100 dark:bg-gray-700': activeFile === file.name }"
+          class="flex items-center px-2 py-1.5 rounded hover:bg-block-hover cursor-pointer transition-colors group"
+          :class="{ 'bg-block': activeFile === file.name }"
         >
           <span v-if="file.type === 'directory'" class="text-gray-400 text-xs mr-1">
             <div :class="file.isOpen ? 'i-mdi-chevron-down' : 'i-mdi-chevron-right'" class="w-4 h-4"></div>
           </span>
           <div :class="[getFileIcon(file), 'w-4 h-4 mr-2 flex-shrink-0']"></div>
-          <span class="truncate text-gray-800 dark:text-gray-200">{{ file.name }}</span>
+          <span class="truncate text-text">{{ file.name }}</span>
         </div>
         
         <!-- Nested Children -->

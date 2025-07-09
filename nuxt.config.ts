@@ -8,8 +8,10 @@ export default defineNuxtConfig({
 			openAPI: true,
 		},
 	},
-	devtools: { enabled: false },
-	css: ["@unocss/reset/tailwind.css", "~/assets/design-tokens.css"],
+	devtools: {
+		enabled: true,
+	},
+	css: ["@unocss/reset/tailwind-compat.css", "~/assets/design-tokens.css"],
 	app: {
 		head: {
 			title: "AI Wrikka",
@@ -28,17 +30,13 @@ export default defineNuxtConfig({
 	modules: [
 		"@unocss/nuxt",
 		"@vueuse/nuxt",
-		["@pinia/nuxt", {
-			autoImports: ["defineStore", "storeToRefs"]
-		}],
-		["@pinia-plugin-persistedstate/nuxt", {
-			storage: 'localStorage',
-			autoImports: ['defineStore', 'acceptHMRUpdate']
-		}]
+		"@pinia/nuxt",
+		"@pinia-plugin-persistedstate/nuxt",
 	],
 
 	typescript: {
 		strict: true,
+		typeCheck: true,
 	},
 	runtimeConfig: {
 		openaiApiKey: process.env.OPENAI_API_KEY,
@@ -52,10 +50,10 @@ export default defineNuxtConfig({
 			workosApiKey: process.env.WORKOS_API_KEY,
 			persistedState: {
 				cookieOptions: {
-					sameSite: 'lax',
+					sameSite: "lax",
 					secure: true,
-					maxAge: 60 * 60 * 24 * 30 // 30 days
-				}
+					maxAge: 60 * 60 * 24 * 30, // 30 days
+				},
 			},
 		},
 	},

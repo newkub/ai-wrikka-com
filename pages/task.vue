@@ -1,130 +1,135 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
-import { storeToRefs } from 'pinia'
-import TaskForm from '~/components/task/TaskForm.vue'
-import KanBanView from '~/components/task/views/KanBan.vue'
-import TableView from '~/components/task/views/Table.vue'
-import Sidebar from '~/components/task/Sidebar.vue'
-import { useTaskStore } from '~/stores/task'
-import type { Task, TaskStatus } from '~/stores/task'
+import { storeToRefs } from "pinia";
+import { computed, onMounted, ref } from "vue";
+import Sidebar from "~/components/task/Sidebar.vue";
+import TaskForm from "~/components/task/TaskForm.vue";
+import KanBanView from "~/components/task/views/KanBan.vue";
+import TableView from "~/components/task/views/Table.vue";
+import type { Task, TaskStatus } from "~/stores/task";
+import { useTaskStore } from "~/stores/task";
 
 // View mode
-type ViewMode = 'kanban' | 'table'
-const viewMode = ref<ViewMode>('kanban')
+type ViewMode = "kanban" | "table";
+const viewMode = ref<ViewMode>("kanban");
 
 // Task store
-const taskStore = useTaskStore()
-const { 
-  tasks, 
-  selectedTask, 
-  isTaskFormOpen,
-  todoTasks,
-  inProgressTasks,
-  reviewTasks,
-  doneTasks
-} = storeToRefs(taskStore)
+const taskStore = useTaskStore();
+const {
+	tasks,
+	selectedTask,
+	isTaskFormOpen,
+	todoTasks,
+	inProgressTasks,
+	reviewTasks,
+	doneTasks,
+} = storeToRefs(taskStore);
 
 // Define statuses with id and title to match KanBan component props
-type StatusItem = { id: TaskStatus; title: string }
+type StatusItem = { id: TaskStatus; title: string };
 const statuses: StatusItem[] = [
-  { id: 'todo', title: 'To Do' },
-  { id: 'in-progress', title: 'In Progress' },
-  { id: 'review', title: 'Review' },
-  { id: 'done', title: 'Done' }
-]
+	{ id: "todo", title: "To Do" },
+	{ id: "in-progress", title: "In Progress" },
+	{ id: "review", title: "Review" },
+	{ id: "done", title: "Done" },
+];
 
 // Computed
 const allTasks = computed(() => [
-  ...todoTasks.value,
-  ...inProgressTasks.value,
-  ...reviewTasks.value,
-  ...doneTasks.value
-])
+	...todoTasks.value,
+	...inProgressTasks.value,
+	...reviewTasks.value,
+	...doneTasks.value,
+]);
 
 // Methods
-const handleCreateTask = async (taskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => {
-  try {
-    await taskStore.createTask(taskData)
-  } catch (error) {
-    console.error('Error creating task:', error)
-    throw error
-  }
-}
+const handleCreateTask = async (
+	taskData: Omit<Task, "id" | "createdAt" | "updatedAt">,
+) => {
+	try {
+		await taskStore.createTask(taskData);
+	} catch (error) {
+		console.error("Error creating task:", error);
+		throw error;
+	}
+};
 
 const handleUpdateTask = async (task: Task) => {
-  try {
-    const { id, ...updates } = task
-    await taskStore.updateTask(id, updates)
-  } catch (error) {
-    console.error('Error updating task:', error)
-    throw error
-  }
-}
+	try {
+		const { id, ...updates } = task;
+		await taskStore.updateTask(id, updates);
+	} catch (error) {
+		console.error("Error updating task:", error);
+		throw error;
+	}
+};
 
 const handleDeleteTask = async (taskId: string) => {
-  try {
-    await taskStore.deleteTask(taskId)
-  } catch (error) {
-    console.error('Error deleting task:', error)
-    throw error
-  }
-}
+	try {
+		await taskStore.deleteTask(taskId);
+	} catch (error) {
+		console.error("Error deleting task:", error);
+		throw error;
+	}
+};
 
 const handleTaskClick = (task: Task) => {
-  taskStore.selectTask(task)
-  taskStore.openTaskForm()
-}
+	taskStore.selectTask(task);
+	taskStore.openTaskForm();
+};
 
 const handleStatusChange = async (taskId: string, newStatus: TaskStatus) => {
-  try {
-    await taskStore.updateTask(taskId, { status: newStatus })
-  } catch (error) {
-    console.error('Error updating task status:', error)
-  }
-}
+	try {
+		await taskStore.updateTask(taskId, { status: newStatus });
+	} catch (error) {
+		console.error("Error updating task status:", error);
+	}
+};
 
 // Drag and drop
 const onDragStart = (e: DragEvent, taskId: string) => {
-  if (e.dataTransfer) {
-    e.dataTransfer.setData('taskId', taskId)
-  }
-}
+	if (e.dataTransfer) {
+		e.dataTransfer.setData("taskId", taskId);
+	}
+};
 
 const onDrop = async (e: DragEvent, status: TaskStatus) => {
-  e.preventDefault()
-  const taskId = e.dataTransfer?.getData('taskId')
-  if (taskId) {
-    await handleStatusChange(taskId, status)
-  }
-}
+	e.preventDefault();
+	const taskId = e.dataTransfer?.getData("taskId");
+	if (taskId) {
+		await handleStatusChange(taskId, status);
+	}
+};
 
 // Handle sidebar item selection
-const handleSidebarSelect = (itemId: string, type: 'workspace' | 'status' | 'view') => {
-  console.log(`Selected ${type}:`, itemId)
-  
-  // Handle selection based on type
-  switch (type) {
-    case 'workspace':
-      // Filter tasks by workspace
-      console.log('Filtering by workspace:', itemId)
-      break
-      
-    case 'status':
-      // Filter tasks by status
-      console.log('Filtering by status:', itemId)
-      break
-      
-    case 'view':
-      // Handle view type selection
-      console.log('Selected view:', itemId)
-      break
-  }
-}
+const handleSidebarSelect = (
+	itemId: string,
+	type: "workspace" | "status" | "view",
+) => {
+	console.log(`Selected ${type}:`, itemId);
+
+	// Handle selection based on type
+	switch (type) {
+		case "workspace":
+			// Filter tasks by workspace
+			console.log("Filtering by workspace:", itemId);
+			break;
+
+		case "status":
+			// Filter tasks by status
+			console.log("Filtering by status:", itemId);
+			break;
+
+		case "view":
+			// Handle view type selection
+			console.log("Selected view:", itemId);
+			break;
+	}
+};
 
 // Fetch tasks on component mount
 onMounted(() => {
-  taskStore.fetchTasks()
-})
+	taskStore.fetchTasks();
+});
 </script>
 
 <template>

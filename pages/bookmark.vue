@@ -1,77 +1,9 @@
-<template>
-  <div>
-    <!-- Header -->
-    <header class="bg-block border-b border">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div class="flex justify-between items-center">
-          <h1 class="text-2xl font-bold">Bookmarks</h1>
-          <button class="px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90 transition-opacity">
-            Add Bookmark
-          </button>
-        </div>
-      </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <!-- Search and Filter -->
-      <Search
-        v-model="searchQuery"
-        :tags="getAllTags()"
-        :active-tag="activeTag"
-        placeholder="Search bookmarks..."
-        @tag-click="setActiveTag"
-      />
-
-      <!-- All Tags -->
-      <div class="mb-6">
-        <h2 class="text-lg font-medium mb-3">All Tags</h2>
-        <div class="flex flex-wrap gap-2">
-          <Tag 
-            v-for="tag in getAllTags()" 
-            :key="tag.id"
-            :name="tag.name"
-            :active="activeTag === tag.id"
-            :clickable="true"
-            active-bg-color="bg-color-primary"
-            active-text-color="text-white"
-            inactive-bg-color="bg-block/80"
-            inactive-text-color="text-text/70"
-            class="transition-all duration-200"
-            @click="setActiveTag(tag.id === activeTag ? null : tag.id)"
-          />
-        </div>
-      </div>
-
-      <!-- Bookmark Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <CardBookmark 
-          v-for="bookmark in filteredBookmarks" 
-          :key="bookmark.id"
-          :bookmark="bookmark"
-        />
-        
-        <!-- Empty State -->
-        <div 
-          v-if="filteredBookmarks.length === 0"
-          class="col-span-full py-12 text-gray-500"
-        >
-          <i class="i-mdi-bookmark-outline text-4xl mx-auto mb-4"></i>
-          <p class="text-lg font-medium">No bookmarks found</p>
-          <p v-if="searchQuery || activeTag" class="text-sm">
-            Try adjusting your search or filter criteria
-          </p>
-        </div>
-      </div>
-    </main>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import Search from "~/components/Search.vue";
 import CardBookmark from "~/components/CardBookmark.vue";
 import { Tag } from "~/components/primitive";
+import Search from "~/components/Search.vue";
+import Button from "~/components/Button.vue"; // Import Button component
 import type { Bookmark, Tag as TagType } from "~/types/bookmark";
 
 // Mock data - ควรดึงจาก API จริงในอนาคต
@@ -166,3 +98,64 @@ bookmarks.value = [
 	},
 ];
 </script>
+
+<template>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Search and Add Bookmark -->
+    <div class="flex gap-4 mb-6">
+      <Search
+        v-model="searchQuery"
+        :tags="getAllTags()"
+        :active-tag="activeTag"
+        placeholder="Search bookmarks..."
+        @tag-click="setActiveTag"
+        class="flex-1"
+      />
+      <Button class="px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90 transition-opacity whitespace-nowrap">
+        Add Bookmark
+      </Button>
+    </div>
+
+      <!-- All Tags -->
+      <div class="mb-6">
+        <h2 class="text-lg font-medium mb-3">All Tags</h2>
+        <div class="flex flex-wrap gap-2">
+          <Tag 
+            v-for="tag in getAllTags()" 
+            :key="tag.id"
+            :name="tag.name"
+            :active="activeTag === tag.id"
+            :clickable="true"
+            active-bg-color="bg-color-primary"
+            active-text-color="text-white"
+            inactive-bg-color="bg-block/80"
+            inactive-text-color="text-text/70"
+            class="transition-all duration-200"
+            @click="setActiveTag(tag.id === activeTag ? null : tag.id)"
+          />
+        </div>
+      </div>
+
+      <!-- Bookmark Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <CardBookmark 
+          v-for="bookmark in filteredBookmarks" 
+          :key="bookmark.id"
+          :bookmark="bookmark"
+        />
+        
+        <!-- Empty State -->
+        <div 
+          v-if="filteredBookmarks.length === 0"
+          class="col-span-full py-12 text-gray-500"
+        >
+          <i class="i-mdi-bookmark-outline text-4xl mx-auto mb-4"></i>
+          <p class="text-lg font-medium">No bookmarks found</p>
+          <p v-if="searchQuery || activeTag" class="text-sm">
+            Try adjusting your search or filter criteria
+          </p>
+        </div>
+      </div>
+    </div>
+
+</template>

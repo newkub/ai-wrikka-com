@@ -26,16 +26,16 @@ const setActiveTab = (tabId: string) => {
 </script>
 
 <template>
-  <div class="h-full flex flex-col bg-white dark:bg-gray-900">
+  <div class="h-full flex flex-col bg-white">
     <!-- Tabs -->
-    <div class="flex border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+    <div class="flex border-b border-gray-200 bg-gray-50">
       <button
         v-for="tab in tabs"
         :key="tab.id"
         class="px-4 py-2 text-sm font-medium border-b-2"
         :class="{
-          'border-blue-500 text-blue-600 dark:text-blue-400': activeTab === tab.id,
-          'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300': activeTab !== tab.id
+          'border-blue-500 text-blue-600': activeTab === tab.id,
+          'border-transparent text-gray-500 hover:text-gray-700': activeTab !== tab.id
         }"
         @click="setActiveTab(tab.id)"
       >
@@ -69,7 +69,5 @@ const setActiveTab = (tabId: string) => {
   border-radius: 3px;
 }
 
-.dark ::-webkit-scrollbar-thumb {
-  background: #4b5563;
-}
+/* Removed dark mode scrollbar styles */
 </style>

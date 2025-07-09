@@ -1,48 +1,48 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from "vue";
 
 defineProps<{
-  modelValue?: string;
-  workspaces?: { id: string; name: string }[];
-  statuses?: { id: string; name: string }[];
+	modelValue?: string;
+	workspaces?: { id: string; name: string }[];
+	statuses?: { id: string; name: string }[];
 }>();
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: string): void;
-  (e: 'select', value: string, type: 'workspace' | 'status' | 'view'): void;
+	(e: "update:modelValue", value: string): void;
+	(e: "select", value: string, type: "workspace" | "status" | "view"): void;
 }>();
 
 const viewItems = [
-  { id: 'all', label: 'All Tasks', icon: 'i-mdi:view-list' },
-  { id: 'today', label: 'Today', icon: 'i-mdi:calendar-today' },
-  { id: 'upcoming', label: 'Upcoming', icon: 'i-mdi:calendar-month' },
-  { id: 'completed', label: 'Completed', icon: 'i-mdi:check-circle' },
+	{ id: "all", label: "All Tasks", icon: "i-mdi:view-list" },
+	{ id: "today", label: "Today", icon: "i-mdi:calendar-today" },
+	{ id: "upcoming", label: "Upcoming", icon: "i-mdi:calendar-month" },
+	{ id: "completed", label: "Completed", icon: "i-mdi:check-circle" },
 ];
 
-const selectedView = ref('all');
+const selectedView = ref("all");
 const selectedWorkspace = ref<string | null>(null);
 const selectedStatus = ref<string | null>(null);
 
 const selectView = (viewId: string) => {
-  selectedView.value = viewId;
-  selectedWorkspace.value = null;
-  selectedStatus.value = null;
-  emit('update:modelValue', viewId);
-  emit('select', viewId, 'view');
+	selectedView.value = viewId;
+	selectedWorkspace.value = null;
+	selectedStatus.value = null;
+	emit("update:modelValue", viewId);
+	emit("select", viewId, "view");
 };
 
 const selectWorkspace = (workspaceId: string) => {
-  selectedWorkspace.value = workspaceId;
-  selectedView.value = '';
-  selectedStatus.value = null;
-  emit('select', workspaceId, 'workspace');
+	selectedWorkspace.value = workspaceId;
+	selectedView.value = "";
+	selectedStatus.value = null;
+	emit("select", workspaceId, "workspace");
 };
 
 const selectStatus = (statusId: string) => {
-  selectedStatus.value = statusId;
-  selectedView.value = '';
-  selectedWorkspace.value = null;
-  emit('select', statusId, 'status');
+	selectedStatus.value = statusId;
+	selectedView.value = "";
+	selectedWorkspace.value = null;
+	emit("select", statusId, "status");
 };
 </script>
 

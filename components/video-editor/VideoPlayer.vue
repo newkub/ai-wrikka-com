@@ -55,15 +55,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, watch, onMounted } from "vue";
 
 const props = defineProps<{
-  src: string;
-  autoplay?: boolean;
-  showControls?: boolean;
+	src: string;
+	autoplay?: boolean;
+	showControls?: boolean;
 }>();
 
-const emit = defineEmits(['timeupdate', 'loadedmetadata', 'play', 'pause']);
+const emit = defineEmits(["timeupdate", "loadedmetadata", "play", "pause"]);
 
 const videoElement = ref<HTMLVideoElement | null>(null);
 const isPlaying = ref(false);
@@ -73,76 +73,77 @@ const duration = ref(0);
 const volume = ref(1);
 
 const progress = computed(() => {
-  return duration.value > 0 ? (currentTime.value / duration.value) * 100 : 0;
+	return duration.value > 0 ? (currentTime.value / duration.value) * 100 : 0;
 });
 
 const currentSource = computed(() => props.src);
 
 const togglePlay = () => {
-  if (!videoElement.value) return;
-  
-  if (videoElement.value.paused) {
-    videoElement.value.play();
-    emit('play');
-  } else {
-    videoElement.value.pause();
-    emit('pause');
-  }
+	if (!videoElement.value) return;
+
+	if (videoElement.value.paused) {
+		videoElement.value.play();
+		emit("play");
+	} else {
+		videoElement.value.pause();
+		emit("pause");
+	}
 };
 
 const toggleMute = () => {
-  if (!videoElement.value) return;
-  isMuted.value = !isMuted.value;
-  if (videoElement.value) {
-    videoElement.value.muted = isMuted.value;
-  }
+	if (!videoElement.value) return;
+	isMuted.value = !isMuted.value;
+	if (videoElement.value) {
+		videoElement.value.muted = isMuted.value;
+	}
 };
 
 const handleTimeUpdate = () => {
-  if (!videoElement.value) return;
-  currentTime.value = videoElement.value.currentTime;
-  emit('timeupdate', currentTime.value);
+	if (!videoElement.value) return;
+	currentTime.value = videoElement.value.currentTime;
+	emit("timeupdate", currentTime.value);
 };
 
 const handleLoadedMetadata = () => {
-  if (!videoElement.value) return;
-  duration.value = videoElement.value.duration;
-  emit('loadedmetadata', {
-    duration: duration.value,
-    videoWidth: videoElement.value.videoWidth,
-    videoHeight: videoElement.value.videoHeight
-  });};
+	if (!videoElement.value) return;
+	duration.value = videoElement.value.duration;
+	emit("loadedmetadata", {
+		duration: duration.value,
+		videoWidth: videoElement.value.videoWidth,
+		videoHeight: videoElement.value.videoHeight,
+	});
+};
 
 const formatTime = (timeInSeconds: number): string => {
-  const minutes = Math.floor(timeInSeconds / 60);
-  const seconds = Math.floor(timeInSeconds % 60);
-  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+	const minutes = Math.floor(timeInSeconds / 60);
+	const seconds = Math.floor(timeInSeconds % 60);
+	return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 };
 
 watch(volume, (newVolume) => {
-  if (!videoElement.value) return;
-  videoElement.value.volume = newVolume;
-  isMuted.value = newVolume === 0;
+	if (!videoElement.value) return;
+	videoElement.value.volume = newVolume;
+	isMuted.value = newVolume === 0;
 });
 
 // Expose methods
 const play = () => {
-  if (videoElement.value) videoElement.value.play();
+	if (videoElement.value) videoElement.value.play();
 };
 
 const pause = () => {
-  if (videoElement.value) videoElement.value.pause();
+	if (videoElement.value) videoElement.value.pause();
 };
 
 const seek = (time: number) => {
-  if (!videoElement.value) return;
-  videoElement.value.currentTime = time;
+	if (!videoElement.value) return;
+	videoElement.value.currentTime = time;
 };
 
 defineExpose({
-  play,
-  pause,
-  seek,
-  videoElement
+	play,
+	pause,
+	seek,
+	videoElement,
 });
 </script>

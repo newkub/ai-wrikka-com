@@ -1,67 +1,69 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { useTable } from '~/composables/useTable'
-import type { Task } from '~/stores/task'
+import { computed, ref } from "vue";
+import { useTable } from "~/composables/useTable";
+import type { Task } from "~/stores/task";
 
 const props = defineProps<{
-  tasks: Task[]
-  onEdit: (task: Task) => void
-  onDelete: (taskId: string) => void
-  onStatusChange: (taskId: string, status: string) => void
-}>()
+	tasks: Task[];
+	onEdit: (task: Task) => void;
+	onDelete: (taskId: string) => void;
+	onStatusChange: (taskId: string, status: string) => void;
+}>();
 
 const {
-  sortField,
-  sortDirection,
-  searchQuery,
-  currentPage,
-  itemsPerPage,
-  totalPages,
-  paginatedTasks,
-  sortBy,
-  changePage,
-  formatHeader
-} = useTable(props.tasks)
+	sortField,
+	sortDirection,
+	searchQuery,
+	currentPage,
+	itemsPerPage,
+	totalPages,
+	paginatedTasks,
+	sortBy,
+	changePage,
+	formatHeader,
+} = useTable(props.tasks);
 
 // Table columns configuration
 const columns = [
-  { key: 'title', label: 'Title', sortable: true },
-  { key: 'status', label: 'Status', sortable: true },
-  { key: 'priority', label: 'Priority', sortable: true },
-  { key: 'dueDate', label: 'Due Date', sortable: true },
-  { key: 'actions', label: 'Actions', sortable: false }
-]
+	{ key: "title", label: "Title", sortable: true },
+	{ key: "status", label: "Status", sortable: true },
+	{ key: "priority", label: "Priority", sortable: true },
+	{ key: "dueDate", label: "Due Date", sortable: true },
+	{ key: "actions", label: "Actions", sortable: false },
+];
 
 // Format date for display
 const formatDate = (dateString?: Date) => {
-  if (!dateString) return ''
-  return new Date(dateString).toLocaleDateString('th-TH', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  })
-}
+	if (!dateString) return "";
+	return new Date(dateString).toLocaleDateString("th-TH", {
+		year: "numeric",
+		month: "short",
+		day: "numeric",
+	});
+};
 
 // Status badge class
 const getStatusClass = (status: string) => {
-  const classes = {
-    todo: 'bg-gray-100 text-gray-800',
-    'in-progress': 'bg-blue-100 text-blue-800',
-    review: 'bg-yellow-100 text-yellow-800',
-    done: 'bg-green-100 text-green-800'
-  }
-  return classes[status as keyof typeof classes] || 'bg-gray-100 text-gray-800'
-}
+	const classes = {
+		todo: "bg-gray-100 text-gray-800",
+		"in-progress": "bg-blue-100 text-blue-800",
+		review: "bg-yellow-100 text-yellow-800",
+		done: "bg-green-100 text-green-800",
+	};
+	return classes[status as keyof typeof classes] || "bg-gray-100 text-gray-800";
+};
 
 // Priority badge class
 const getPriorityClass = (priority: string) => {
-  const classes = {
-    low: 'bg-blue-100 text-blue-800',
-    medium: 'bg-yellow-100 text-yellow-800',
-    high: 'bg-red-100 text-red-800'
-  }
-  return classes[priority as keyof typeof classes] || 'bg-gray-100 text-gray-800'
-}
+	const classes = {
+		low: "bg-blue-100 text-blue-800",
+		medium: "bg-yellow-100 text-yellow-800",
+		high: "bg-red-100 text-red-800",
+	};
+	return (
+		classes[priority as keyof typeof classes] || "bg-gray-100 text-gray-800"
+	);
+};
 </script>
 
 <template>

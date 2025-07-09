@@ -1,34 +1,34 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import type { DrawingTool } from '~/types/whiteboard';
+import { ref, computed } from "vue";
+import type { DrawingTool } from "~/types/whiteboard";
 
 interface Tool {
-  id: DrawingTool;
-  name: string;
-  icon: string;
+	id: DrawingTool;
+	name: string;
+	icon: string;
 }
 
 const TOOLS: Tool[] = [
-  { id: 'pen', name: 'Pen', icon: '✏️' },
-  { id: 'rectangle', name: 'Rectangle', icon: '⬜' },
-  { id: 'ellipse', name: 'Ellipse', icon: '⭕' },
-  { id: 'text', name: 'Text', icon: 'T' },
+	{ id: "pen", name: "Pen", icon: "✏️" },
+	{ id: "rectangle", name: "Rectangle", icon: "⬜" },
+	{ id: "ellipse", name: "Ellipse", icon: "⭕" },
+	{ id: "text", name: "Text", icon: "T" },
 ];
 
 const props = defineProps<{
-  currentTool: DrawingTool;
-  currentColor: string;
-  currentWidth: number;
-  isFullscreen: boolean;
+	currentTool: DrawingTool;
+	currentColor: string;
+	currentWidth: number;
+	isFullscreen: boolean;
 }>();
 
 const emit = defineEmits<{
-  'update:currentTool': [tool: DrawingTool];
-  'update:currentColor': [color: string];
-  'update:currentWidth': [width: number];
-  'clear': [];
-  'undo': [];
-  'toggleFullscreen': [];
+	"update:currentTool": [tool: DrawingTool];
+	"update:currentColor": [color: string];
+	"update:currentWidth": [width: number];
+	clear: [];
+	undo: [];
+	toggleFullscreen: [];
 }>();
 </script>
 

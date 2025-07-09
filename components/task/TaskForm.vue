@@ -1,66 +1,75 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import type { Task } from '~/stores/task'
+import { ref, computed } from "vue";
+import type { Task } from "~/stores/task";
 
 const props = defineProps<{
-  task?: Task
-  isOpen: boolean
-}>()
+	task?: Task;
+	isOpen: boolean;
+}>();
 
 const emit = defineEmits<{
-  (e: 'update:isOpen', value: boolean): void
-  (e: 'submit', task: Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'workspaceId'> & { workspaceId: string }): void
-  (e: 'update:task', task: Task): void
-}>()
+	(e: "update:isOpen", value: boolean): void;
+	(
+		e: "submit",
+		task: Omit<Task, "id" | "createdAt" | "updatedAt" | "workspaceId"> & {
+			workspaceId: string;
+		},
+	): void;
+	(e: "update:task", task: Task): void;
+}>();
 
-const title = ref(props.task?.title || '')
-const description = ref(props.task?.description || '')
-const status = ref<Task['status']>(props.task?.status || 'todo')
-const priority = ref<Task['priority']>(props.task?.priority || 'medium')
-const dueDate = ref(props.task?.dueDate ? new Date(props.task.dueDate).toISOString().split('T')[0] : '')
+const title = ref(props.task?.title || "");
+const description = ref(props.task?.description || "");
+const status = ref<Task["status"]>(props.task?.status || "todo");
+const priority = ref<Task["priority"]>(props.task?.priority || "medium");
+const dueDate = ref(
+	props.task?.dueDate
+		? new Date(props.task.dueDate).toISOString().split("T")[0]
+		: "",
+);
 
-const isEditMode = computed(() => !!props.task)
+const isEditMode = computed(() => !!props.task);
 
 const statusOptions = [
-  { value: 'todo', label: 'To Do' },
-  { value: 'in-progress', label: 'In Progress' },
-  { value: 'review', label: 'Review' },
-  { value: 'done', label: 'Done' }
-]
+	{ value: "todo", label: "To Do" },
+	{ value: "in-progress", label: "In Progress" },
+	{ value: "review", label: "Review" },
+	{ value: "done", label: "Done" },
+];
 
 const priorityOptions = [
-  { value: 'low', label: 'Low' },
-  { value: 'medium', label: 'Medium' },
-  { value: 'high', label: 'High' }
-]
+	{ value: "low", label: "Low" },
+	{ value: "medium", label: "Medium" },
+	{ value: "high", label: "High" },
+];
 
 const handleSubmit = () => {
-  const taskData = {
-    title: title.value,
-    description: description.value,
-    status: status.value,
-    priority: priority.value,
-    dueDate: dueDate.value ? new Date(dueDate.value).toISOString() : undefined,
-    workspaceId: props.task?.workspaceId || '' // ต้องมี workspaceId
-  }
+	const taskData = {
+		title: title.value,
+		description: description.value,
+		status: status.value,
+		priority: priority.value,
+		dueDate: dueDate.value ? new Date(dueDate.value).toISOString() : undefined,
+		workspaceId: props.task?.workspaceId || "", // ต้องมี workspaceId
+	};
 
-  if (isEditMode.value && props.task) {
-    const updatedTask = {
-      ...props.task,
-      ...taskData,
-      dueDate: taskData.dueDate || props.task.dueDate
-    }
-    emit('update:task', updatedTask)
-  } else {
-    emit('submit', taskData)
-  }
-  
-  closeModal()
-}
+	if (isEditMode.value && props.task) {
+		const updatedTask = {
+			...props.task,
+			...taskData,
+			dueDate: taskData.dueDate || props.task.dueDate,
+		};
+		emit("update:task", updatedTask);
+	} else {
+		emit("submit", taskData);
+	}
+
+	closeModal();
+};
 
 const closeModal = () => {
-  emit('update:isOpen', false)
-}
+	emit("update:isOpen", false);
+};
 </script>
 
 <template>

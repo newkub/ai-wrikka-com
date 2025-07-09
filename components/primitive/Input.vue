@@ -58,14 +58,14 @@ const inputValue = computed({
 
 <template>
   <div class="w-full">
-    <label v-if="label" :for="id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+    <label v-if="label" :for="id" class="block text-sm font-medium text-text mb-1">
       {{ label }}
-      <span v-if="required" class="text-red-500">*</span>
+      <span v-if="required" class="text-color-error">*</span>
     </label>
     
     <div class="relative rounded-md shadow-sm">
       <div v-if="icon" class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-        <i :class="`${icon} h-5 w-5 text-gray-400`" />
+        <i :class="`${icon} h-5 w-5 text-text/50`" />
       </div>
       
       <input
@@ -77,17 +77,17 @@ const inputValue = computed({
         :required="required"
         :autocomplete="autocomplete"
         :class="[
-          'block w-full pl-10 pr-3 py-2.5 border rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm',
-          'dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400',
+          'block w-full pl-10 pr-3 py-2.5 border rounded-lg shadow-sm placeholder-text/40 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm',
+          'bg-block text-text',
           error 
-            ? 'border-red-300 text-red-900 focus:ring-red-500 focus:border-red-500 dark:border-red-600 dark:focus:ring-red-500' 
-            : 'border-gray-300 focus:ring-color-primary focus:border-color-primary dark:focus:ring-color-primary',
+            ? 'border-color-error text-color-error focus:ring-color-error focus:border-color-error' 
+            : 'border-border focus:ring-color-primary focus:border-color-primary',
           icon ? 'pl-10' : 'pl-3',
         ]"
       />
     </div>
     
-    <p v-if="error" class="mt-1 text-sm text-red-600 dark:text-red-400">
+    <p v-if="error" class="mt-1 text-sm text-color-error">
       {{ error }}
     </p>
   </div>

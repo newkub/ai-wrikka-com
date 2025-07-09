@@ -1,19 +1,18 @@
-# lefthook.yml
 pre-commit:
   parallel: true
-  commands:
-    build:
-      run: bun run build
-    lint:
-      glob: "*.{js,ts,vue}"
-      run: bunx biome lint --write {staged_files}
-    format:
-      glob: "*.{js,ts,vue,json,md,yaml,yml}"
-      run: bunx biome format --write {staged_files}
+  jobs:
+    - name: install
+      run: bun install
+    - name: format
+      run: bun format {staged_files}
 
+    
 pre-push:
   parallel: true
-  commands:
-    lint:
-      glob: "*.{js,ts,vue}"
-      run: bunx biome lint {staged_files} && bunx vue-tsc --noEmit
+  jobs:
+    - name: lint
+      run: bun lint
+    - name: security-audit
+      run: bun audit
+    - name: check-outdated
+      run: bun outdated

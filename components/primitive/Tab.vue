@@ -32,12 +32,11 @@ const isActive = (tabId: string | number) => props.modelValue === tabId;
 
 const tabClasses = (tabId: string | number) => ({
 	"flex items-center justify-center whitespace-nowrap border-b-2 font-medium text-sm": true,
-	"border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300":
+	"border-transparent text-text/60 hover:text-text hover:border-border":
 		!isActive(tabId),
 	"border-color-primary text-color-primary":
 		isActive(tabId) && props.variant === "underline",
-	"bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-white":
-		isActive(tabId) && props.variant === "pills",
+	"bg-block text-text": isActive(tabId) && props.variant === "pills",
 	"rounded-t-lg": props.variant === "pills",
 	"w-full": props.fullWidth,
 	[tabSizes[props.size]]: true,
@@ -49,7 +48,7 @@ const handleTabClick = (tabId: string | number) => {
 </script>
 
 <template>
-  <div class="border-b border-gray-200 dark:border-gray-700">
+  <div class="border-b border-border">
     <nav class="flex -mb-px" :class="{ 'space-x-1': variant === 'pills' }" aria-label="Tabs">
       <button
         v-for="tab in tabs"

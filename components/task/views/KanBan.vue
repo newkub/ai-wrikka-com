@@ -1,36 +1,36 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import type { Task, TaskStatus } from '~/stores/task'
-import TaskCard from '../TaskCard.vue'
+import { computed } from "vue";
+import type { Task, TaskStatus } from "~/stores/task";
+import TaskCard from "../TaskCard.vue";
 
 const props = defineProps<{
-  tasks: Task[]
-  statuses: Array<{ id: TaskStatus; title: string }>
-  onTaskClick: (task: Task) => void
-  onStatusChange: (taskId: string, status: TaskStatus) => void
-  onDragStart: (e: DragEvent, taskId: string) => void
-  onDrop: (e: DragEvent, status: TaskStatus) => void
-}>()
+	tasks: Task[];
+	statuses: Array<{ id: TaskStatus; title: string }>;
+	onTaskClick: (task: Task) => void;
+	onStatusChange: (taskId: string, status: TaskStatus) => void;
+	onDragStart: (e: DragEvent, taskId: string) => void;
+	onDrop: (e: DragEvent, status: TaskStatus) => void;
+}>();
 
 const emit = defineEmits<{
-  (e: 'edit', task: Task): void
-  (e: 'delete', taskId: string): void
-}>()
+	(e: "edit", task: Task): void;
+	(e: "delete", taskId: string): void;
+}>();
 
 // Group tasks by status
 const tasksByStatus = (status: TaskStatus) => {
-  return props.tasks.filter(task => task.status === status)
-}
+	return props.tasks.filter((task) => task.status === status);
+};
 
 const handleEdit = (task: Task) => {
-  emit('edit', task)
-}
+	emit("edit", task);
+};
 
 const handleDelete = (taskId: string) => {
-  if (confirm('Are you sure you want to delete this task?')) {
-    emit('delete', taskId)
-  }
-}
+	if (confirm("Are you sure you want to delete this task?")) {
+		emit("delete", taskId);
+	}
+};
 </script>
 
 <template>

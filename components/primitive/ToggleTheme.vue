@@ -17,7 +17,7 @@ const toggleTheme = () => {
     @click="toggleTheme"
     :aria-label="modelValue ? 'Switch to light mode' : 'Switch to dark mode'"
   >
-    <div v-if="modelValue" class="i-mdi-weather-night text-gray-700 dark:text-gray-300" />
-    <div v-else class="i-mdi-weather-sunny text-yellow-500" />
+    <div v-if="modelValue" class="i-mdi-weather-night text-text" />
+    <div v-else class="i-mdi-weather-sunny text-color-primary" />
   </button>
 </template>

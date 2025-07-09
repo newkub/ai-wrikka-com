@@ -1,76 +1,76 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue';
-import { useWhiteboardStore } from '~/stores/whiteboard';
-import { useWhiteboardState } from '~/composables/useWhiteboardState';
-import WhiteboardToolbar from '~/components/whiteboard/WhiteboardToolbar.vue';
-import WhiteboardCanvas from '~/components/whiteboard/WhiteboardCanvas.vue';
+import { onMounted, onUnmounted } from "vue";
+import { useWhiteboardStore } from "~/stores/whiteboard";
+import { useWhiteboardState } from "~/composables/useWhiteboardState";
+import WhiteboardToolbar from "~/components/whiteboard/WhiteboardToolbar.vue";
+import WhiteboardCanvas from "~/components/whiteboard/WhiteboardCanvas.vue";
 
 const store = useWhiteboardStore();
 
 const {
-  // State
-  isFullscreen,
-  showTextInput,
-  textInput,
-  textPosition,
-  
-  // Computed
-  currentTool,
-  currentColor,
-  currentWidth,
-  viewState,
-  
-  // Methods
-  toggleFullscreen,
-  startDrawing,
-  updateDrawing,
-  stopDrawing,
-  startPan,
-  updatePan,
-  stopPan,
-  zoom,
-  resetView,
-  clearCanvas: handleClearCanvas,
-  undo: handleUndo,
+	// State
+	isFullscreen,
+	showTextInput,
+	textInput,
+	textPosition,
 
-  toCanvasCoords,
+	// Computed
+	currentTool,
+	currentColor,
+	currentWidth,
+	viewState,
+
+	// Methods
+	toggleFullscreen,
+	startDrawing,
+	updateDrawing,
+	stopDrawing,
+	startPan,
+	updatePan,
+	stopPan,
+	zoom,
+	resetView,
+	clearCanvas: handleClearCanvas,
+	undo: handleUndo,
+
+	toCanvasCoords,
 } = useWhiteboardState();
 
 // Handle keyboard shortcuts
 const handleKeyDown = (e: KeyboardEvent) => {
-  if (e.key === 'Escape' && showTextInput.value) {
-    showTextInput.value = false;
-  } else if (e.key === '0' && (e.ctrlKey || e.metaKey)) {
-    e.preventDefault();
-    resetView();
-  } else if (e.key === 'z' && (e.ctrlKey || e.metaKey)) {
-    e.preventDefault();
-    handleUndo();
-  }
+	if (e.key === "Escape" && showTextInput.value) {
+		showTextInput.value = false;
+	} else if (e.key === "0" && (e.ctrlKey || e.metaKey)) {
+		e.preventDefault();
+		resetView();
+	} else if (e.key === "z" && (e.ctrlKey || e.metaKey)) {
+		e.preventDefault();
+		handleUndo();
+	}
 };
 
 // Handle text submission
 const handleSubmitText = () => {
-  if (textInput.value.trim() && textPosition.value) {
-    store.addText();
-    textInput.value = '';
-    showTextInput.value = false;
-  }
+	if (textInput.value.trim() && textPosition.value) {
+		store.addText();
+		textInput.value = "";
+		showTextInput.value = false;
+	}
 };
 
 // Handle text cancellation
 const handleCancelText = () => {
-  textInput.value = '';
-  showTextInput.value = false;
+	textInput.value = "";
+	showTextInput.value = false;
 };
 
 // Set up keyboard event listeners
 onMounted(() => {
-  window.addEventListener('keydown', handleKeyDown);
+	window.addEventListener("keydown", handleKeyDown);
 });
 
 onUnmounted(() => {
-  window.removeEventListener('keydown', handleKeyDown);
+	window.removeEventListener("keydown", handleKeyDown);
 });
 </script>
 

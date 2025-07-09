@@ -50,7 +50,7 @@ onUnmounted(() => {
     <div 
       v-if="position" 
       ref="menuRef"
-      class="fixed z-50 bg-white dark:bg-gray-800 shadow-xl rounded-md py-1 w-48 border border-gray-200 dark:border-gray-700 text-sm"
+      class="fixed z-50 bg-block shadow-xl rounded-md py-1 w-48 border border-border text-sm"
       :style="{ top: `${position.y}px`, left: `${position.x}px` }"
       @click.stop
       @contextmenu.stop
@@ -58,7 +58,7 @@ onUnmounted(() => {
       <button 
         v-if="isDirectory"
         @click="handleAction('newFile')"
-        class="w-full text-left px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center"
+        class="w-full text-left px-4 py-2 text-text hover:bg-block-hover flex items-center"
       >
         <div class="i-mdi-file-document-outline mr-2 w-4 h-4"></div>
         New File
@@ -66,22 +66,22 @@ onUnmounted(() => {
       <button 
         v-if="isDirectory"
         @click="handleAction('newFolder')"
-        class="w-full text-left px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center"
+        class="w-full text-left px-4 py-2 text-text hover:bg-block-hover flex items-center"
       >
         <div class="i-mdi-folder-plus-outline mr-2 w-4 h-4"></div>
         New Folder
       </button>
-      <div v-if="isDirectory" class="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+      <div v-if="isDirectory" class="border-t border-border my-1"></div>
       <button 
         @click="handleAction('rename')"
-        class="w-full text-left px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center"
+        class="w-full text-left px-4 py-2 text-text hover:bg-block-hover flex items-center"
       >
         <div class="i-mdi-pencil-outline mr-2 w-4 h-4"></div>
         Rename
       </button>
       <button 
         @click="handleAction('delete')"
-        class="w-full text-left px-4 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 flex items-center"
+        class="w-full text-left px-4 py-2 text-color-error hover:bg-error/10 flex items-center"
       >
         <div class="i-mdi-delete-outline mr-2 w-4 h-4"></div>
         Delete

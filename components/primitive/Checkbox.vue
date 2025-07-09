@@ -50,10 +50,10 @@ const handleChange = (e: Event) => {
       />
     </div>
     <div class="ml-3 text-sm">
-      <label :for="checkboxId" class="font-medium text-gray-700 dark:text-gray-300">
+      <label :for="checkboxId" class="font-medium text-gray-700">
         {{ label }}
       </label>
-      <p v-if="error" class="mt-1 text-sm text-red-600 dark:text-red-400">
+      <p v-if="error" class="mt-1 text-sm text-red-600">
         {{ error }}
       </p>
     </div>

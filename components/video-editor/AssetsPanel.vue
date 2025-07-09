@@ -142,139 +142,143 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted } from "vue";
 
 interface Asset {
-  id: string;
-  name: string;
-  type: 'video' | 'image' | 'audio' | 'text' | 'effect';
-  duration: number; // in seconds
-  thumbnail?: string;
-  width?: number;
-  height?: number;
-  bitrate?: number; // in kbps
-  subtype?: string;
-  [key: string]: string | number | boolean | undefined;
+	id: string;
+	name: string;
+	type: "video" | "image" | "audio" | "text" | "effect";
+	duration: number; // in seconds
+	thumbnail?: string;
+	width?: number;
+	height?: number;
+	bitrate?: number; // in kbps
+	subtype?: string;
+	[key: string]: string | number | boolean | undefined;
 }
 
-const props = withDefaults(defineProps<{
-  assets?: Asset[];
-  selectedTrackId?: string | null;
-}>(), {
-  assets: () => [],
-  selectedTrackId: null
-});
+const props = withDefaults(
+	defineProps<{
+		assets?: Asset[];
+		selectedTrackId?: string | null;
+	}>(),
+	{
+		assets: () => [],
+		selectedTrackId: null,
+	},
+);
 
-const emit = defineEmits([
-  'add-asset',
-  'select-asset'
-]);
+const emit = defineEmits(["add-asset", "select-asset"]);
 
-type TabType = 'media' | 'audio' | 'text' | 'effects';
+type TabType = "media" | "audio" | "text" | "effects";
 
 interface Tab {
-  id: TabType;
-  name: string;
+	id: TabType;
+	name: string;
 }
 
-const activeTab = ref<TabType>('media');
-const searchQuery = ref('');
+const activeTab = ref<TabType>("media");
+const searchQuery = ref("");
 const selectedAsset = ref<Asset | null>(null);
 
 const tabs: Tab[] = [
-  { id: 'media', name: 'Media' },
-  { id: 'audio', name: 'Audio' },
-  { id: 'text', name: 'Text' },
-  { id: 'effects', name: 'Effects' }
+	{ id: "media", name: "Media" },
+	{ id: "audio", name: "Audio" },
+	{ id: "text", name: "Text" },
+	{ id: "effects", name: "Effects" },
 ];
 
 // Filter assets based on search query and active tab
 const filteredAssets = computed(() => {
-  return props.assets.filter(asset => {
-    // Filter by tab
-    if (activeTab.value === 'media' && !['video', 'image'].includes(asset.type)) return false;
-    if (activeTab.value === 'audio' && asset.type !== 'audio') return false;
-    if (activeTab.value === 'text' && asset.type !== 'text') return false;
-    if (activeTab.value === 'effects' && asset.type !== 'effect') return false;
-    
-    // Filter by search query
-    if (searchQuery.value) {
-      const query = searchQuery.value.toLowerCase();
-      return asset.name.toLowerCase().includes(query);
-    }
-    
-    return true;
-  });
+	return props.assets.filter((asset) => {
+		// Filter by tab
+		if (activeTab.value === "media" && !["video", "image"].includes(asset.type))
+			return false;
+		if (activeTab.value === "audio" && asset.type !== "audio") return false;
+		if (activeTab.value === "text" && asset.type !== "text") return false;
+		if (activeTab.value === "effects" && asset.type !== "effect") return false;
+
+		// Filter by search query
+		if (searchQuery.value) {
+			const query = searchQuery.value.toLowerCase();
+			return asset.name.toLowerCase().includes(query);
+		}
+
+		return true;
+	});
 });
 
 // Format duration as MM:SS
 const formatDuration = (seconds: number): string => {
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return `${mins}:${secs.toString().padStart(2, '0')}`;
+	const mins = Math.floor(seconds / 60);
+	const secs = Math.floor(seconds % 60);
+	return `${mins}:${secs.toString().padStart(2, "0")}`;
 };
 
 // Format bitrate
 const formatBitrate = (bitrate: number): string => {
-  if (bitrate < 1000) return `${bitrate} kbps`;
-  return `${(bitrate / 1000).toFixed(1)} Mbps`;
+	if (bitrate < 1000) return `${bitrate} kbps`;
+	return `${(bitrate / 1000).toFixed(1)} Mbps`;
 };
 
 // Handle asset click
 const handleAssetClick = (asset: Asset) => {
-  selectedAsset.value = asset;
-  emit('select-asset', asset);
+	selectedAsset.value = asset;
+	emit("select-asset", asset);
 };
 
 // Handle drag start
 const handleDragStart = (event: DragEvent, asset: Asset) => {
-  if (!event.dataTransfer) return;
-  
-  event.dataTransfer.setData('text/plain', JSON.stringify({
-    type: 'asset',
-    assetId: asset.id
-  }));
-  
-  // Set drag image
-  const dragImage = document.createElement('div');
-  dragImage.textContent = asset.name;
-  dragImage.style.padding = '4px 8px';
-  dragImage.style.background = 'rgba(0, 0, 0, 0.7)';
-  dragImage.style.borderRadius = '4px';
-  dragImage.style.color = 'white';
-  dragImage.style.position = 'absolute';
-  dragImage.style.top = '-1000px';
-  document.body.appendChild(dragImage);
-  
-  event.dataTransfer.setDragImage(dragImage, 0, 0);
-  
-  // Clean up
-  setTimeout(() => {
-    document.body.removeChild(dragImage);
-  }, 0);
+	if (!event.dataTransfer) return;
+
+	event.dataTransfer.setData(
+		"text/plain",
+		JSON.stringify({
+			type: "asset",
+			assetId: asset.id,
+		}),
+	);
+
+	// Set drag image
+	const dragImage = document.createElement("div");
+	dragImage.textContent = asset.name;
+	dragImage.style.padding = "4px 8px";
+	dragImage.style.background = "rgba(0, 0, 0, 0.7)";
+	dragImage.style.borderRadius = "4px";
+	dragImage.style.color = "white";
+	dragImage.style.position = "absolute";
+	dragImage.style.top = "-1000px";
+	document.body.appendChild(dragImage);
+
+	event.dataTransfer.setDragImage(dragImage, 0, 0);
+
+	// Clean up
+	setTimeout(() => {
+		document.body.removeChild(dragImage);
+	}, 0);
 };
 
 // Add asset to timeline
 const addToTimeline = (asset: Asset) => {
-  if (!props.selectedTrackId) {
-    console.warn('No track selected');
-    return;
-  }
-  
-  emit('add-asset', {
-    asset,
-    trackId: props.selectedTrackId,
-    position: 0 // Default to start of timeline
-  });
+	if (!props.selectedTrackId) {
+		console.warn("No track selected");
+		return;
+	}
+
+	emit("add-asset", {
+		asset,
+		trackId: props.selectedTrackId,
+		position: 0, // Default to start of timeline
+	});
 };
 
 // Expose methods
 defineExpose({
-  selectAsset: (asset: Asset) => {
-    selectedAsset.value = asset;
-  },
-  clearSelection: () => {
-    selectedAsset.value = null;
-  }
+	selectAsset: (asset: Asset) => {
+		selectedAsset.value = asset;
+	},
+	clearSelection: () => {
+		selectedAsset.value = null;
+	},
 });
 </script>

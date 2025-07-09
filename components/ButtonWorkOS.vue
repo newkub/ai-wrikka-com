@@ -1,9 +1,8 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { Button, Avatar, Dropdown } from "./primitive";
 import AuthUI from "./AuthUI.vue";
-import Account from "./Account.vue";
+import { Avatar, Button, Dropdown } from "./primitive";
 
 const isAuthModalOpen = ref(false);
 const isAuthenticated = ref(false);
@@ -90,10 +89,10 @@ defineExpose({
         </template>
         <div class="py-1">
           <Account @signout="handleSignOut" />
-          <div class="border-t border-gray-100 dark:border-gray-700"></div>
+          <div class="border-t border-gray-100"></div>
           <button
             @click="handleSignOut"
-            class="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+            class="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
           >
             Sign out
           </button>

@@ -1,3 +1,133 @@
+<script setup lang="ts">
+import { ref, computed, onMounted } from "vue";
+import type AssetsPanel from "~/components/video-editor/AssetsPanel.vue";
+import type Timeline from "~/components/video-editor/Timeline.vue";
+import type VideoPlayer from "~/components/video-editor/VideoPlayer.vue";
+
+// Types
+interface Tool {
+	id: string;
+	name: string;
+	icon: string;
+}
+
+interface MediaAsset {
+	id: string;
+	name: string;
+	type: "video" | "image" | "audio" | "text" | "effect";
+	duration: number;
+	thumbnail?: string;
+	width?: number;
+	height?: number;
+	[key: string]: string | number | boolean | undefined;
+}
+
+interface Clip {
+	id: string;
+	assetId: string;
+	startTime: number;
+	endTime: number;
+	trackId: string;
+	layer: number;
+}
+
+interface Track {
+	id: string;
+	name: string;
+	type: "video" | "audio" | "text";
+	muted: boolean;
+	locked: boolean;
+}
+
+// Refs
+const videoPlayer = ref<InstanceType<typeof VideoPlayer> | null>(null);
+const timeline = ref<InstanceType<typeof Timeline> | null>(null);
+const assetsPanel = ref<InstanceType<typeof AssetsPanel> | null>(null);
+
+// State
+const activeTool = ref<string>("select");
+const currentTime = ref<number>(0);
+const maxDuration = ref<number>(0);
+const selectedTrackId = ref<string | null>(null);
+
+// Data
+const tools = ref<Tool[]>([
+	{ id: "select", name: "Select", icon: "🖱️" },
+	{ id: "cut", name: "Cut", icon: "✂️" },
+	{ id: "text", name: "Text", icon: "🔤" },
+	{ id: "crop", name: "Crop", icon: "✂️" },
+	{ id: "effects", name: "Effects", icon: "✨" },
+]);
+
+const mediaAssets = ref<MediaAsset[]>([]);
+const tracks = ref<Track[]>([]);
+const currentVideoSource = ref<string>("");
+
+// Methods
+const setActiveTool = (toolId: string) => {
+	activeTool.value = toolId;
+};
+
+const handleTimeUpdate = (time: number) => {
+	currentTime.value = time;
+	if (timeline.value) {
+		timeline.value.updatePlayhead(time);
+	}
+};
+
+const handleLoadedMetadata = (data: { duration: number }) => {
+	maxDuration.value = data.duration;
+};
+
+const seekToTime = (time: number) => {
+	if (videoPlayer.value) {
+		videoPlayer.value.seek(time);
+	}
+};
+
+interface ClipEvent {
+	clipId: string;
+	trackId: string;
+	startTime: number;
+	endTime: number;
+	layer: number;
+}
+
+const handleClipMove = (event: ClipEvent) => {
+	// Update clip position in state
+};
+
+const handleClipResize = (event: ClipEvent) => {
+	// Update clip duration in state
+};
+
+interface AddAssetEvent {
+	asset: MediaAsset;
+	trackId: string;
+	startTime: number;
+}
+
+const handleAddAsset = (event: AddAssetEvent) => {
+	// Add new clip to timeline
+};
+
+const handleSelectAsset = (asset: MediaAsset) => {
+	// Handle asset selection
+};
+
+const exportVideo = () => {
+	// Export video logic
+};
+
+// Lifecycle
+onMounted(() => {
+	// Set first track as selected by default
+	if (tracks.value.length > 0) {
+		selectedTrackId.value = tracks.value[0].id;
+	}
+});
+</script>
+
 <template>
   <div class="video-editor h-screen flex flex-col bg-gray-900 text-white">
     <!-- Header -->
@@ -36,7 +166,7 @@
           <div class="w-full max-w-4xl aspect-video bg-gray-900 rounded-lg overflow-hidden">
             <VideoPlayer
               ref="videoPlayer"
-              :src="currentVideoSource"
+              :currentSource="currentVideoSource"
               :autoplay="false"
               @timeupdate="handleTimeUpdate"
               @loadedmetadata="handleLoadedMetadata"
@@ -70,230 +200,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import type VideoPlayer from '~/components/video-editor/VideoPlayer.vue';
-import type Timeline from '~/components/video-editor/Timeline.vue';
-import type AssetsPanel from '~/components/video-editor/AssetsPanel.vue';
-
-// Types
-interface Tool {
-  id: string;
-  name: string;
-  icon: string;
-}
-
-interface MediaAsset {
-  id: string;
-  name: string;
-  type: 'video' | 'image' | 'audio' | 'text' | 'effect';
-  duration: number;
-  thumbnail?: string;
-  width?: number;
-  height?: number;
-  [key: string]: string | number | boolean | undefined;
-}
-
-interface Clip {
-  id: string;
-  assetId: string;
-  name: string;
-  type: 'video' | 'audio' | 'text' | 'effect';
-  start: number;
-  end: number;
-  [key: string]: string | number | boolean | undefined;
-}
-
-interface Track {
-  id: string;
-  type: 'video' | 'audio' | 'text' | 'effect';
-  clips: Clip[];
-  color: string;
-}
-
-// Refs
-const videoPlayer = ref<InstanceType<typeof VideoPlayer> | null>(null);
-const timeline = ref<InstanceType<typeof Timeline> | null>(null);
-const assetsPanel = ref<InstanceType<typeof AssetsPanel> | null>(null);
-
-// State
-const activeTool = ref('select');
-const currentTime = ref(0);
-const maxDuration = ref(60 * 5); // 5 minutes default
-const currentVideoSource = ref('');
-const selectedTrackId = ref<string | null>(null);
-
-// Sample data
-const tools: Tool[] = [
-  { id: 'select', name: 'Select', icon: '🖱️' },
-  { id: 'cut', name: 'Cut', icon: '✂️' },
-  { id: 'text', name: 'Text', icon: 'T' },
-  { id: 'effects', name: 'Effects', icon: '✨' },
-  { id: 'audio', name: 'Audio', icon: '🔊' },
-  { id: 'export', name: 'Export', icon: '📤' },
-];
-
-const tracks = ref<Track[]>([
-  {
-    id: 'video-1',
-    type: 'video',
-    color: '#3b82f6',
-    clips: []
-  },
-  {
-    id: 'audio-1',
-    type: 'audio',
-    color: '#8b5cf6',
-    clips: []
-  }
-]);
-
-const mediaAssets: MediaAsset[] = [
-  {
-    id: 'video-1',
-    name: 'Sample Video 1',
-    type: 'video',
-    duration: 30,
-    thumbnail: 'https://via.placeholder.com/320x180',
-    width: 1920,
-    height: 1080
-  },
-  {
-    id: 'audio-1',
-    name: 'Background Music',
-    type: 'audio',
-    duration: 120
-  },
-  {
-    id: 'text-1',
-    name: 'Title',
-    type: 'text',
-    duration: 5,
-    text: 'Edit me',
-    fontSize: 48,
-    color: '#ffffff'
-  }
-];
-
-// Computed
-const selectedTrack = computed(() => {
-  return tracks.value.find(track => track.id === selectedTrackId.value);
-});
-
-// Methods
-const setActiveTool = (toolId: string) => {
-  activeTool.value = toolId;
-  // Add tool-specific logic here
-};
-
-const handleTimeUpdate = (time: number) => {
-  currentTime.value = time;
-  // Update timeline position
-  if (timeline.value) {
-    // Timeline handles the visualization
-  }
-};
-
-const handleLoadedMetadata = (data: { duration: number }) => {
-  maxDuration.value = data.duration;
-};
-
-const seekToTime = (time: number) => {
-  if (videoPlayer.value) {
-    videoPlayer.value.seek(time);
-  }
-};
-
-interface ClipEvent {
-  clip: {
-    id: string;
-    start: number;
-    end: number;
-  };
-  start: number;
-  end: number;
-}
-
-const handleClipMove = (event: ClipEvent) => {
-  console.log('Clip moved:', event);
-  // Update clip position in the track
-  const track = tracks.value.find(t => t.clips.some(c => c.id === event.clip.id));
-  if (track) {
-    const clip = track.clips.find(c => c.id === event.clip.id);
-    if (clip) {
-      clip.start = event.start;
-      clip.end = event.end;
-    }
-  }
-};
-
-const handleClipResize = (event: ClipEvent) => {
-  console.log('Clip resized:', event);
-  // Update clip duration in the track
-  const track = tracks.value.find(t => t.clips.some(c => c.id === event.clip.id));
-  if (track) {
-    const clip = track.clips.find(c => c.id === event.clip.id);
-    if (clip) {
-      clip.start = event.start;
-      clip.end = event.end;
-    }
-  }
-};
-
-interface AddAssetEvent {
-  asset: MediaAsset;
-  trackId: string;
-  position: number;
-}
-
-const handleAddAsset = (event: AddAssetEvent) => {
-  console.log('Add asset to timeline:', event);
-  const { asset, trackId, position } = event;
-  
-  const track = tracks.value.find(t => t.id === trackId);
-  if (!track) return;
-  
-  // ตรวจสอบ type ให้ตรงกับที่กำหนด
-  const assetType = asset.type === 'image' ? 'video' : asset.type as 'video' | 'audio' | 'text' | 'effect';
-  
-  const newClip: Clip = {
-    id: `clip-${Date.now()}`,
-    assetId: asset.id,
-    name: asset.name,
-    type: assetType,
-    start: position,
-    end: position + (asset.duration || 5),
-    // เพิ่ม properties เพิ่มเติมจาก asset ที่ไม่ซ้ำกับ properties หลัก
-    ...Object.fromEntries(
-      Object.entries(asset)
-        .filter(([key]) => !['id', 'assetId', 'name', 'type', 'start', 'end'].includes(key))
-    )
-  };
-  
-  track.clips.push(newClip);
-  selectedTrackId.value = trackId;
-};
-
-const handleSelectAsset = (asset: MediaAsset) => {
-  console.log('Asset selected:', asset);
-  // Handle asset selection (e.g., show properties)
-};
-
-const exportVideo = () => {
-  // Implement export logic
-  console.log('Exporting video...');
-  alert('Export functionality will be implemented here');
-};
-
-// Lifecycle
-onMounted(() => {
-  // Set first track as selected by default
-  if (tracks.value.length > 0) {
-    selectedTrackId.value = tracks.value[0].id;
-  }
-});
-</script>
 
 <style scoped>
 /* Custom scrollbar */
