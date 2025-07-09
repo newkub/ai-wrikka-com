@@ -33,11 +33,11 @@ export default defineNuxtConfig({
 		"@pinia/nuxt",
 		"@pinia-plugin-persistedstate/nuxt",
 	],
-
+	/*
 	typescript: {
 		strict: true,
 		typeCheck: true,
-	},
+	},*/
 	runtimeConfig: {
 		openaiApiKey: process.env.OPENAI_API_KEY,
 		workos: {
