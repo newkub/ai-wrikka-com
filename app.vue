@@ -17,7 +17,6 @@ const customAppItems = [
 	{ name: "Task", path: "/task", icon: "i-mdi-check-circle" },
 	{ name: "Image", path: "/image", icon: "i-mdi-image" },
 	{ name: "Hosting", path: "/hosting", icon: "i-mdi-image" },
-	{ name: "Web Editor", path: "/web-editor", icon: "i-mdi-web" },
 	{ name: "Video", path: "/video", icon: "i-mdi-video" },
 	{ name: "Whiteboard", path: "/whiteboard", icon: "i-mdi-chart-box" },
 	{ name: "Add", path: "/marketplace", icon: "i-mdi-plus" },
