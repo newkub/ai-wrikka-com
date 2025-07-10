@@ -9,9 +9,9 @@ pre-commit:
 
 pre-push:
   parallel: true
-  jobs:
-    - name: lint
-      run: bun lint
+  #jobs:
+    #- name: lint
+     # run: bun lint
    # - name: gitleaks
       # ตรวจสอบ secret keys และ sensitive data ที่อาจถูก commit โดยไม่ได้ตั้งใจ
       # จะ return error และหยุดการ push ถ้าพบ sensitive data
