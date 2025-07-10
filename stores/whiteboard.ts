@@ -190,7 +190,4 @@ export const useWhiteboardStore = defineStore(
 			resetView,
 		};
 	},
-	{
-		persist: true, // Optional: Enable persistence if needed
-	},
 );

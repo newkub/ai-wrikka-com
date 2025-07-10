@@ -221,8 +221,5 @@ export const useChatStore = defineStore(
 			replyToMessage,
 			saveMessage,
 		};
-	},
-	{
-		persist: true,
-	},
+	}
 );
