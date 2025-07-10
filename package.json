@@ -13,7 +13,7 @@
     "format": "biome format --write .",
     "db:generate": "drizzle-kit generate",
     "lint": "vue-tsc --noEmit",
-    "unused": "knip",
+    "unused": "bunx knip",
     "update:deps": "bunx taze -r"
   },
   "dependencies": {
@@ -44,7 +44,6 @@
     "@unocss/nuxt": "^66.3.3",
     "@vueuse/nuxt": "^13.5.0",
     "drizzle-kit": "^0.31.4",
-    "knip": "^5.61.3",
     "unocss": "^66.3.3",
     "unocss-preset-scrollbar": "^3.2.0",
     "vue-tsc": "^3.0.1"
