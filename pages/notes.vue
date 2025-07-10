@@ -1,9 +1,35 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import Card from "~/components/primitive/Card.vue";
+import { onBeforeUnmount, onMounted, ref } from "vue";
 import TextEditor from "@/components/common/TextEditor.vue";
 
 const isModalOpen = ref(false);
+const modalRef = ref<HTMLElement | null>(null);
+
+// Handle click outside
+const handleClickOutside = (event: MouseEvent) => {
+	if (modalRef.value && !modalRef.value.contains(event.target as Node)) {
+		isModalOpen.value = false;
+	}
+};
+
+// Handle escape key
+const handleKeyDown = (event: KeyboardEvent) => {
+	if (event.key === "Escape") {
+		isModalOpen.value = false;
+	}
+};
+
+// Add and remove event listeners
+onMounted(() => {
+	document.addEventListener("mousedown", handleClickOutside);
+	document.addEventListener("keydown", handleKeyDown);
+});
+
+onBeforeUnmount(() => {
+	document.removeEventListener("mousedown", handleClickOutside);
+	document.removeEventListener("keydown", handleKeyDown);
+});
 interface Note {
 	id: number;
 	title: string;
@@ -53,27 +79,82 @@ const handleSave = (content: string) => {
 
     <!-- TextEditor Modal -->
     <Teleport to="body">
-      <div v-if="isModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] flex flex-col">
-          <div class="p-4 border-b flex justify-between items-center">
-            <h3 class="text-lg font-semibold">{{ currentNote?.title || 'New Note' }}</h3>
-            <button 
-              @click="isModalOpen = false" 
-              class="text-gray-500 hover:text-gray-700"
-            >
-              <span class="text-2xl">&times;</span>
-            </button>
-          </div>
-          <div class="p-4 overflow-auto flex-1">
-            <TextEditor 
-              v-if="isModalOpen"
-              :initial-content="currentNote?.content || ''"
-              @save="handleSave"
-              class="h-full"
-            />
+      <Transition name="modal-fade">
+        <div 
+          v-if="isModalOpen" 
+          class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300"
+        >
+          <div 
+            ref="modalRef"
+            class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform transition-all duration-300 scale-95"
+            :class="{ 'scale-100': isModalOpen }"
+          >
+            <div class="p-5 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+              <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                {{ currentNote?.title || 'New Note' }}
+              </h3>
+              <button 
+                @click="isModalOpen = false" 
+                class="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                aria-label="Close modal"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div class="p-5 overflow-auto flex-1">
+              <TextEditor 
+                v-if="isModalOpen"
+                :initial-content="currentNote?.content || ''"
+                @save="handleSave"
+                class="h-full"
+              />
+            </div>
+            <div class="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end space-x-3">
+              <button
+                @click="isModalOpen = false"
+                class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-600"
+              >
+                Cancel
+              </button>
+              <button
+                @click="handleSave(currentNote?.content || '')"
+                class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                Save Changes
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </Transition>
     </Teleport>
   </div>
 </template>
+
+<style scoped>
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+}
+
+.modal-fade-enter-active .modal-content {
+  animation: modal-zoom 0.3s ease-out;
+}
+
+@keyframes modal-zoom {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+</style>

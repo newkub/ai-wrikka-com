@@ -1,12 +1,30 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import BottomPanel from "~/components/code/bottom/index.vue";
+import { computed, ref } from "vue";
 import CodeEditor from "~/components/code/CodeEditor.vue";
 import FileStructure from "~/components/code/FileStructure.vue";
+import LeftPanel from "~/components/code/left/index.vue";
+import Preview from "~/components/code/Browser.vue";
+import { useFileSystem } from "~/composables/useFileSystem";
 
-definePageMeta({
-	layout: "fullscreen",
-});
+interface RawFileItem {
+	name: string;
+	type: "file" | "directory";
+	id?: string;
+	isOpen?: boolean;
+	children?: RawFileItem[];
+	path?: string;
+}
+
+interface FileItem {
+	id: string;
+	name: string;
+	type: "file" | "folder";
+	isSelected: boolean;
+	isEditing: boolean;
+	isOpen?: boolean;
+	path?: string;
+	children?: FileItem[];
+}
 
 // File system logic
 const {
@@ -14,6 +32,108 @@ const {
 	fileStructure,
 	handleFileSelect: handleFileSelectOriginal,
 } = useFileSystem();
+
+// Mock file structure data
+fileStructure.value = [
+	{
+		id: crypto.randomUUID(),
+		name: "src",
+		type: "folder",
+		isOpen: true,
+		children: [
+			{
+				id: crypto.randomUUID(),
+				name: "components",
+				type: "folder",
+				children: [
+					{
+						id: crypto.randomUUID(),
+						name: "Button.vue",
+						type: "file",
+						isSelected: false,
+						isEditing: false,
+					},
+					{
+						id: crypto.randomUUID(),
+						name: "Card.vue",
+						type: "file",
+						isSelected: false,
+						isEditing: false,
+					},
+				],
+			},
+			{
+				id: crypto.randomUUID(),
+				name: "pages",
+				type: "folder",
+				children: [
+					{
+						id: crypto.randomUUID(),
+						name: "index.vue",
+						type: "file",
+						isSelected: false,
+						isEditing: false,
+					},
+					{
+						id: crypto.randomUUID(),
+						name: "about.vue",
+						type: "file",
+						isSelected: false,
+						isEditing: false,
+					},
+				],
+			},
+			{
+				id: crypto.randomUUID(),
+				name: "main.js",
+				type: "file",
+				isSelected: false,
+				isEditing: false,
+			},
+		],
+	},
+	{
+		id: crypto.randomUUID(),
+		name: "package.json",
+		type: "file",
+		isSelected: false,
+		isEditing: false,
+	},
+	{
+		id: crypto.randomUUID(),
+		name: "README.md",
+		type: "file",
+		isSelected: false,
+		isEditing: false,
+	},
+];
+
+// Prepare file structure data with required id
+const preparedFileStructure = computed<FileItem[]>(() => {
+	const convertType = (item: RawFileItem): FileItem => {
+		const baseItem = item;
+		const convertedItem: FileItem = {
+			id: baseItem.id || `file-${crypto.randomUUID()}`,
+			name: baseItem.name,
+			type: baseItem.type === "directory" ? "folder" : "file",
+			isSelected: baseItem.name === activeFile.value,
+			isEditing: false,
+			isOpen: baseItem.isOpen,
+			path: baseItem.path,
+		};
+
+		if (baseItem.children) {
+			convertedItem.children = baseItem.children.map((child) => ({
+				...convertType(child),
+				id: child.id || `file-${crypto.randomUUID()}`,
+			}));
+		}
+
+		return convertedItem;
+	};
+
+	return (fileStructure.value as RawFileItem[]).map(convertType);
+});
 
 // Code editor state
 const code = ref(
@@ -49,80 +169,49 @@ const isDark = ref(false);
 </script>
 
 <template>
-  <div class="h-full flex flex-col bg-background">
-    <div class="flex-1 flex overflow-hidden">
-      <!-- Left Panel - File Explorer -->
-      <div 
-        class="h-full bg-block border-r border-border flex flex-col flex-shrink-0"
-        :style="{ width: leftPanelWidth }"
-      >
-        <!-- File Explorer Header -->
-        <div class="p-2 border-b border-border flex justify-between items-center">
-          <h2 class="text-sm font-medium text-text">EXPLORER</h2>
-        </div>
-        
-        <!-- File Structure -->
-        <div class="flex-1 overflow-y-auto">
-          <FileStructure 
-            :files="fileStructure" 
-            :active-file="activeFile"
-            @select-file="handleFileSelect"
-          />
-        </div>
+  <div class="flex h-screen">
+    <!-- Left Panel -->
+    <LeftPanel />
+
+    <!-- Right Panel -->
+    <div class="flex flex-col flex-1 h-full">
+      <!-- Top Section (50%) -->
+      <div class="h-[50%] flex">
+        <FileStructure 
+          :modelValue="preparedFileStructure"
+          @fileSelect="handleFileSelect"
+          class="w-64 border-r"
+        />
+        <CodeEditor 
+          v-model="code"
+          :theme="editorTheme"
+          :is-dark="isDark"
+          @update:modelValue="handleCodeUpdate"
+          class="flex-1"
+        />
       </div>
 
-      <!-- Resize Handle -->
-      <div 
-        class="w-1 bg-block hover:bg-color-primary cursor-col-resize active:bg-color-primary transition-colors flex-shrink-0"
-        @mousedown="startVerticalResize"
-      ></div>
-
-      <!-- Right Panel -->
-      <div class="flex-1 flex flex-col overflow-hidden">
-        <!-- Editor -->
-        <div class="flex-1 overflow-hidden" :style="{ height: editorHeight }">
-          <CodeEditor 
-            v-model="code"
-            :theme="editorTheme"
-            :is-dark="isDark"
-            @update:modelValue="handleCodeUpdate"
-            class="size-full"
-          />
-        </div>
-
-        <!-- Resize Handle -->
-        <div 
-          class="resize-handle"
-          @mousedown="startHorizontalResize"
-        ></div>
-
-        <!-- Bottom Panel -->
-        <div class="flex-1 overflow-hidden border-t border-border">
-          <BottomPanel class="h-full w-full" />
-        </div>
+      <!-- Bottom Section (50%) -->
+      <div class="h-[50%] border-t">
+        <Preview />
       </div>
     </div>
   </div>
 </template>
 
-<style scoped>
+<style>
 /* Custom scrollbar for file explorer */
-::-webkit-scrollbar {
+:global(::-webkit-scrollbar) {
   width: 6px;
   height: 6px;
 }
 
-::-webkit-scrollbar-track {
+:global(::-webkit-scrollbar-track) {
   background: transparent;
 }
 
-::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 3px;
-}
-
-/* Using theme colors for scrollbar */
-::-webkit-scrollbar-thumb {
+:global(::-webkit-scrollbar-thumb) {
   background: var(--border);
+  border-radius: 3px;
 }
 </style>

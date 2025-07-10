@@ -31,7 +31,8 @@ const handleSend = async (): Promise<void> => {
 
 <template>
   <div class="fixed inset-0 flex flex-col items-center justify-center bg-background p-4">
-    <div class="w-full max-w-2xl mx-auto transform -translate-y-1/2">
+    <div class="w-full max-w-2xl mx-auto">
+      <h2 class="text-xl font-medium text-center mb-4">What's on your mind?</h2>
       <ChatInput
         v-model="userInput"
         :loading="isLoading"

@@ -1,260 +1,287 @@
-<script setup lang="ts">
-import { ref, computed } from "vue";
-
-// สถานะเมนูสำหรับ mobile
-const isMenuOpen = ref(false);
-const activeSection = ref("getting-started");
-
-// ข้อมูลเมนู
-interface MenuItem {
-	id: string;
-	title: string;
-	icon: string;
-	children: {
-		id: string;
-		title: string;
-	}[];
-}
-
-const menuItems: MenuItem[] = [
-	{
-		id: "getting-started",
-		title: "Getting Started",
-		icon: "i-mdi-rocket-launch-outline",
-		children: [
-			{ id: "introduction", title: "Introduction" },
-			{ id: "installation", title: "Installation" },
-			{ id: "configuration", title: "Configuration" },
-		],
-	},
-	{
-		id: "guides",
-		title: "Guides",
-		icon: "i-mdi-book-open-page-variant-outline",
-		children: [
-			{ id: "basic-concepts", title: "Basic Concepts" },
-			{ id: "advanced-usage", title: "Advanced Usage" },
-			{ id: "best-practices", title: "Best Practices" },
-		],
-	},
-	{
-		id: "api",
-		title: "API Reference",
-		icon: "i-mdi-api",
-		children: [
-			{ id: "core-api", title: "Core API" },
-			{ id: "plugins", title: "Plugins" },
-			{ id: "utilities", title: "Utilities" },
-		],
-	},
-];
-
-// ข้อมูลหัวข้อในหน้า (สำหรับ TOC)
-const headings = [
-	{ id: "introduction", text: "Introduction", level: 2 },
-	{ id: "features", text: "Key Features", level: 2 },
-	{ id: "quick-start", text: "Quick Start", level: 2 },
-	{ id: "prerequisites", text: "Prerequisites", level: 3 },
-	{ id: "installation", text: "Installation", level: 3 },
-	{ id: "usage", text: "Basic Usage", level: 3 },
-	{ id: "configuration", text: "Configuration", level: 2 },
-];
-
-// ฟังก์ชันสำหรับเปลี่ยน section
-const setActiveSection = (sectionId: string) => {
-	activeSection.value = sectionId;
-	isMenuOpen.value = false; // ปิดเมนูบนมือถือเมื่อเลือกหัวข้อ
-};
-</script>
-
 <template>
-  <div class="text flex flex-col">
-    <!-- Header -->
-    <header class="bg-block border-b border">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
-          <div class="flex items-center">
-            <button 
-              @click="isMenuOpen = !isMenuOpen"
-              class="md:hidden p-2 rounded-md hover:bg-block/50 focus:outline-none"
-            >
-              <i class="i-mdi-menu text-2xl"></i>
-            </button>
-            <h1 class="text-xl font-bold ml-2">Documentation</h1>
-          </div>
-          <div class="flex items-center space-x-4">
-            <button class="p-2 hover:bg-block/50 focus:outline-none">
-              <i class="i-mdi-magnify text-xl"></i>
-            </button>
-            <!-- Theme toggle removed -->
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <div class="flex flex-1 overflow-hidden">
-      <!-- Sidebar Menu -->
-      <aside 
-        class="w-64 bg-block border-r border overflow-y-auto transition-all duration-300 ease-in-out transform md:translate-x-0 fixed md:static inset-y-0 left-0 z-30"
-        :class="{ '-translate-x-full': !isMenuOpen, 'translate-x-0': isMenuOpen }"
-      >
-        <div class="p-4">
-          <nav>
-            <ul class="space-y-1">
-              <li v-for="section in menuItems" :key="section.id" class="mb-4">
-                <h3 class="px-3 py-2 text-sm font-medium text/80 uppercase tracking-wider">
-                  <i :class="[section.icon, 'mr-2']"></i>
-                  {{ section.title }}
-                </h3>
-                <ul class="mt-1">
-                  <li v-for="item in section.children" :key="item.id">
-                    <a
-                      href="#"
-                      @click.prevent="setActiveSection(item.id)"
-                      class="block px-3 py-2 text-sm rounded-md transition-colors duration-200"
-                      :class="{
-                        'bg-blue-50 text-blue-700': activeSection === item.id,
-                        'text hover:bg-block/50': activeSection !== item.id
-                      }"
-                    >
-                      {{ item.title }}
-                    </a>
-                  </li>
-                </ul>
+  <div class="docs-container">
+    <aside class="sidebar">
+      <nav>
+        <ul>
+          <li v-for="item in sidebar" :key="item.text">
+            <div class="menu-header" @click="toggleCollapse(item)">
+              <div class="flex items-center">
+                <div :class="item.icon" class="mr-2 text-lg"></div>
+                <RouterLink :to="item.link" class="menu-title">{{ item.text }}</RouterLink>
+              </div>
+              <button class="collapse-btn">
+                <div class="i-mdi-chevron-down" v-if="!item.collapsed"></div>
+                <div class="i-mdi-chevron-right" v-else></div>
+              </button>
+            </div>
+            <ul v-if="item.items && !item.collapsed" class="sub-menu">
+              <li v-for="subItem in item.items" :key="subItem.text">
+                <RouterLink :to="subItem.link" class="flex items-center">
+                  <div :class="subItem.icon" class="mr-2 text-gray-500"></div>
+                  {{ subItem.text }}
+                </RouterLink>
               </li>
             </ul>
-          </nav>
-        </div>
-      </aside>
-
-      <!-- Main Content -->
-      <main class="flex-1 overflow-y-auto p-6 md:p-8">
-        <div class="max-w-3xl mx-auto">
-          <h1 class="text-3xl font-bold mb-6">Getting Started</h1>
-          
-          <div class="prose max-w-none">
-            <section id="introduction" class="mb-12">
-              <h2>Introduction</h2>
-              <p>Welcome to the documentation for our platform. This guide will help you get started with our tools and services.</p>
-              <p>Our platform is designed to be intuitive and powerful, providing everything you need to build amazing applications.</p>
-            </section>
-
-            <section id="features" class="mb-12">
-              <h2>Key Features</h2>
-              <ul>
-                <li>Feature-rich API for all your needs</li>
-                <li>Comprehensive documentation and examples</li>
-                <li>Active community and support</li>
-                <li>Regular updates and improvements</li>
-              </ul>
-            </section>
-
-            <section id="quick-start" class="mb-12">
-              <h2>Quick Start</h2>
-              
-              <section id="prerequisites" class="mt-6">
-                <h3>Prerequisites</h3>
-                <p>Before you begin, make sure you have the following installed:</p>
-                <ul>
-                  <li>Node.js 16.x or later</li>
-                  <li>npm 7.x or later or yarn</li>
-                  <li>Modern web browser</li>
-                </ul>
-              </section>
-
-              <section id="installation" class="mt-6">
-                <h3>Installation</h3>
-                <p>Install the package using npm or yarn:</p>
-                <pre class="bg-gray-100 p-4 rounded-md overflow-x-auto"><code>npm install your-package-name
-# or
-yarn add your-package-name</code></pre>
-              </section>
-
-              <section id="usage" class="mt-6">
-                <h3>Basic Usage</h3>
-                <p>Import and use the package in your project:</p>
-                <pre class="bg-gray-100 p-4 rounded-md overflow-x-auto"><code>import { createApp } from 'your-package-name';
-
-const app = createApp({
-  // your configuration
-});
-
-app.mount('#app');</code></pre>
-              </section>
-            </section>
-
-            <section id="configuration" class="mb-12">
-              <h2>Configuration</h2>
-              <p>Customize the behavior of the package using the following options:</p>
-              <pre class="bg-gray-100 p-4 rounded-md overflow-x-auto"><code>{
-  // Enable debug mode
-  debug: false,
-  
-  // API configuration
-  api: {
-    baseURL: 'https://api.example.com',
-    timeout: 30000,
-  },
-  
-  // Feature flags
-  features: {
-    analytics: true,
-    notifications: true,
-  },
+          </li>
+        </ul>
+      </nav>
+    </aside>
+    
+    <main class="content">
+      <h1>Getting Started</h1>
+      <p>Welcome to our documentation. Here's how to get started with our product.</p>
+      
+      <h2 id="installation">Installation</h2>
+      <p>To install our package, run the following command:</p>
+      <pre><code>npm install our-package</code></pre>
+      
+      <h2 id="configuration">Configuration</h2>
+      <p>Create a config file in your project root:</p>
+      <pre><code>{
+  "apiKey": "your-api-key",
+  "environment": "production"
 }</code></pre>
-            </section>
-          </div>
-        </div>
-      </main>
+      
+      <h2 id="usage">Basic Usage</h2>
+      <p>Import and initialize the SDK:</p>
+      <pre><code>import { initSDK } from 'our-package';
 
-      <!-- Table of Contents -->
-      <aside class="hidden xl:block w-64 bg-white border-l border-gray-200 overflow-y-auto p-6">
-        <div class="sticky top-6">
-          <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4">
-            On this page
-          </h3>
-          <nav>
-            <ul class="space-y-2 text-sm">
-              <li v-for="heading in headings" :key="heading.id" 
-                  :class="{ 'ml-4': heading.level === 3 }">
-                <a 
-                  :href="`#${heading.id}`"
-                  class="block py-1 text-gray-600 hover:text-blue-600 transition-colors duration-200"
-                  @click="setActiveSection(heading.id)"
-                >
-                  {{ heading.text }}
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </div>
-      </aside>
-    </div>
+initSDK({
+  apiKey: 'your-api-key'
+});</code></pre>
+    </main>
+    
+    <aside class="toc">
+      <div class="toc-container">
+        <h3>On this page</h3>
+        <ul>
+          <li><a href="#installation">Installation</a></li>
+          <li><a href="#configuration">Configuration</a></li>
+          <li><a href="#usage">Basic Usage</a></li>
+        </ul>
+      </div>
+    </aside>
   </div>
 </template>
 
+<script setup lang="ts">
+import { ref } from "vue";
+
+const sidebar = ref([
+	{
+		text: "Getting Started",
+		link: "/docs/getting-started",
+		icon: "i-mdi-rocket-launch-outline",
+		collapsed: false,
+		items: [
+			{
+				text: "Installation",
+				link: "/docs/getting-started/installation",
+				icon: "i-mdi-download-box-outline",
+			},
+			{
+				text: "Configuration",
+				link: "/docs/getting-started/configuration",
+				icon: "i-mdi-cog-outline",
+			},
+		],
+	},
+	{
+		text: "Guide",
+		link: "/docs/guide",
+		icon: "i-mdi-book-open-outline",
+		collapsed: false,
+		items: [
+			{
+				text: "Basic Usage",
+				link: "/docs/guide/basic-usage",
+				icon: "i-mdi-play-circle-outline",
+			},
+			{
+				text: "Advanced Features",
+				link: "/docs/guide/advanced-features",
+				icon: "i-mdi-star-cog-outline",
+			},
+		],
+	},
+	{
+		text: "API Reference",
+		link: "/docs/api",
+		icon: "i-mdi-code-json",
+		collapsed: false,
+		items: [
+			{
+				text: "Endpoints",
+				link: "/docs/api/endpoints",
+				icon: "i-mdi-api",
+			},
+			{
+				text: "Authentication",
+				link: "/docs/api/authentication",
+				icon: "i-mdi-shield-lock-outline",
+			},
+		],
+	},
+]);
+
+const toggleCollapse = (item: any) => {
+	item.collapsed = !item.collapsed;
+};
+</script>
+
 <style scoped>
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+.docs-container {
+  display: grid;
+  grid-template-columns: 280px 1fr 240px;
+  min-height: calc(100vh - 64px);
 }
 
-::-webkit-scrollbar-track {
-  background-color: #f3f4f6; /* bg-gray-100 */
+.sidebar {
+  padding: 24px;
+  border-right: 1px solid #e2e8f0;
+  position: sticky;
+  top: 64px;
+  height: calc(100vh - 64px);
+  overflow-y: auto;
 }
 
-::-webkit-scrollbar-thumb {
-  background-color: #d1d5db; /* bg-gray-300 */
-  border-radius: 9999px; /* rounded-full */
+.content {
+  padding: 32px 48px;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background-color: #9ca3af; /* bg-gray-400 */
+.toc {
+  padding: 32px 16px;
+  position: sticky;
+  top: 64px;
+  height: calc(100vh - 64px);
+  overflow-y: auto;
 }
 
-/* Smooth scrolling for anchor links */
-html {
-  scroll-behavior: smooth;
+.toc-container {
+  padding: 16px;
+  border-left: 1px solid #e2e8f0;
+}
+
+/* Existing styles */
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+nav li {
+  margin-bottom: 12px;
+}
+
+nav a {
+  color: #4a5568;
+  text-decoration: none;
+  display: block;
+  padding: 4px 0;
+}
+
+nav a:hover {
+  color: #4f46e5;
+}
+
+.sub-menu {
+  padding-left: 16px;
+  margin-top: 8px;
+}
+
+/* Content styles */
+h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 2rem 0 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+pre {
+  background: #f8fafc;
+  padding: 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+}
+
+code {
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+}
+
+/* เพิ่ม style สำหรับ collapse menu */
+.menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 8px 0;
+}
+
+.menu-title {
+  flex: 1;
+}
+
+.collapse-btn {
+  background: none;
+  border: none;
+  color: #4a5568;
+  cursor: pointer;
+  padding: 4px;
+  margin-left: 8px;
+}
+
+.collapse-btn:hover {
+  color: #4f46e5;
+}
+
+/* เพิ่ม style สำหรับ icon */
+.menu-header .flex {
+  flex: 1;
+}
+
+/* เพิ่ม style สำหรับ submenu icon */
+.sub-menu .flex {
+  padding-left: 8px;
+}
+
+.sub-menu .text-gray-500 {
+  font-size: 1.1rem;
+}
+
+.toc h3 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #4a5568;
+}
+
+.toc ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.toc li {
+  margin-bottom: 8px;
+}
+
+.toc a {
+  font-size: 0.875rem;
+  color: #4a5568;
+  text-decoration: none;
+}
+
+.toc a:hover {
+  color: #4f46e5;
 }
 </style>

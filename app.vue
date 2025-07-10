@@ -1,37 +1,46 @@
+<script setup lang="ts">
+import SidebarApp from "~/components/ui/SidebarApp.vue";
+import CommandPalette from "~/components/ui/CommandPalette.vue";
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import Nav from "~/components/Nav.vue";
+const customAppItems = [
+	{ name: "Home", path: "/", icon: "i-mdi-home" },
+	{ name: "Chat", path: "/chat", icon: "i-mdi-forum" },
+	{ name: "Email", path: "/email", icon: "i-mdi-email" },
+	{ name: "Automation", path: "/automation", icon: "i-mdi-robot" },
+	{ name: "Bookmark", path: "/bookmark", icon: "i-mdi-bookmark-multiple" },
+	{ name: "Code", path: "/code", icon: "i-mdi-code-braces" },
+	{ name: "Learn", path: "/learn", icon: "i-mdi-lightbulb-on" },
+	{ name: "Notes", path: "/notes", icon: "i-mdi-notebook" },
+	{ name: "Calendar", path: "/calendar", icon: "i-mdi-calendar" },
+	{ name: "Database", path: "/database", icon: "i-mdi-database" },
+	{ name: "Search", path: "/search", icon: "i-mdi-magnify" },
+	{ name: "Task", path: "/task", icon: "i-mdi-check-circle" },
+	{ name: "Image", path: "/image", icon: "i-mdi-image" },
+	{ name: "Hosting", path: "/hosting", icon: "i-mdi-image" },
+	{ name: "Web Editor", path: "/web-editor", icon: "i-mdi-web" },
+	{ name: "Video", path: "/video", icon: "i-mdi-video" },
+	{ name: "Whiteboard", path: "/whiteboard", icon: "i-mdi-chart-box" },
+	{ name: "Add", path: "/marketplace", icon: "i-mdi-plus" },
+];
 
-export default defineComponent({
-	name: "App",
-	components: {
-		Nav,
-	},
-	setup() {
-		return {};
-	},
-});
+const customBelowItems = [
+	{ name: "Settings", path: "/settings", icon: "i-mdi-cog" },
+	{ name: "Contact", path: "/contact", icon: "i-mdi-email" },
+];
 </script>
 
 <template>
+  <CommandPalette />
   <NuxtLayout>
-    <div class="min-h-screen w-full flex flex-col bg-background text-text">
-      <!-- Fixed Navbar -->
-      <div class="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm">
-        <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Nav />
-        </div>
-      </div>
+    <div class="min-h-screen flex bg-background text-text">
+      <SidebarApp 
+        :app-items="customAppItems" 
+        :below-items="customBelowItems" 
+      />
       
-      <!-- Main Content with padding-top to account for fixed navbar -->
-      <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 flex flex-col pt-20">
-        <main class="flex-grow">
-          <NuxtPage />
-        </main>
-      </div>
+      <main class="flex-1 ml-24 p-6">
+        <NuxtPage />
+      </main>
     </div>
   </NuxtLayout>
 </template>
-
-  

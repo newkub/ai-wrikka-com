@@ -1,250 +1,110 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
-import { storeToRefs } from "pinia";
-import TaskForm from "~/components/task/TaskForm.vue";
-import KanBanView from "~/components/task/views/KanBan.vue";
-import TableView from "~/components/task/views/Table.vue";
-import Sidebar from "~/components/task/Sidebar.vue";
-import { useTaskStore } from "~/stores/task";
-import type { Task, TaskStatus } from "~/stores/task";
+interface ImageApp {
+	id: string;
+	title: string;
+	description: string;
+	icon: string;
+	path: string;
+	color: string;
+}
 
-// View mode
-type ViewMode = "kanban" | "table";
-const viewMode = ref<ViewMode>("kanban");
-
-// Task store
-const taskStore = useTaskStore();
-const {
-	tasks,
-	selectedTask,
-	isTaskFormOpen,
-	todoTasks,
-	inProgressTasks,
-	reviewTasks,
-	doneTasks,
-} = storeToRefs(taskStore);
-
-// Define statuses with id and title to match KanBan component props
-type StatusItem = { id: TaskStatus; title: string };
-const statuses: StatusItem[] = [
-	{ id: "todo", title: "To Do" },
-	{ id: "in-progress", title: "In Progress" },
-	{ id: "review", title: "Review" },
-	{ id: "done", title: "Done" },
+const imageApps: ImageApp[] = [
+	{
+		id: "gen",
+		title: "Image Generation",
+		description: "Create stunning AI-generated images from text prompts",
+		icon: "i-mdi-image-auto-adjust",
+		path: "/image/gen",
+		color: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+	},
+	{
+		id: "editor",
+		title: "Image Editor",
+		description: "Edit and enhance your photos with powerful tools",
+		icon: "i-mdi-image-edit",
+		path: "/image/editor",
+		color: "bg-purple-500/10 text-purple-600 dark:text-purple-400",
+	},
+	{
+		id: "upscale",
+		title: "Upscale",
+		description: "Enhance image resolution without losing quality",
+		icon: "i-mdi-vector-square-edit",
+		path: "/image/upscale",
+		color: "bg-green-500/10 text-green-600 dark:text-green-400",
+	},
+	{
+		id: "restore",
+		title: "Restore",
+		description: "Fix and restore old or damaged photos",
+		icon: "i-mdi-image-refresh",
+		path: "/image/restore",
+		color: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+	},
+	{
+		id: "remove-bg",
+		title: "Remove Background",
+		description: "Instantly remove background from any image",
+		icon: "i-mdi-image-remove",
+		path: "/image/remove-bg",
+		color: "bg-rose-500/10 text-rose-600 dark:text-rose-400",
+	},
+	{
+		id: "sketch",
+		title: "Sketch to Image",
+		description: "Transform your sketches into realistic images",
+		icon: "i-mdi-drawing",
+		path: "/image/sketch",
+		color: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400",
+	},
+	{
+		id: "style-transfer",
+		title: "Style Transfer",
+		description: "Apply artistic styles to your photos",
+		icon: "i-mdi-palette",
+		path: "/image/style-transfer",
+		color: "bg-pink-500/10 text-pink-600 dark:text-pink-400",
+	},
+	{
+		id: "inpaint",
+		title: "Inpainting",
+		description: "Remove unwanted objects from your images",
+		icon: "i-mdi-brush",
+		path: "/image/inpaint",
+		color: "bg-teal-500/10 text-teal-600 dark:text-teal-400",
+	},
 ];
 
-// Computed
-const allTasks = computed(() => [
-	...todoTasks.value,
-	...inProgressTasks.value,
-	...reviewTasks.value,
-	...doneTasks.value,
-]);
-
-// Methods
-const handleCreateTask = async (
-	taskData: Omit<Task, "id" | "createdAt" | "updatedAt">,
-) => {
-	try {
-		await taskStore.createTask(taskData);
-	} catch (error) {
-		console.error("Error creating task:", error);
-		throw error;
-	}
+const navigateTo = (path: string) => {
+	navigateTo(path);
 };
-
-const handleUpdateTask = async (task: Task) => {
-	try {
-		const { id, ...updates } = task;
-		await taskStore.updateTask(id, updates);
-	} catch (error) {
-		console.error("Error updating task:", error);
-		throw error;
-	}
-};
-
-const handleDeleteTask = async (taskId: string) => {
-	try {
-		await taskStore.deleteTask(taskId);
-	} catch (error) {
-		console.error("Error deleting task:", error);
-		throw error;
-	}
-};
-
-const handleTaskClick = (task: Task) => {
-	taskStore.selectTask(task);
-	taskStore.openTaskForm();
-};
-
-const handleStatusChange = async (taskId: string, newStatus: TaskStatus) => {
-	try {
-		await taskStore.updateTask(taskId, { status: newStatus });
-	} catch (error) {
-		console.error("Error updating task status:", error);
-	}
-};
-
-// Drag and drop
-const onDragStart = (e: DragEvent, taskId: string) => {
-	if (e.dataTransfer) {
-		e.dataTransfer.setData("taskId", taskId);
-	}
-};
-
-const onDrop = async (e: DragEvent, status: TaskStatus) => {
-	e.preventDefault();
-	const taskId = e.dataTransfer?.getData("taskId");
-	if (taskId) {
-		await handleStatusChange(taskId, status);
-	}
-};
-
-// Handle sidebar item selection
-const handleSidebarSelect = (
-	itemId: string,
-	type: "workspace" | "status" | "view",
-) => {
-	console.log(`Selected ${type}:`, itemId);
-
-	// Handle selection based on type
-	switch (type) {
-		case "workspace":
-			// Filter tasks by workspace
-			console.log("Filtering by workspace:", itemId);
-			break;
-
-		case "status":
-			// Filter tasks by status
-			console.log("Filtering by status:", itemId);
-			break;
-
-		case "view":
-			// Handle view type selection
-			console.log("Selected view:", itemId);
-			break;
-	}
-};
-
-// Fetch tasks on component mount
-onMounted(() => {
-	taskStore.fetchTasks();
-});
 </script>
 
 <template>
-  <div class="flex min-h-screen bg-gray-50">
-    <!-- Sidebar -->
-    <Sidebar 
-      @select="handleSidebarSelect"
-      :workspaces="[
-        { id: 'workspace-1', name: 'Personal' },
-        { id: 'workspace-2', name: 'Work' },
-        { id: 'workspace-3', name: 'Team' }
-      ]"
-      :statuses="[
-        { id: 'todo', name: 'To Do' },
-        { id: 'in-progress', name: 'In Progress' },
-        { id: 'review', name: 'Review' },
-        { id: 'done', name: 'Done' }
-      ]"
-      class="flex-shrink-0 hidden md:block"
-    />
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8">Image Tools</h1>
     
-    <!-- Main Content -->
-    <div class="flex-1 overflow-auto">
-    <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-      <div class="flex flex-col justify-between py-6 space-y-4 md:flex-row md:items-center md:space-y-0">
-        <h1 class="text-2xl font-bold text-gray-900">Task Management</h1>
-        
-        <div class="flex items-center space-x-4">
-          <!-- View Toggle -->
-          <div class="inline-flex rounded-md shadow-sm">
-            <button
-              type="button"
-              @click="viewMode = 'kanban'"
-              :class="[
-                'px-4 py-2 text-sm font-medium rounded-l-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500',
-                viewMode === 'kanban' 
-                  ? 'bg-primary-600 text-white' 
-                  : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-300'
-              ]"
-            >
-              Kanban
-            </button>
-            <button
-              type="button"
-              @click="viewMode = 'table'"
-              :class="[
-                'px-4 py-2 text-sm font-medium rounded-r-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500',
-                viewMode === 'table' 
-                  ? 'bg-primary-600 text-white' 
-                  : 'bg-white text-gray-700 hover:bg-gray-50 border-t border-b border-r border-gray-300'
-              ]"
-            >
-              Table
-            </button>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <NuxtLink 
+        v-for="app in imageApps" 
+        :key="app.id"
+        :to="app.path"
+        class="group block"
+      >
+        <div class="h-full rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-200 hover:shadow-lg hover:border-transparent">
+          <div class="p-6">
+            <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-4" :class="app.color">
+              <div :class="app.icon" class="text-2xl" />
+            </div>
+            <h3 class="text-lg font-semibold mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+              {{ app.title }}
+            </h3>
+            <p class="text-gray-600 dark:text-gray-400 text-sm">
+              {{ app.description }}
+            </p>
           </div>
-          
-          <!-- New Task Button -->
-          <button
-            type="button"
-            @click="taskStore.openTaskForm()"
-            class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 border border-transparent rounded-md shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-          >
-            <svg
-              class="w-5 h-5 mr-2 -ml-1"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              ></path>
-            </svg>
-            New Task
-          </button>
         </div>
-      </div>
-
-      <!-- Kanban View -->
-      <KanBanView
-        v-if="viewMode === 'kanban'"
-        :tasks="allTasks"
-        :statuses="statuses"
-        :on-task-click="handleTaskClick"
-        :on-status-change="handleStatusChange"
-        :on-drag-start="onDragStart"
-        :on-drop="onDrop"
-        @edit="handleTaskClick"
-        @delete="handleDeleteTask"
-        class="mt-6"
-      />
-
-      <!-- Table View -->
-      <TableView
-        v-else
-        :tasks="allTasks"
-        :on-edit="handleTaskClick"
-        :on-delete="handleDeleteTask"
-        :on-status-change="(taskId: string, status: string) => handleStatusChange(taskId, status as TaskStatus)"
-        class="mt-6"
-      />
+      </NuxtLink>
     </div>
-
-    <!-- Task Form Modal -->
-    <TaskForm
-      v-if="isTaskFormOpen"
-      v-model:is-open="isTaskFormOpen"
-      :task="selectedTask || undefined"
-      @submit="handleCreateTask"
-      @update:task="handleUpdateTask"
-      @close="taskStore.closeTaskForm"
-    />
   </div>
-</div>
 </template>

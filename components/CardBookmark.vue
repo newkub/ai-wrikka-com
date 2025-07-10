@@ -1,5 +1,3 @@
-
-
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { Tag } from "~/components/primitive";
@@ -7,11 +5,13 @@ import type { Bookmark } from "~/types/bookmark";
 
 interface Props {
 	bookmark: Bookmark;
+	showEditButton?: boolean;
 }
 
 interface Emits {
-	(e: "click", event: MouseEvent): void;
+	(e: "click", bookmark: Bookmark): void;
 	(e: "menu-click", event: MouseEvent): void;
+	(e: "edit-click", bookmark: Bookmark): void;
 }
 
 const props = defineProps<Props>();
@@ -73,8 +73,8 @@ onMounted(() => {
 
 <template>
   <div 
-    class="bg-block rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col h-full group"
-    @click="$emit('click', $event)"
+    class="bg-block rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col h-full group cursor-pointer"
+    @click="$emit('click', props.bookmark)"
   >
     <!-- Bookmark Image/Gradient -->
     <div 
@@ -116,6 +116,13 @@ onMounted(() => {
           @click.stop="$emit('menu-click', $event)"
         >
           <i class="i-mdi-dots-vertical w-4 h-4" :class="{ 'text-white': bookmark.gradient || ogImage, 'text-gray-700': !bookmark.gradient && !ogImage }"></i>
+        </button>
+        <button 
+          v-if="props.showEditButton"
+          class="p-1.5 bg-white/20 backdrop-blur-sm rounded-full shadow hover:bg-white/30 transition-colors"
+          @click.stop="$emit('edit-click', bookmark)"
+        >
+          <i class="i-mdi-pencil w-4 h-4" :class="{ 'text-white': bookmark.gradient || ogImage, 'text-gray-700': !bookmark.gradient && !ogImage }"></i>
         </button>
       </div>
     </div>
