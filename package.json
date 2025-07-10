@@ -24,8 +24,6 @@
     "@unocss/reset": "^66.3.3",
     "@vueuse/core": "^13.5.0",
     "drizzle-orm": "^0.44.2",
-    "highlight.js": "^11.11.1",
-    "marked": "16.0.0",
     "monaco-editor": "^0.52.2",
     "motion": "^12.23.0",
     "nuxt": "^3.17.6",
