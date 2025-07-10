@@ -2,19 +2,19 @@
   "name": "ai-platform",
   "private": true,
   "type": "module",
-  "packageManager": "bun@1.2.17",
+  "packageManager": "bun@1.2.18",
   "scripts": {
     "dev": "nuxt dev",
     "build": "nuxt build",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "prepare": "lefthook install && nuxt prepare",
+    "prepare": "bunx lefthook install && nuxt prepare",
     "postinstall": "nuxt prepare",
     "format": "biome format --write .",
     "db:generate": "drizzle-kit generate",
     "lint": "vue-tsc --noEmit",
     "unused": "knip",
-    "update:deps": "taze -r"
+    "update:deps": "bunx taze -r"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -31,7 +31,6 @@
     "nuxt": "^3.17.6",
     "openai": "^5.8.3",
     "pinia": "^3.0.3",
-    "pinia-plugin-persistedstate": "^4.4.1",
     "shiki": "^3.7.0",
     "vue": "^3.5.17",
     "vue-router": "^4.5.1"
@@ -39,15 +38,12 @@
   "devDependencies": {
     "@biomejs/biome": "2.1.1",
     "@iconify-json/mdi": "^1.2.3",
-    "@pinia-plugin-persistedstate/nuxt": "^1.2.1",
     "@shikijs/monaco": "^3.7.0",
     "@types/bun": "latest",
     "@unocss/nuxt": "^66.3.3",
     "@vueuse/nuxt": "^13.5.0",
     "drizzle-kit": "^0.31.4",
     "knip": "^5.61.3",
-    "lefthook": "^1.12.1",
-    "taze": "^19.1.0",
     "unocss": "^66.3.3",
     "unocss-preset-scrollbar": "^3.2.0",
     "vue-tsc": "^3.0.1"
