@@ -22,7 +22,6 @@ export default defineConfig({
 				error: "var(--error)",
 				success: "var(--success)",
 			},
-			
 		},
 	},
 	presets: [
