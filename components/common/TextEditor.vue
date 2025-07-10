@@ -171,25 +171,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from "vue";
-import { useEditor } from "~/composables/useEditor";
+import { ref, watch, onMounted } from 'vue';
+import { useEditor } from '~/composables/useEditor';
 
-const props = defineProps({
-	modelValue: {
-		type: String,
-		default: "",
-	},
-	placeholder: {
-		type: String,
-		default: "พิมพ์ข้อความที่นี่...",
-	},
-	editable: {
-		type: Boolean,
-		default: true,
-	},
+interface Props {
+  modelValue?: string;
+  editable?: boolean;
+  placeholder?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: '',
+  editable: true,
+  placeholder: 'พิมพ์ข้อความที่นี่...',
 });
 
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: string): void;
+}>();
 
 // Editor state
 const editorRef = ref<HTMLElement | null>(null);
@@ -202,29 +201,31 @@ const selectedHeading = ref("");
 
 // Initialize editor
 const {
-	content,
-	formatText,
-	insertLink,
-	insertImage,
-	clearFormatting,
-	setContent,
-	clearContent,
-	isFormatActive,
+  editor,
+  isReady,
+  formatText,
+  insertLink,
+  insertImage,
+  clearFormatting,
+  setContent,
+  clearContent,
+  isFormatActive,
 } = useEditor({
-	initialContent: props.modelValue,
-	onUpdate: (newContent) => {
-		emit("update:modelValue", newContent);
-	},
+  initialContent: props.modelValue,
+  onUpdate: (newContent: string) => {
+    emit("update:modelValue", newContent);
+  },
 });
 
 // Watch for external modelValue changes
 watch(
-	() => props.modelValue,
-	(newValue) => {
-		if (newValue !== content.value) {
-			setContent(newValue);
-		}
-	},
+  () => props.modelValue,
+  (newValue: string) => {
+    if (newValue !== editor.value?.innerHTML) {
+      setContent(newValue);
+    }
+  },
+  { immediate: true }
 );
 
 // Apply heading
@@ -276,9 +277,9 @@ const handlePaste = (e: ClipboardEvent) => {
 
 // Expose methods
 defineExpose({
-	clearContent,
-	getContent: () => content.value,
-	setContent,
+  clearContent,
+  getContent: () => editor.value?.innerHTML || '',
+  setContent,
 });
 </script>
 
