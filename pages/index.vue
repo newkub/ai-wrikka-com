@@ -557,7 +557,6 @@ const formattedPrice = (apps: number): string => {
           <h3 class="text-white text-sm font-semibold mb-4">Legal</h3>
           <ul class="space-y-2">
             <li><RouterLink to="/policy" class="hover:text-white transition-colors">Privacy Policy</RouterLink></li>
-            <li><RouterLink to="/terms" class="hover:text-white transition-colors">Terms of Service</RouterLink></li>
           </ul>
         </div>
         
