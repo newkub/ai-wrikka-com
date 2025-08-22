@@ -153,13 +153,13 @@ const removeTag = (tag: string) => {
 const getPriorityColor = (priority: string) => {
 	switch (priority) {
 		case "high":
-			return "bg-red-500/20 text-red-400";
+			return "bg-color-error/20 text-color-error";
 		case "medium":
-			return "bg-yellow-500/20 text-yellow-400";
+			return "bg-color-warning/20 text-color-warning";
 		case "low":
-			return "bg-blue-500/20 text-blue-400";
+			return "bg-color-success/20 text-color-success";
 		default:
-			return "bg-gray-500/20 text-gray-400";
+			return "bg-block/50 text-text/50";
 	}
 };
 
@@ -178,14 +178,14 @@ const getPriorityIcon = (priority: string) => {
 </script>
 
 <template>
-  <div class="h-full flex flex-col bg-gray-900 text-gray-200">
+  <div class="h-full flex flex-col bg-background text-text">
     <!-- Toolbar -->
-    <div class="p-3 border-b border-gray-700 bg-gray-800">
+    <div class="p-3 border-b border-border bg-block">
       <div class="flex items-center justify-between mb-3">
         <h2 class="text-lg font-medium">Tasks</h2>
         <button 
           @click="isAddingTask = !isAddingTask" 
-          class="px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded text-sm flex items-center gap-1"
+          class="px-3 py-1 bg-color-primary hover:bg-color-primary/90 rounded text-sm flex items-center gap-1"
         >
           <i class="i-mdi-plus"></i>
           <span>Add Task</span>
@@ -199,12 +199,12 @@ const getPriorityIcon = (priority: string) => {
             v-model="searchQuery"
             type="text"
             placeholder="Search tasks..."
-            class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-1.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+            class="w-full bg-block border border-border rounded px-3 py-1.5 text-sm placeholder:text-text/50 focus:outline-none focus:ring-1 focus:ring-color-primary focus:border-color-primary"
           />
-          <i class="i-mdi-magnify absolute right-2 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <i class="i-mdi-magnify absolute right-2 top-1/2 -translate-y-1/2 text-text/50"></i>
         </div>
         
-        <div class="flex border border-gray-600 rounded overflow-hidden">
+        <div class="flex border border-border rounded overflow-hidden">
           <button
             v-for="option in [
               { value: 'all', label: 'All' },
@@ -215,8 +215,8 @@ const getPriorityIcon = (priority: string) => {
             @click="filter = option.value as any"
             class="px-3 py-1 text-sm"
             :class="{
-              'bg-blue-600 text-white': filter === option.value,
-              'text-gray-300 hover:bg-gray-700': filter !== option.value
+              'bg-color-primary text-white': filter === option.value,
+              'text-text hover:bg-block': filter !== option.value
             }"
           >
             {{ option.label }}
@@ -226,14 +226,14 @@ const getPriorityIcon = (priority: string) => {
     </div>
     
     <!-- Add Task Form -->
-    <div v-if="isAddingTask" class="border-b border-gray-700 p-3 bg-gray-800/50">
+    <div v-if="isAddingTask" class="border-b border-border p-3 bg-block/50">
       <div class="space-y-3">
         <div>
           <input
             v-model="newTask.title"
             type="text"
             placeholder="Task title"
-            class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+            class="w-full bg-block border border-border rounded px-3 py-2 text-sm placeholder:text-text/50 focus:outline-none focus:ring-1 focus:ring-color-primary focus:border-color-primary"
             @keyup.enter="addTask"
           />
         </div>
@@ -243,7 +243,7 @@ const getPriorityIcon = (priority: string) => {
             v-model="newTask.description"
             placeholder="Description (optional)"
             rows="2"
-            class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+            class="w-full bg-block border border-border rounded px-3 py-2 text-sm placeholder:text-text/50 focus:outline-none focus:ring-1 focus:ring-color-primary focus:border-color-primary"
           ></textarea>
         </div>
         
@@ -251,20 +251,20 @@ const getPriorityIcon = (priority: string) => {
           <div class="relative">
             <select
               v-model="newTask.priority"
-              class="appearance-none bg-gray-700 border border-gray-600 rounded px-3 py-1.5 pr-8 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              class="appearance-none bg-block border border-border rounded px-3 py-1.5 pr-8 text-sm focus:outline-none focus:ring-1 focus:ring-color-primary focus:border-color-primary"
             >
               <option value="low">Low Priority</option>
               <option value="medium">Medium Priority</option>
               <option value="high">High Priority</option>
             </select>
-            <i class="i-mdi-chevron-down absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+            <i class="i-mdi-chevron-down absolute right-2 top-1/2 -translate-y-1/2 text-text/50 pointer-events-none"></i>
           </div>
           
           <div class="relative">
             <input
               v-model="newTask.dueDate"
               type="date"
-              class="bg-gray-700 border border-gray-600 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              class="bg-block border border-border rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-color-primary focus:border-color-primary"
             />
           </div>
           
@@ -273,12 +273,12 @@ const getPriorityIcon = (priority: string) => {
               v-model="newTag"
               type="text"
               placeholder="Add tags..."
-              class="w-full bg-gray-700 border border-gray-600 rounded-l px-3 py-1.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              class="w-full bg-block border border-border rounded-l px-3 py-1.5 text-sm placeholder:text-text/50 focus:outline-none focus:ring-1 focus:ring-color-primary focus:border-color-primary"
               @keyup.enter="addTag"
             />
             <button 
               @click="addTag"
-              class="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1.5 rounded-r text-sm"
+              class="bg-block hover:bg-block/50 text-text/50 px-2 py-1.5 rounded-r text-sm"
             >
               <i class="i-mdi-plus"></i>
             </button>
@@ -289,10 +289,10 @@ const getPriorityIcon = (priority: string) => {
           <span 
             v-for="(tag, index) in newTask.tags" 
             :key="index"
-            class="inline-flex items-center bg-gray-700 text-xs px-2 py-0.5 rounded"
+            class="inline-flex items-center bg-block text-text/50 text-xs px-2 py-0.5 rounded"
           >
             {{ tag }}
-            <button @click="removeTag(tag)" class="ml-1 text-gray-400 hover:text-white">
+            <button @click="removeTag(tag)" class="ml-1 text-text/50 hover:text-text">
               <i class="i-mdi-close text-xs"></i>
             </button>
           </span>
@@ -301,14 +301,14 @@ const getPriorityIcon = (priority: string) => {
         <div class="flex justify-end gap-2 pt-1">
           <button 
             @click="isAddingTask = false" 
-            class="px-3 py-1.5 text-sm text-gray-300 hover:text-white"
+            class="px-3 py-1.5 text-sm text-text/50 hover:text-text"
           >
             Cancel
           </button>
           <button 
             @click="addTask" 
             :disabled="!newTask.title?.trim()"
-            class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed"
+            class="px-3 py-1.5 bg-color-primary hover:bg-color-primary/90 rounded text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Add Task
           </button>
@@ -318,17 +318,17 @@ const getPriorityIcon = (priority: string) => {
     
     <!-- Tasks List -->
     <div class="flex-1 overflow-auto">
-      <div v-if="filteredTasks.length === 0" class="flex flex-col items-center justify-center h-full text-gray-500 p-8 text-center">
+      <div v-if="filteredTasks.length === 0" class="flex flex-col items-center justify-center h-full text-text/50 p-8 text-center">
         <i class="i-mdi-checkbox-marked-circle-outline text-4xl mb-2"></i>
         <p class="font-medium">No tasks found</p>
         <p class="text-sm mt-1">{{ searchQuery ? 'Try a different search term' : 'Add a new task to get started' }}</p>
       </div>
       
-      <ul v-else class="divide-y divide-gray-800">
+      <ul v-else class="divide-y divide-border">
         <li 
           v-for="task in filteredTasks" 
           :key="task.id"
-          class="group hover:bg-gray-800/50"
+          class="group hover:bg-block/50"
         >
           <div class="p-3">
             <div class="flex items-start gap-3">
@@ -336,8 +336,8 @@ const getPriorityIcon = (priority: string) => {
                 @click="toggleTask(task.id)"
                 class="mt-0.5 flex-shrink-0 w-5 h-5 rounded border flex items-center justify-center"
                 :class="{
-                  'bg-blue-600 border-blue-600': task.completed,
-                  'border-gray-600 hover:border-blue-500': !task.completed,
+                  'bg-color-primary border-color-primary': task.completed,
+                  'border-border hover:border-color-primary': !task.completed,
                   [getPriorityColor(task.priority)]: !task.completed
                 }"
                 :title="task.completed ? 'Mark as incomplete' : 'Mark as complete'"
@@ -351,8 +351,8 @@ const getPriorityIcon = (priority: string) => {
                   <h3 
                     class="text-sm font-medium truncate"
                     :class="{
-                      'text-gray-300 line-through': task.completed,
-                      'text-white': !task.completed
+                      'text-text/70 line-through': task.completed,
+                      'text-text': !task.completed
                     }"
                   >
                     {{ task.title }}
@@ -362,15 +362,15 @@ const getPriorityIcon = (priority: string) => {
                       v-if="task.dueDate" 
                       class="text-xs px-1.5 py-0.5 rounded"
                       :class="{
-                        'bg-red-500/20 text-red-400': new Date(task.dueDate) < new Date() && !task.completed,
-                        'bg-gray-700/50 text-gray-400': !(new Date(task.dueDate) < new Date() && !task.completed)
+                        'bg-color-error/20 text-color-error': new Date(task.dueDate) < new Date() && !task.completed,
+                        'bg-block/50 text-text/50': !(new Date(task.dueDate) < new Date() && !task.completed)
                       }"
                     >
                       {{ new Date(task.dueDate).toLocaleDateString() }}
                     </span>
                     <button 
                       @click="deleteTask(task.id)" 
-                      class="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-red-400 p-1"
+                      class="opacity-0 group-hover:opacity-100 text-text/50 hover:text-color-error p-1"
                       title="Delete task"
                     >
                       <i class="i-mdi-trash-can-outline text-sm"></i>
@@ -380,7 +380,7 @@ const getPriorityIcon = (priority: string) => {
                 
                 <p 
                   v-if="task.description" 
-                  class="mt-1 text-sm text-gray-400 whitespace-pre-line break-words"
+                  class="mt-1 text-sm text-text/70 whitespace-pre-line break-words"
                   :class="{ 'line-through': task.completed }"
                 >
                   {{ task.description }}
@@ -390,13 +390,13 @@ const getPriorityIcon = (priority: string) => {
                   <span 
                     v-for="(tag, index) in task.tags" 
                     :key="index"
-                    class="inline-block bg-gray-800 text-gray-400 text-xs px-2 py-0.5 rounded"
+                    class="inline-block bg-block text-text/50 text-xs px-2 py-0.5 rounded"
                   >
                     {{ tag }}
                   </span>
                 </div>
                 
-                <div class="mt-2 flex items-center justify-between text-xs text-gray-500">
+                <div class="mt-2 flex items-center justify-between text-xs text-text/50">
                   <span>Created: {{ new Date(task.createdAt).toLocaleString() }}</span>
                   <span v-if="task.updatedAt !== task.createdAt">
                     Updated: {{ new Date(task.updatedAt).toLocaleString() }}
@@ -410,7 +410,7 @@ const getPriorityIcon = (priority: string) => {
     </div>
     
     <!-- Status Bar -->
-    <div class="px-3 py-1.5 border-t border-gray-700 bg-gray-800 text-xs text-gray-400 flex items-center justify-between">
+    <div class="px-3 py-1.5 border-t border-border bg-block text-xs text-text/50 flex items-center justify-between">
       <div>
         {{ tasks.filter(t => t.completed).length }} of {{ tasks.length }} tasks completed
       </div>

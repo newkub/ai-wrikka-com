@@ -335,7 +335,6 @@ const handleEditBookmark = (bookmark: Bookmark) => {
           active-text-color="text-white"
           inactive-bg-color="bg-block/80"
           inactive-text-color="text-text/70"
-          class="transition-all duration-200"
           @click="setActiveTag('all')"
         />
         <Tag 
@@ -348,7 +347,6 @@ const handleEditBookmark = (bookmark: Bookmark) => {
           active-text-color="text-white"
           inactive-bg-color="bg-block/80"
           inactive-text-color="text-text/70"
-          class="transition-all duration-200"
           @click="setActiveTag(tag.id === activeTag ? null : tag.id)"
         />
       </div>

@@ -105,19 +105,19 @@ const handleKeyDown = (e: KeyboardEvent) => {
 <template>
   <div class="h-full flex flex-col">
     <!-- Search Bar -->
-    <div class="p-2 border-b border-gray-700">
+    <div class="p-2 border-b border-border bg-block">
       <div class="relative">
         <input
           v-model="searchQuery"
           type="text"
           placeholder="Search (Enter to search, Esc to clear)"
-          class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 pl-10 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+          class="w-full bg-block border border-border rounded px-3 py-2 pl-10 text-sm placeholder:text-text/50 focus:outline-none focus:ring-1 focus:ring-color-primary focus:border-color-primary"
           @keydown="handleKeyDown"
         />
-        <i class="i-mdi-magnify absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+        <i class="i-mdi-magnify absolute left-3 top-1/2 -translate-y-1/2 text-text/50"></i>
         <button
           v-if="searchQuery"
-          class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
+          class="absolute right-2 top-1/2 -translate-y-1/2 text-text/50 hover:text-text"
           @click="clearSearch"
         >
           <i class="i-mdi-close"></i>
@@ -130,13 +130,13 @@ const handleKeyDown = (e: KeyboardEvent) => {
           :key="file"
           class="text-xs px-2 py-0.5 rounded"
           :class="{
-            'bg-blue-900/50 text-blue-300': selectedFile === file,
-            'bg-gray-800 text-gray-400 hover:bg-gray-700': selectedFile !== file
+            'bg-color-primary/50 text-color-primary': selectedFile === file,
+            'bg-block text-text/50 hover:bg-block/70': selectedFile !== file
           }"
           @click="selectFile(file)"
         >
           {{ file.split('/').pop() }}
-          <span class="text-gray-500 ml-1">
+          <span class="text-text/30 ml-1">
             {{ searchResults.find(r => r.file === file)?.matches.length || 0 }}
           </span>
         </button>
@@ -146,23 +146,23 @@ const handleKeyDown = (e: KeyboardEvent) => {
     <!-- Search Results -->
     <div class="flex-1 overflow-auto">
       <div v-if="isSearching" class="flex items-center justify-center h-full">
-        <div class="animate-spin text-blue-400">
+        <div class="animate-spin text-color-primary">
           <i class="i-mdi-loading text-2xl"></i>
         </div>
       </div>
       
-      <div v-else-if="searchResults.length === 0" class="text-center py-8 text-gray-500">
+      <div v-else-if="searchResults.length === 0" class="text-center py-8 text-text/50">
         <i class="i-mdi-magnify-remove-outline text-4xl mb-2"></i>
         <p>No results found</p>
-        <p class="text-xs mt-1 text-gray-600">Try a different search term</p>
+        <p class="text-xs mt-1 text-text/30">Try a different search term</p>
       </div>
       
-      <div v-else class="divide-y divide-gray-800">
+      <div v-else class="divide-y divide-border">
         <div v-for="result in filteredResults" :key="result.file" class="py-2">
-          <div class="px-4 py-1 bg-gray-800/50 text-xs text-gray-400 flex items-center">
+          <div class="px-4 py-1 bg-block/50 text-xs text-text/50 flex items-center">
             <i class="i-mdi-file-document-outline mr-2"></i>
             <span class="truncate">{{ result.file }}</span>
-            <span class="ml-auto bg-gray-700 rounded-full px-2 py-0.5 text-gray-300">
+            <span class="ml-auto bg-block rounded-full px-2 py-0.5 text-text">
               {{ result.matches.length }} {{ result.matches.length === 1 ? 'match' : 'matches' }}
             </span>
           </div>
@@ -171,16 +171,11 @@ const handleKeyDown = (e: KeyboardEvent) => {
             <div 
               v-for="match in result.matches" 
               :key="`${result.file}-${match.line}`"
-              class="px-4 py-1.5 hover:bg-gray-800/50 cursor-pointer flex group"
+              class="px-4 py-1.5 hover:bg-block/50 cursor-pointer flex group"
             >
-              <div class="text-xs text-gray-500 w-8 flex-shrink-0">{{ match.lineNumber }}</div>
-              <div class="text-sm text-gray-300 font-mono break-all">
-                <span v-html="match.content.replace(new RegExp(searchQuery, 'gi'), match => `<span class='bg-yellow-500/30 text-yellow-200'>${match}</span>`)"></span>
-              </div>
-              <div class="ml-auto opacity-0 group-hover:opacity-100 flex items-center">
-                <button class="p-1 text-gray-500 hover:text-blue-400" title="Go to file">
-                  <i class="i-mdi-arrow-top-right"></i>
-                </button>
+              <div class="text-xs text-text/50 w-8 flex-shrink-0">{{ match.lineNumber }}</div>
+              <div class="text-sm text-text font-mono break-all">
+                <span v-html="match.content.replace(new RegExp(searchQuery, 'gi'), match => `<span class='bg-color-alert/30 text-color-alert'>${match}</span>`)"></span>
               </div>
             </div>
           </div>

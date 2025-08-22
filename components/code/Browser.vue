@@ -1,7 +1,10 @@
 <template>
-  <div class="h-full flex flex-col bg-white">
+  <div class="h-full flex flex-col bg-white relative" ref="container">
     <!-- Browser Controls -->
-    <div class="flex items-center gap-2 p-2 border-b border-gray-200 bg-gray-50">
+    <div 
+      class="flex items-center gap-2 p-2 border-b border-gray-200 bg-gray-50 cursor-move"
+      @mousedown="startDrag"
+    >
       <button 
         class="p-2 rounded-full hover:bg-gray-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         :disabled="!canGoBack"
@@ -100,12 +103,19 @@
         @load="handleLoad"
         @error="handleError"
       />
+      <!-- Resize handle -->
+      <div 
+        class="absolute bottom-0 right-0 w-4 h-4 cursor-nwse-resize"
+        @mousedown="startResize"
+      >
+        <i class="i-mdi-drag-vertical absolute bottom-0 right-0 text-gray-400" />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 
 const props = defineProps({
 	initialUrl: {
@@ -129,6 +139,13 @@ const urlError = ref<string | null>(null);
 const history = ref<string[]>([props.initialUrl]);
 const historyIndex = ref(0);
 const sandboxOptions = ref(props.sandbox);
+const container = ref<HTMLElement | null>(null);
+const isDragging = ref(false);
+const isResizing = ref(false);
+const startX = ref(0);
+const startY = ref(0);
+const startWidth = ref(0);
+const startHeight = ref(0);
 
 // Computed
 const canGoBack = computed(() => historyIndex.value > 0);
@@ -249,10 +266,65 @@ const handleError = (error: Event) => {
 	urlError.value = "Failed to load the page. The site might be unavailable.";
 };
 
+const startDrag = (e: MouseEvent) => {
+  isDragging.value = true;
+  startX.value = e.clientX;
+  startY.value = e.clientY;
+  document.addEventListener('mousemove', drag);
+  document.addEventListener('mouseup', stopDrag);
+};
+
+const drag = (e: MouseEvent) => {
+  if (!isDragging.value || !container.value) return;
+  const dx = e.clientX - startX.value;
+  const dy = e.clientY - startY.value;
+  container.value.style.left = `${container.value.offsetLeft + dx}px`;
+  container.value.style.top = `${container.value.offsetTop + dy}px`;
+  startX.value = e.clientX;
+  startY.value = e.clientY;
+};
+
+const stopDrag = () => {
+  isDragging.value = false;
+  document.removeEventListener('mousemove', drag);
+  document.removeEventListener('mouseup', stopDrag);
+};
+
+const startResize = (e: MouseEvent) => {
+  e.stopPropagation();
+  isResizing.value = true;
+  startX.value = e.clientX;
+  startY.value = e.clientY;
+  if (container.value) {
+    startWidth.value = container.value.offsetWidth;
+    startHeight.value = container.value.offsetHeight;
+  }
+  document.addEventListener('mousemove', resize);
+  document.addEventListener('mouseup', stopResize);
+};
+
+const resize = (e: MouseEvent) => {
+  if (!isResizing.value || !container.value) return;
+  const dx = e.clientX - startX.value;
+  const dy = e.clientY - startY.value;
+  container.value.style.width = `${startWidth.value + dx}px`;
+  container.value.style.height = `${startHeight.value + dy}px`;
+};
+
+const stopResize = () => {
+  isResizing.value = false;
+  document.removeEventListener('mousemove', resize);
+  document.removeEventListener('mouseup', stopResize);
+};
+
 // Lifecycle
 onMounted(() => {
-	if (urlInput.value) {
-		urlInput.value.focus();
-	}
+  if (urlInput.value) {
+    urlInput.value.focus();
+  }
+  if (container.value) {
+    container.value.style.width = '50%';
+    container.value.style.height = '50%';
+  }
 });
 </script>

@@ -155,14 +155,6 @@ const handleCodeUpdate = (newCode: string) => {
 	code.value = newCode;
 };
 
-// Resize logic
-const {
-	leftPanelWidth,
-	editorHeight,
-	startVerticalResize,
-	startHorizontalResize,
-} = useResize();
-
 // Theme - Using system preference
 const isDark = ref(false);
 // Note: Dark mode is now handled by CSS variables in uno.config.ts
@@ -170,48 +162,24 @@ const isDark = ref(false);
 
 <template>
   <div class="flex h-screen">
-    <!-- Left Panel -->
-    <LeftPanel />
+    <!-- Left Panel (Full Height) -->
+    <LeftPanel class="w-1/4" />
 
-    <!-- Right Panel -->
-    <div class="flex flex-col flex-1 h-full">
-      <!-- Top Section (50%) -->
-      <div class="h-[50%] flex">
-        <FileStructure 
-          :modelValue="preparedFileStructure"
-          @fileSelect="handleFileSelect"
-          class="w-64 border-r"
-        />
-        <CodeEditor 
-          v-model="code"
-          :theme="editorTheme"
-          :is-dark="isDark"
-          @update:modelValue="handleCodeUpdate"
-          class="flex-1"
-        />
-      </div>
+    <!-- Right Panel (Split Top/Bottom) -->
+    <div class="flex flex-col w-3/4 h-full">
+      <!-- Top: Code Editor -->
+      <CodeEditor 
+        v-model="code"
+        :theme="editorTheme"
+        :is-dark="isDark"
+        @update:modelValue="handleCodeUpdate"
+        class="flex-1"
+      />
 
-      <!-- Bottom Section (50%) -->
-      <div class="h-[50%] border-t">
+      <!-- Bottom: Browser Preview -->
+      <div class="h-1/2 border-t border-gray-200 bg-white dark:bg-gray-800">
         <Preview />
       </div>
     </div>
   </div>
 </template>
-
-<style>
-/* Custom scrollbar for file explorer */
-:global(::-webkit-scrollbar) {
-  width: 6px;
-  height: 6px;
-}
-
-:global(::-webkit-scrollbar-track) {
-  background: transparent;
-}
-
-:global(::-webkit-scrollbar-thumb) {
-  background: var(--border);
-  border-radius: 3px;
-}
-</style>

@@ -80,20 +80,20 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="h-full flex flex-col">
+  <div class="h-full flex flex-col bg-block">
     <!-- Search and Actions -->
-    <div class="p-2 border-b border-gray-700 flex items-center gap-2">
+    <div class="p-2 border-b border-border flex items-center gap-2">
       <div class="relative flex-1">
         <input
           v-model="searchQuery"
           type="text"
           placeholder="Search dependencies..."
-          class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-1.5 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+          class="w-full bg-block border border-border rounded px-3 py-1.5 text-sm text-text placeholder-text/50 focus:outline-none focus:ring-1 focus:ring-color-primary focus:border-color-primary"
         />
-        <i class="i-mdi-magnify absolute right-2 top-1/2 -translate-y-1/2 text-gray-500"></i>
+        <i class="i-mdi-magnify absolute right-2 top-1/2 -translate-y-1/2 text-text/50"></i>
       </div>
       <button 
-        class="p-1.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded"
+        class="p-1.5 text-text/50 hover:text-text hover:bg-bg-hover rounded"
         title="Refresh"
         @click="loadDependencies"
       >
@@ -104,61 +104,52 @@ onMounted(() => {
     <!-- Dependencies List -->
     <div class="flex-1 overflow-auto">
       <div v-if="isLoading" class="flex items-center justify-center h-full">
-        <div class="animate-spin text-blue-400">
+        <div class="animate-spin text-color-primary">
           <i class="i-mdi-loading text-2xl"></i>
         </div>
       </div>
       
-      <div v-else-if="filteredDependencies.length === 0" class="text-center py-8 text-gray-500">
+      <div v-else-if="filteredDependencies.length === 0" class="text-center py-8 text-text/50">
         <i class="i-mdi-package-variant-remove text-4xl mb-2"></i>
         <p>No dependencies found</p>
       </div>
       
-      <div v-else class="divide-y divide-gray-800">
+      <div v-else class="divide-y divide-border">
         <div 
           v-for="dep in filteredDependencies" 
           :key="dep.name"
-          class="p-3 hover:bg-gray-800/50"
+          class="p-3 hover:bg-bg-hover"
         >
           <div class="flex items-start justify-between">
             <div class="min-w-0">
               <div class="flex items-center gap-2">
-                <h3 class="text-sm font-medium text-blue-400 truncate">
-                  <a 
-                    v-if="dep.homepage" 
-                    :href="dep.homepage" 
-                    target="_blank" 
-                    class="hover:underline"
-                    @click.stop
-                  >
-                    {{ dep.name }}
-                  </a>
-                  <template v-else>{{ dep.name }}</template>
+                <h3 class="text-sm font-medium text-color-primary truncate">
+                  {{ dep.name }}
                 </h3>
                 <span 
                   class="text-xs px-1.5 py-0.5 rounded"
                   :class="{
-                    'bg-blue-900/50 text-blue-300': dep.type === 'dependency',
-                    'bg-purple-900/50 text-purple-300': dep.type === 'devDependency',
-                    'bg-amber-900/50 text-amber-300': dep.type === 'peerDependency'
+                    'bg-color-primary/10 text-color-primary': dep.type === 'dependency',
+                    'bg-color-secondary/10 text-color-secondary': dep.type === 'devDependency',
+                    'bg-color-alert/10 text-color-alert': dep.type === 'peerDependency'
                   }"
                 >
                   {{ dep.type === 'devDependency' ? 'dev' : dep.type === 'peerDependency' ? 'peer' : 'dep' }}
                 </span>
               </div>
               
-              <p v-if="dep.description" class="text-xs text-gray-400 mt-1 truncate">
+              <p v-if="dep.description" class="text-xs text-text/70 mt-1 truncate">
                 {{ dep.description }}
               </p>
               
               <div class="mt-2 flex items-center gap-2 text-xs">
-                <span class="text-gray-500">v{{ dep.version }}</span>
+                <span class="text-text/50">v{{ dep.version }}</span>
                 
                 <template v-if="dep.latestVersion && dep.latestVersion !== dep.version">
-                  <span class="text-gray-600">→</span>
-                  <span class="text-green-400">v{{ dep.latestVersion }}</span>
+                  <span class="text-text/30">→</span>
+                  <span class="text-color-success">v{{ dep.latestVersion }}</span>
                   <button 
-                    class="text-xs bg-green-900/50 text-green-300 px-1.5 py-0.5 rounded hover:bg-green-800/50"
+                    class="text-xs bg-color-success/10 text-color-success px-1.5 py-0.5 rounded hover:bg-color-success/20"
                     @click="updateDependency(dep.name, dep.latestVersion!)"
                   >
                     Update
@@ -169,7 +160,7 @@ onMounted(() => {
             
             <div class="flex-shrink-0 ml-2">
               <button 
-                class="p-1 text-gray-500 hover:text-gray-300"
+                class="p-1 text-text/50 hover:text-text"
                 title="View details"
               >
                 <i class="i-mdi-dots-vertical"></i>

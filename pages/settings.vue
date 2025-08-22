@@ -1,3 +1,5 @@
+
+
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -71,47 +73,44 @@ const saveSettings = () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-background text-foreground">
-    <div class="container mx-auto p-6 max-w-4xl">
-      <div class="flex flex-col space-y-6">
-        <div class="flex items-center justify-between">
-          <h1 class="text-3xl font-bold">Settings</h1>
-          <button 
-            @click="saveSettings"
-            class="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-          >
-            Save Changes
-          </button>
-        </div>
+  <div class="min-h-screen bg-background text-foreground flex">
+    <!-- Left Sidebar Navigation -->
+    <div class="w-64 p-4 border-r border-border bg-card">
+      <h2 class="text-xl font-bold mb-6">Settings</h2>
+      <nav class="space-y-1">
+        <button
+          v-for="tab in [
+            { id: 'account', label: 'Account', icon: 'i-mdi-account-circle' },
+            { id: 'appearance', label: 'Appearance', icon: 'i-mdi-palette' },
+            { id: 'notifications', label: 'Notifications', icon: 'i-mdi-bell-outline' },
+            { id: 'danger', label: 'Danger Zone', icon: 'i-mdi-alert-circle-outline' }
+          ]"
+          :key="tab.id"
+          @click="setActiveTab(tab.id)"
+          class="w-full text-left px-3 py-2 rounded-md flex items-center"
+          :class="{
+            'bg-primary/10 text-primary': activeTab === tab.id,
+            'text-muted-foreground hover:bg-accent': activeTab !== tab.id
+          }"
+        >
+          <span :class="`${tab.icon} mr-3 text-lg`"></span>
+          {{ tab.label }}
+        </button>
+      </nav>
+      
+      <button 
+        @click="saveSettings"
+        class="mt-6 w-full px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+      >
+        Save Changes
+      </button>
+    </div>
 
-        <!-- Tabs Navigation -->
-        <div class="border-b border-border">
-          <nav class="flex space-x-8" aria-label="Settings navigation">
-            <button
-              v-for="tab in [
-                { id: 'account', label: 'Account', icon: 'i-mdi-account-circle' },
-                { id: 'appearance', label: 'Appearance', icon: 'i-mdi-palette' },
-                { id: 'notifications', label: 'Notifications', icon: 'i-mdi-bell-outline' },
-                { id: 'danger', label: 'Danger Zone', icon: 'i-mdi-alert-circle-outline' }
-              ]"
-              :key="tab.id"
-              @click="setActiveTab(tab.id)"
-              class="py-4 px-1 border-b-2 font-medium text-sm flex items-center"
-              :class="{
-                'border-primary text-primary': activeTab === tab.id,
-                'border-transparent text-muted-foreground hover:text-foreground hover:border-foreground/20': activeTab !== tab.id
-              }"
-            >
-              <span :class="`${tab.icon} mr-2 text-lg`"></span>
-              {{ tab.label }}
-            </button>
-          </nav>
-        </div>
-      </div>
-
-      <div class="space-y-8 mt-6">
+    <!-- Main Content -->
+    <div class="flex-1 p-8 overflow-y-auto">
+      <div class="space-y-8 max-w-3xl">
         <!-- Account Settings -->
-        <div id="account" class="bg-card p-6 rounded-lg shadow-sm scroll-mt-24">
+        <div id="account" class="bg-card p-6 rounded-lg shadow-sm">
           <h2 class="text-xl font-semibold mb-4 flex items-center">
             <span class="i-mdi-account-circle mr-2 text-2xl"></span>
             Account
@@ -148,7 +147,7 @@ const saveSettings = () => {
         </div>
 
         <!-- Theme Settings -->
-        <div id="appearance" class="bg-card p-6 rounded-lg shadow-sm scroll-mt-24">
+        <div id="appearance" class="bg-card p-6 rounded-lg shadow-sm">
           <h2 class="text-xl font-semibold mb-4 flex items-center">
             <span class="i-mdi-palette mr-2 text-2xl"></span>
             Appearance
@@ -192,7 +191,7 @@ const saveSettings = () => {
         </div>
 
         <!-- Notification Settings -->
-        <div id="notifications" class="bg-card p-6 rounded-lg shadow-sm scroll-mt-24">
+        <div id="notifications" class="bg-card p-6 rounded-lg shadow-sm">
           <h2 class="text-xl font-semibold mb-4 flex items-center">
             <span class="i-mdi-bell-outline mr-2 text-2xl"></span>
             Notifications
@@ -250,7 +249,7 @@ const saveSettings = () => {
         </div>
 
         <!-- Danger Zone -->
-        <div id="danger" class="border border-destructive/20 bg-destructive/5 p-6 rounded-lg scroll-mt-24">
+        <div id="danger" class="border border-destructive/20 bg-destructive/5 p-6 rounded-lg">
           <h2 class="text-xl font-semibold mb-4 flex items-center text-destructive">
             <span class="i-mdi-alert-circle-outline mr-2 text-2xl"></span>
             Danger Zone

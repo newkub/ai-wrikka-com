@@ -46,17 +46,15 @@ const terminalClasses = computed(() => [
 	"h-full",
 	"flex",
 	"flex-col",
-	"bg-gray-900",
+	"bg-block",
 	"rounded-lg",
 	"overflow-hidden",
 	"border",
-	"border-gray-700",
+	"border-border",
 	"font-mono",
 	"text-sm",
-	"text-gray-200",
-	"select-text",
-	"transition-all",
-	"duration-200",
+	"text-text",
+	"select-text"
 ]);
 
 const inputClasses = computed(() => [
@@ -79,10 +77,10 @@ const inputClasses = computed(() => [
 ]);
 
 const lineClasses = (type?: string) => ({
-	"text-blue-300": type === "input",
-	"text-red-400": type === "error",
-	"text-yellow-300": type === "info",
-	"text-gray-300": !type || type === "output",
+	"!text-primary": type === "input",
+	"!text-error": type === "error",
+	"!text-alert": type === "info",
+	"!text-text": !type || type === "output",
 });
 
 const formatTimestamp = (timestamp: number) => {
@@ -377,40 +375,40 @@ defineExpose({
     tabindex="0"
   >
     <!-- Terminal Header -->
-    <div class="flex items-center px-4 py-2 bg-gray-800 border-b border-gray-700 select-none">
+    <div class="flex items-center px-4 py-2 bg-block border-b border-border select-none">
       <div class="flex space-x-2">
         <div 
-          class="w-3 h-3 rounded-full bg-red-500 cursor-pointer hover:bg-red-400 transition-colors"
+          class="w-3 h-3 rounded-full bg-color-error cursor-pointer hover:bg-color-error/90 transition-colors"
           title="Stop"
           @click="blurInput"
         ></div>
         <div 
-          class="w-3 h-3 rounded-full bg-yellow-500 cursor-pointer hover:bg-yellow-400 transition-colors"
+          class="w-3 h-3 rounded-full bg-color-alert cursor-pointer hover:bg-color-alert/90 transition-colors"
           title="Minimize"
           @click="toggleInputFocus"
         ></div>
         <div 
-          class="w-3 h-3 rounded-full bg-green-500 cursor-pointer hover:bg-green-400 transition-colors"
+          class="w-3 h-3 rounded-full bg-color-success cursor-pointer hover:bg-color-success/90 transition-colors"
           title="Maximize"
           @click="focusInput"
         ></div>
       </div>
       
-      <div class="flex-1 text-center text-gray-400 text-sm font-medium">
+      <div class="flex-1 text-center text-text/50 text-sm font-medium">
         Terminal
       </div>
       
       <div class="flex items-center space-x-2">
         <button 
           v-if="output.length > 0"
-          class="text-xs text-gray-400 hover:text-white transition-colors"
+          class="text-xs text-text/50 hover:text-text transition-colors"
           @click.stop="copyAll"
           title="Copy all (Ctrl+C)"
         >
           <span class="i-mdi-content-copy text-base"></span>
         </button>
         <button 
-          class="text-xs text-gray-400 hover:text-white transition-colors"
+          class="text-xs text-text/50 hover:text-text transition-colors"
           @click.stop="clear"
           title="Clear terminal (Ctrl+L)"
         >
@@ -433,7 +431,7 @@ defineExpose({
         <!-- Timestamp -->
         <span 
           v-if="showTimestamp && line.timestamp" 
-          class="text-gray-500 text-xs mr-2 flex-shrink-0"
+          class="text-text/50 text-xs mr-2 flex-shrink-0"
         >
           [{{ formatTimestamp(line.timestamp) }}]
         </span>
@@ -442,7 +440,7 @@ defineExpose({
         <div class="flex-1 min-w-0 break-words">
           <span 
             v-if="line.type === 'input'" 
-            class="text-green-400 font-medium select-none"
+            class="text-primary font-medium select-none"
           >
             {{ prompt }}
           </span>
@@ -454,7 +452,7 @@ defineExpose({
         <!-- Copy button for each line -->
         <button 
           v-if="line.text"
-          class="ml-2 opacity-0 group-hover:opacity-100 text-gray-500 hover:text-white transition-opacity"
+          class="ml-2 opacity-0 group-hover:opacity-100 text-text/50 hover:text-text transition-opacity"
           @click.stop="() => {
             useClipboard().copy(line.text);
             addLine('Copied to clipboard', 'info');
@@ -467,7 +465,7 @@ defineExpose({
       
       <!-- Input Line -->
       <div v-if="!readOnly" class="flex items-center mt-2">
-        <span class="text-green-400 font-medium select-none mr-2">{{ prompt }}</span>
+        <span class="text-success font-medium select-none mr-2">{{ prompt }}</span>
         
         <div class="relative flex-1">
           <input
@@ -488,7 +486,7 @@ defineExpose({
           <!-- Cursor -->
           <span 
             v-if="!readOnly && showCursor && isInputFocused"
-            class="absolute top-0 bottom-0 w-0.5 bg-green-400 animate-pulse"
+            class="absolute top-0 bottom-0 w-0.5 bg-success animate-pulse"
             :style="{ left: `${(inputRef?.selectionStart || 0) * 0.6}em` }"
           ></span>
         </div>
@@ -496,13 +494,13 @@ defineExpose({
         <!-- Processing indicator -->
         <div 
           v-if="isProcessing" 
-          class="ml-2 w-3 h-3 border-2 border-green-400 border-t-transparent rounded-full animate-spin"
+          class="ml-2 w-3 h-3 border-2 border-success border-t-transparent rounded-full animate-spin"
         ></div>
       </div>
     </div>
     
     <!-- Status Bar -->
-    <div class="px-4 py-1 text-xs text-gray-500 bg-gray-800 border-t border-gray-700 flex justify-between items-center">
+    <div class="px-4 py-1 text-xs text-text/50 bg-block border-t border-border flex justify-between items-center">
       <div class="flex items-center space-x-2">
         <span class="i-mdi-console-line text-xs"></span>
         <span>{{ isInputFocused ? 'Input' : 'Ready' }}</span>
@@ -518,3 +516,20 @@ defineExpose({
     </div>
   </div>
 </template>
+
+<style scoped>
+/* Custom scrollbar for tab content */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+</style>

@@ -62,17 +62,17 @@ defineExpose({
 </script>
 
 <template>
-  <div class="h-full overflow-auto p-2">
+  <div class="h-full overflow-auto p-2 bg-block">
     <div class="flex justify-between items-center mb-2">
-      <h3 class="text-sm font-medium text-gray-300">Problems</h3>
+      <h3 class="text-sm font-medium text-text">Problems</h3>
       <button 
-        class="text-xs text-blue-400 hover:text-blue-300"
+        class="text-xs text-color-primary hover:text-color-primary/80"
         @click="problems = []"
       >
         Clear All
       </button>
     </div>
-    <div v-if="problems.length === 0" class="text-center text-gray-500 py-8">
+    <div v-if="problems.length === 0" class="text-center text-text/50 py-8">
       <div class="i-mdi-check-circle-outline text-4xl mx-auto mb-2"></div>
       <p>No problems detected</p>
     </div>
@@ -80,13 +80,13 @@ defineExpose({
       <div 
         v-for="(problem, index) in problems" 
         :key="index"
-        class="p-2 rounded hover:bg-gray-800 cursor-pointer flex items-start gap-2"
+        class="p-2 rounded hover:bg-bg-hover cursor-pointer flex items-start gap-2"
       >
         <div 
           :class="[
             'flex-shrink-0 mt-0.5',
-            problem.severity === 'error' ? 'text-red-400' :
-            problem.severity === 'warning' ? 'text-yellow-400' : 'text-blue-400'
+            problem.severity === 'error' ? 'text-color-error' :
+            problem.severity === 'warning' ? 'text-color-alert' : 'text-color-secondary'
           ]"
         >
           <i 
@@ -97,8 +97,8 @@ defineExpose({
           ></i>
         </div>
         <div class="flex-1 min-w-0">
-          <div class="text-sm text-gray-200">{{ problem.message }}</div>
-          <div v-if="problem.source || problem.line" class="text-xs text-gray-500 mt-0.5">
+          <div class="text-sm text-text">{{ problem.message }}</div>
+          <div v-if="problem.source || problem.line" class="text-xs text-text/50 mt-0.5">
             <span v-if="problem.source">{{ problem.source }}</span>
             <span v-if="problem.line"> ({{ problem.line }}, {{ problem.column || 1 }})</span>
           </div>

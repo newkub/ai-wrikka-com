@@ -32,16 +32,16 @@ const setActiveTab = (tabId: string) => {
 </script>
 
 <template>
-  <div class="h-full flex flex-col bg-white">
+  <div class="h-full flex flex-col bg-background">
     <!-- Tabs -->
-    <div class="flex border-b border-gray-200 bg-gray-50">
+    <div class="flex border-b border-border bg-block">
       <button
         v-for="tab in tabs"
         :key="tab.id"
         class="px-4 py-2 text-sm font-medium border-b-2"
         :class="{
-          'border-blue-500 text-blue-600': activeTab === tab.id,
-          'border-transparent text-gray-500 hover:text-gray-700': activeTab !== tab.id
+          'border-color-primary text-color-primary': activeTab === tab.id,
+          'border-transparent text-text/50 hover:text-text': activeTab !== tab.id
         }"
         @click="setActiveTab(tab.id)"
       >
@@ -71,7 +71,7 @@ const setActiveTab = (tabId: string) => {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
+  background: var(--border);
   border-radius: 3px;
 }
 
